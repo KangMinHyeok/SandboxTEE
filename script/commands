@@ -1,0 +1,23 @@
+ip:  147.46.125.212
+port: 1832
+
+
+gcc -o test tests/ifc/iitp.c && ./scons platform=x86-64 --verbose
+
+for i in {1..10} ; do sync; sudo sysctl vm.drop_caches=3; ./test 2>&1 | tee -a Base_10000.out; done
+
+for i in {1..10} ; do sync; sudo sysctl vm.drop_caches=3; sudo ./scons-out/usgx-linux-x86-64/staging/sel_sgx_ldr ~/test2/depot_tools/native_client/scons-out/nacl-x86-64/staging/iitp.nexe 2>&1 | tee -a SGX+NaCl_10000.out; done
+
+
+
+sync; sudo sysctl vm.drop_caches=3; ./test 2>&1 | tee -a Base_100D.out
+
+sync; sudo sysctl vm.drop_caches=3; sudo ./scons-out/usgx-linux-x86-64/staging/sel_sgx_ldr ~/test2/depot_tools/native_client/scons-out/nacl-x86-64/staging/iitp.nexe 2>&1 | tee -a SGX+NaCl_100D.out
+
+sync; sudo sysctl vm.drop_caches=3; sudo ./scons-out/usgx-linux-x86-64/staging/sel_sgx_ldr ~/test2/depot_tools/native_client/scons-out/nacl-x86-64/staging/iitp.nexe 2>&1 | tee -a SGX+NaCl_100D.out
+
+for i in {1..250}; do sync; sudo sysctl vm.drop_caches=3; ./test 2>&1 | tee -a Base_4.out; done
+
+for i in {1..250}; do sync; sudo sysctl vm.drop_caches=3; sudo ./scons-out/usgx-linux-x86-64/staging/sel_sgx_ldr ~/test2/depot_tools/native_client/scons-out/nacl-x86-64/staging/iitp.nexe 2>&1 | tee -a SGX+NaCl_4.out; done
+
+python script/parse-result.py data/ 100T5.out; gnuplot script/bar.plot ;  gnuplot script/box.plot 
