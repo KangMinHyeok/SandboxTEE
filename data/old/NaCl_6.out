@@ -1,0 +1,2400 @@
+DEBUG MODE ENABLED (bypass acl)
+[14893,2715809664:20:44:53.094617] BYPASSING ALL ACL CHECKS
+[14893,2715809664:20:44:53.094725] Native Client module will be loaded at base address 0x00006fdf00000000
+[write_10000] tvsec: 436
+[read_10000] tvsec: 215
+[write_1000] tvsec: 183
+[read_1000] tvsec: 94
+[write_100000] tvsec: 3260
+[read_100000] tvsec: 1251
+[write_1000000] tvsec: 29644
+[read_1000000] tvsec: 9595
+[write_4096] tvsec: 284
+[read_4096] tvsec: 157
+[write_16384] tvsec: 600
+[read_16384] tvsec: 249
+[write_65536] tvsec: 1911
+[read_65536] tvsec: 805
+[write_262144] tvsec: 7860
+[read_262144] tvsec: 2971
+[write_1048576] tvsec: 31826
+[read_1048576] tvsec: 10167
+[write_4194304] tvsec: 122852
+[read_4194304] tvsec: 41577
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14897,3231946624:20:44:53.437096] BYPASSING ALL ACL CHECKS
+[14897,3231946624:20:44:53.437262] Native Client module will be loaded at base address 0x0000376900000000
+[write_10000] tvsec: 411
+[read_10000] tvsec: 208
+[write_1000] tvsec: 244
+[read_1000] tvsec: 111
+[write_100000] tvsec: 2978
+[read_100000] tvsec: 1275
+[write_1000000] tvsec: 28186
+[read_1000000] tvsec: 9589
+[write_4096] tvsec: 290
+[read_4096] tvsec: 157
+[write_16384] tvsec: 553
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1920
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7834
+[read_262144] tvsec: 2984
+[write_1048576] tvsec: 32790
+[read_1048576] tvsec: 10360
+[write_4194304] tvsec: 122353
+[read_4194304] tvsec: 41417
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14901,1709221760:20:44:53.777994] BYPASSING ALL ACL CHECKS
+[14901,1709221760:20:44:53.778162] Native Client module will be loaded at base address 0x000044b600000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 192
+[write_1000] tvsec: 244
+[read_1000] tvsec: 111
+[write_100000] tvsec: 2954
+[read_100000] tvsec: 1259
+[write_1000000] tvsec: 28406
+[read_1000000] tvsec: 9678
+[write_4096] tvsec: 249
+[read_4096] tvsec: 147
+[write_16384] tvsec: 576
+[read_16384] tvsec: 221
+[write_65536] tvsec: 2014
+[read_65536] tvsec: 775
+[write_262144] tvsec: 7933
+[read_262144] tvsec: 2937
+[write_1048576] tvsec: 32352
+[read_1048576] tvsec: 10223
+[write_4194304] tvsec: 122586
+[read_4194304] tvsec: 41453
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14905,891471744:20:44:54.119282] BYPASSING ALL ACL CHECKS
+[14905,891471744:20:44:54.119461] Native Client module will be loaded at base address 0x0000739f00000000
+[write_10000] tvsec: 477
+[read_10000] tvsec: 180
+[write_1000] tvsec: 244
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2905
+[read_100000] tvsec: 1215
+[write_1000000] tvsec: 28238
+[read_1000000] tvsec: 9531
+[write_4096] tvsec: 291
+[read_4096] tvsec: 172
+[write_16384] tvsec: 562
+[read_16384] tvsec: 217
+[write_65536] tvsec: 2014
+[read_65536] tvsec: 767
+[write_262144] tvsec: 7897
+[read_262144] tvsec: 2921
+[write_1048576] tvsec: 32343
+[read_1048576] tvsec: 10368
+[write_4194304] tvsec: 122366
+[read_4194304] tvsec: 41232
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14909,1933277056:20:44:54.459838] BYPASSING ALL ACL CHECKS
+[14909,1933277056:20:44:54.460006] Native Client module will be loaded at base address 0x0000291500000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 180
+[write_1000] tvsec: 202
+[read_1000] tvsec: 134
+[write_100000] tvsec: 2942
+[read_100000] tvsec: 1205
+[write_1000000] tvsec: 28287
+[read_1000000] tvsec: 9728
+[write_4096] tvsec: 238
+[read_4096] tvsec: 130
+[write_16384] tvsec: 568
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1950
+[read_65536] tvsec: 789
+[write_262144] tvsec: 7977
+[read_262144] tvsec: 2985
+[write_1048576] tvsec: 32486
+[read_1048576] tvsec: 10304
+[write_4194304] tvsec: 123247
+[read_4194304] tvsec: 41778
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14913,4230039424:20:44:54.802048] BYPASSING ALL ACL CHECKS
+[14913,4230039424:20:44:54.802215] Native Client module will be loaded at base address 0x00004dfd00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 192
+[write_1000] tvsec: 260
+[read_1000] tvsec: 154
+[write_100000] tvsec: 2981
+[read_100000] tvsec: 1281
+[write_1000000] tvsec: 28607
+[read_1000000] tvsec: 9661
+[write_4096] tvsec: 250
+[read_4096] tvsec: 147
+[write_16384] tvsec: 570
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1977
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7930
+[read_262144] tvsec: 2886
+[write_1048576] tvsec: 32341
+[read_1048576] tvsec: 10226
+[write_4194304] tvsec: 122343
+[read_4194304] tvsec: 41340
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14917,3067250560:20:44:55.142323] BYPASSING ALL ACL CHECKS
+[14917,3067250560:20:44:55.142492] Native Client module will be loaded at base address 0x000019fc00000000
+[write_10000] tvsec: 406
+[read_10000] tvsec: 193
+[write_1000] tvsec: 234
+[read_1000] tvsec: 501
+[write_100000] tvsec: 2917
+[read_100000] tvsec: 1206
+[write_1000000] tvsec: 28259
+[read_1000000] tvsec: 9664
+[write_4096] tvsec: 285
+[read_4096] tvsec: 145
+[write_16384] tvsec: 614
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1958
+[read_65536] tvsec: 764
+[write_262144] tvsec: 8031
+[read_262144] tvsec: 2975
+[write_1048576] tvsec: 32771
+[read_1048576] tvsec: 10282
+[write_4194304] tvsec: 123058
+[read_4194304] tvsec: 41073
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14921,2347648896:20:44:55.484028] BYPASSING ALL ACL CHECKS
+[14921,2347648896:20:44:55.484194] Native Client module will be loaded at base address 0x0000420300000000
+[write_10000] tvsec: 421
+[read_10000] tvsec: 220
+[write_1000] tvsec: 262
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3035
+[read_100000] tvsec: 1201
+[write_1000000] tvsec: 28749
+[read_1000000] tvsec: 9593
+[write_4096] tvsec: 296
+[read_4096] tvsec: 144
+[write_16384] tvsec: 604
+[read_16384] tvsec: 224
+[write_65536] tvsec: 1938
+[read_65536] tvsec: 777
+[write_262144] tvsec: 7926
+[read_262144] tvsec: 2935
+[write_1048576] tvsec: 32207
+[read_1048576] tvsec: 10152
+[write_4194304] tvsec: 122765
+[read_4194304] tvsec: 41236
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14925,1452496768:20:44:55.825212] BYPASSING ALL ACL CHECKS
+[14925,1452496768:20:44:55.825376] Native Client module will be loaded at base address 0x000044ba00000000
+[write_10000] tvsec: 432
+[read_10000] tvsec: 192
+[write_1000] tvsec: 245
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2999
+[read_100000] tvsec: 1264
+[write_1000000] tvsec: 28124
+[read_1000000] tvsec: 9639
+[write_4096] tvsec: 259
+[read_4096] tvsec: 158
+[write_16384] tvsec: 572
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1898
+[read_65536] tvsec: 764
+[write_262144] tvsec: 7899
+[read_262144] tvsec: 2923
+[write_1048576] tvsec: 32674
+[read_1048576] tvsec: 10349
+[write_4194304] tvsec: 122816
+[read_4194304] tvsec: 41357
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14929,738953088:20:44:56.166467] BYPASSING ALL ACL CHECKS
+[14929,738953088:20:44:56.166634] Native Client module will be loaded at base address 0x00000f8700000000
+[write_10000] tvsec: 405
+[read_10000] tvsec: 209
+[write_1000] tvsec: 275
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2925
+[read_100000] tvsec: 1205
+[write_1000000] tvsec: 28412
+[read_1000000] tvsec: 9597
+[write_4096] tvsec: 223
+[read_4096] tvsec: 144
+[write_16384] tvsec: 574
+[read_16384] tvsec: 220
+[write_65536] tvsec: 2027
+[read_65536] tvsec: 772
+[write_262144] tvsec: 8075
+[read_262144] tvsec: 2938
+[write_1048576] tvsec: 32414
+[read_1048576] tvsec: 10267
+[write_4194304] tvsec: 122333
+[read_4194304] tvsec: 41391
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14933,863369088:20:44:56.507792] BYPASSING ALL ACL CHECKS
+[14933,863369088:20:44:56.507958] Native Client module will be loaded at base address 0x000004ce00000000
+[write_10000] tvsec: 411
+[read_10000] tvsec: 181
+[write_1000] tvsec: 205
+[read_1000] tvsec: 139
+[write_100000] tvsec: 3043
+[read_100000] tvsec: 1214
+[write_1000000] tvsec: 28671
+[read_1000000] tvsec: 9623
+[write_4096] tvsec: 250
+[read_4096] tvsec: 145
+[write_16384] tvsec: 639
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1942
+[read_65536] tvsec: 835
+[write_262144] tvsec: 7938
+[read_262144] tvsec: 2954
+[write_1048576] tvsec: 32246
+[read_1048576] tvsec: 10177
+[write_4194304] tvsec: 122987
+[read_4194304] tvsec: 41563
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14937,1218840448:20:44:56.849911] BYPASSING ALL ACL CHECKS
+[14937,1218840448:20:44:56.850076] Native Client module will be loaded at base address 0x0000332500000000
+[write_10000] tvsec: 405
+[read_10000] tvsec: 222
+[write_1000] tvsec: 225
+[read_1000] tvsec: 166
+[write_100000] tvsec: 2938
+[read_100000] tvsec: 1271
+[write_1000000] tvsec: 28334
+[read_1000000] tvsec: 9607
+[write_4096] tvsec: 288
+[read_4096] tvsec: 171
+[write_16384] tvsec: 638
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1982
+[read_65536] tvsec: 779
+[write_262144] tvsec: 8034
+[read_262144] tvsec: 2925
+[write_1048576] tvsec: 33146
+[read_1048576] tvsec: 10328
+[write_4194304] tvsec: 123892
+[read_4194304] tvsec: 41634
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14941,614082432:20:44:57.193540] BYPASSING ALL ACL CHECKS
+[14941,614082432:20:44:57.193719] Native Client module will be loaded at base address 0x0000511d00000000
+[write_10000] tvsec: 399
+[read_10000] tvsec: 192
+[write_1000] tvsec: 260
+[read_1000] tvsec: 168
+[write_100000] tvsec: 2996
+[read_100000] tvsec: 1273
+[write_1000000] tvsec: 28519
+[read_1000000] tvsec: 9653
+[write_4096] tvsec: 251
+[read_4096] tvsec: 144
+[write_16384] tvsec: 568
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1974
+[read_65536] tvsec: 764
+[write_262144] tvsec: 7903
+[read_262144] tvsec: 2896
+[write_1048576] tvsec: 32309
+[read_1048576] tvsec: 10236
+[write_4194304] tvsec: 122267
+[read_4194304] tvsec: 41333
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14945,3683575680:20:44:57.534163] BYPASSING ALL ACL CHECKS
+[14945,3683575680:20:44:57.534327] Native Client module will be loaded at base address 0x0000166d00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 191
+[write_1000] tvsec: 257
+[read_1000] tvsec: 115
+[write_100000] tvsec: 3010
+[read_100000] tvsec: 1204
+[write_1000000] tvsec: 28128
+[read_1000000] tvsec: 9655
+[write_4096] tvsec: 266
+[read_4096] tvsec: 144
+[write_16384] tvsec: 592
+[read_16384] tvsec: 223
+[write_65536] tvsec: 1942
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7836
+[read_262144] tvsec: 2995
+[write_1048576] tvsec: 32916
+[read_1048576] tvsec: 10325
+[write_4194304] tvsec: 123039
+[read_4194304] tvsec: 41774
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14949,3103864704:20:44:57.878703] BYPASSING ALL ACL CHECKS
+[14949,3103864704:20:44:57.878868] Native Client module will be loaded at base address 0x0000757300000000
+[write_10000] tvsec: 402
+[read_10000] tvsec: 190
+[write_1000] tvsec: 281
+[read_1000] tvsec: 168
+[write_100000] tvsec: 2946
+[read_100000] tvsec: 1199
+[write_1000000] tvsec: 28215
+[read_1000000] tvsec: 9637
+[write_4096] tvsec: 248
+[read_4096] tvsec: 117
+[write_16384] tvsec: 565
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1983
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7873
+[read_262144] tvsec: 2942
+[write_1048576] tvsec: 32089
+[read_1048576] tvsec: 10248
+[write_4194304] tvsec: 121873
+[read_4194304] tvsec: 41436
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14953,1067997056:20:44:58.218041] BYPASSING ALL ACL CHECKS
+[14953,1067997056:20:44:58.218206] Native Client module will be loaded at base address 0x0000525100000000
+[write_10000] tvsec: 400
+[read_10000] tvsec: 206
+[write_1000] tvsec: 243
+[read_1000] tvsec: 166
+[write_100000] tvsec: 2932
+[read_100000] tvsec: 1364
+[write_1000000] tvsec: 28377
+[read_1000000] tvsec: 9646
+[write_4096] tvsec: 285
+[read_4096] tvsec: 173
+[write_16384] tvsec: 616
+[read_16384] tvsec: 246
+[write_65536] tvsec: 2043
+[read_65536] tvsec: 821
+[write_262144] tvsec: 7806
+[read_262144] tvsec: 2931
+[write_1048576] tvsec: 32351
+[read_1048576] tvsec: 10341
+[write_4194304] tvsec: 124308
+[read_4194304] tvsec: 41007
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14957,2499991424:20:44:58.561096] BYPASSING ALL ACL CHECKS
+[14957,2499991424:20:44:58.561261] Native Client module will be loaded at base address 0x0000366700000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 196
+[write_1000] tvsec: 255
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3038
+[read_100000] tvsec: 1291
+[write_1000000] tvsec: 28336
+[read_1000000] tvsec: 9671
+[write_4096] tvsec: 247
+[read_4096] tvsec: 146
+[write_16384] tvsec: 567
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1936
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7955
+[read_262144] tvsec: 2896
+[write_1048576] tvsec: 32317
+[read_1048576] tvsec: 10300
+[write_4194304] tvsec: 122511
+[read_4194304] tvsec: 41396
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14961,361400192:20:44:58.901612] BYPASSING ALL ACL CHECKS
+[14961,361400192:20:44:58.901779] Native Client module will be loaded at base address 0x0000279000000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 194
+[write_1000] tvsec: 263
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3006
+[read_100000] tvsec: 1288
+[write_1000000] tvsec: 28643
+[read_1000000] tvsec: 9653
+[write_4096] tvsec: 250
+[read_4096] tvsec: 146
+[write_16384] tvsec: 574
+[read_16384] tvsec: 222
+[write_65536] tvsec: 1993
+[read_65536] tvsec: 769
+[write_262144] tvsec: 7970
+[read_262144] tvsec: 2908
+[write_1048576] tvsec: 32405
+[read_1048576] tvsec: 10273
+[write_4194304] tvsec: 121884
+[read_4194304] tvsec: 41618
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14965,4083300224:20:44:59.242747] BYPASSING ALL ACL CHECKS
+[14965,4083300224:20:44:59.242912] Native Client module will be loaded at base address 0x00006dfa00000000
+[write_10000] tvsec: 430
+[read_10000] tvsec: 280
+[write_1000] tvsec: 243
+[read_1000] tvsec: 166
+[write_100000] tvsec: 2919
+[read_100000] tvsec: 1210
+[write_1000000] tvsec: 28119
+[read_1000000] tvsec: 9615
+[write_4096] tvsec: 287
+[read_4096] tvsec: 155
+[write_16384] tvsec: 629
+[read_16384] tvsec: 220
+[write_65536] tvsec: 2054
+[read_65536] tvsec: 770
+[write_262144] tvsec: 8070
+[read_262144] tvsec: 2958
+[write_1048576] tvsec: 32806
+[read_1048576] tvsec: 10248
+[write_4194304] tvsec: 121793
+[read_4194304] tvsec: 41360
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14969,2422519680:20:44:59.582913] BYPASSING ALL ACL CHECKS
+[14969,2422519680:20:44:59.583060] Native Client module will be loaded at base address 0x00000f7c00000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 275
+[write_1000] tvsec: 234
+[read_1000] tvsec: 114
+[write_100000] tvsec: 2946
+[read_100000] tvsec: 1196
+[write_1000000] tvsec: 28379
+[read_1000000] tvsec: 9609
+[write_4096] tvsec: 247
+[read_4096] tvsec: 145
+[write_16384] tvsec: 602
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1963
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7904
+[read_262144] tvsec: 2945
+[write_1048576] tvsec: 32345
+[read_1048576] tvsec: 10255
+[write_4194304] tvsec: 122756
+[read_4194304] tvsec: 41361
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14973,1983084416:20:44:59.924138] BYPASSING ALL ACL CHECKS
+[14973,1983084416:20:44:59.924307] Native Client module will be loaded at base address 0x00003a2f00000000
+[write_10000] tvsec: 408
+[read_10000] tvsec: 191
+[write_1000] tvsec: 245
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3082
+[read_100000] tvsec: 1196
+[write_1000000] tvsec: 28402
+[read_1000000] tvsec: 9551
+[write_4096] tvsec: 290
+[read_4096] tvsec: 134
+[write_16384] tvsec: 632
+[read_16384] tvsec: 246
+[write_65536] tvsec: 1954
+[read_65536] tvsec: 820
+[write_262144] tvsec: 7846
+[read_262144] tvsec: 3199
+[write_1048576] tvsec: 32736
+[read_1048576] tvsec: 10513
+[write_4194304] tvsec: 123358
+[read_4194304] tvsec: 41459
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14977,1632696192:20:45:00.267361] BYPASSING ALL ACL CHECKS
+[14977,1632696192:20:45:00.267498] Native Client module will be loaded at base address 0x00005bcb00000000
+[write_10000] tvsec: 465
+[read_10000] tvsec: 177
+[write_1000] tvsec: 214
+[read_1000] tvsec: 150
+[write_100000] tvsec: 2924
+[read_100000] tvsec: 1204
+[write_1000000] tvsec: 28251
+[read_1000000] tvsec: 9619
+[write_4096] tvsec: 232
+[read_4096] tvsec: 117
+[write_16384] tvsec: 571
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1998
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7930
+[read_262144] tvsec: 2940
+[write_1048576] tvsec: 32202
+[read_1048576] tvsec: 10245
+[write_4194304] tvsec: 122533
+[read_4194304] tvsec: 41369
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14981,1082574720:20:45:00.607458] BYPASSING ALL ACL CHECKS
+[14981,1082574720:20:45:00.607624] Native Client module will be loaded at base address 0x00001f4200000000
+[write_10000] tvsec: 487
+[read_10000] tvsec: 179
+[write_1000] tvsec: 204
+[read_1000] tvsec: 138
+[write_100000] tvsec: 2989
+[read_100000] tvsec: 1217
+[write_1000000] tvsec: 28804
+[read_1000000] tvsec: 9611
+[write_4096] tvsec: 251
+[read_4096] tvsec: 145
+[write_16384] tvsec: 601
+[read_16384] tvsec: 217
+[write_65536] tvsec: 1942
+[read_65536] tvsec: 831
+[write_262144] tvsec: 8037
+[read_262144] tvsec: 2945
+[write_1048576] tvsec: 32172
+[read_1048576] tvsec: 10161
+[write_4194304] tvsec: 121631
+[read_4194304] tvsec: 41412
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14985,4239603584:20:45:00.947603] BYPASSING ALL ACL CHECKS
+[14985,4239603584:20:45:00.947769] Native Client module will be loaded at base address 0x0000632800000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 217
+[write_1000] tvsec: 259
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3061
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28038
+[read_1000000] tvsec: 9559
+[write_4096] tvsec: 282
+[read_4096] tvsec: 156
+[write_16384] tvsec: 582
+[read_16384] tvsec: 267
+[write_65536] tvsec: 1988
+[read_65536] tvsec: 778
+[write_262144] tvsec: 7871
+[read_262144] tvsec: 2939
+[write_1048576] tvsec: 32133
+[read_1048576] tvsec: 10216
+[write_4194304] tvsec: 122518
+[read_4194304] tvsec: 41504
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14989,1647511424:20:45:01.288049] BYPASSING ALL ACL CHECKS
+[14989,1647511424:20:45:01.288215] Native Client module will be loaded at base address 0x000028e100000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 178
+[write_1000] tvsec: 201
+[read_1000] tvsec: 136
+[write_100000] tvsec: 2944
+[read_100000] tvsec: 1205
+[write_1000000] tvsec: 28574
+[read_1000000] tvsec: 9701
+[write_4096] tvsec: 240
+[read_4096] tvsec: 126
+[write_16384] tvsec: 633
+[read_16384] tvsec: 228
+[write_65536] tvsec: 1916
+[read_65536] tvsec: 846
+[write_262144] tvsec: 7969
+[read_262144] tvsec: 2975
+[write_1048576] tvsec: 32649
+[read_1048576] tvsec: 10225
+[write_4194304] tvsec: 120766
+[read_4194304] tvsec: 41754
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14993,3286476672:20:45:01.628039] BYPASSING ALL ACL CHECKS
+[14993,3286476672:20:45:01.628205] Native Client module will be loaded at base address 0x0000499e00000000
+[write_10000] tvsec: 399
+[read_10000] tvsec: 192
+[write_1000] tvsec: 245
+[read_1000] tvsec: 168
+[write_100000] tvsec: 2947
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28389
+[read_1000000] tvsec: 9619
+[write_4096] tvsec: 297
+[read_4096] tvsec: 141
+[write_16384] tvsec: 603
+[read_16384] tvsec: 244
+[write_65536] tvsec: 1943
+[read_65536] tvsec: 819
+[write_262144] tvsec: 7851
+[read_262144] tvsec: 2924
+[write_1048576] tvsec: 32844
+[read_1048576] tvsec: 10300
+[write_4194304] tvsec: 122175
+[read_4194304] tvsec: 41377
+done!
+DEBUG MODE ENABLED (bypass acl)
+[14997,1171134336:20:45:01.969116] BYPASSING ALL ACL CHECKS
+[14997,1171134336:20:45:01.969281] Native Client module will be loaded at base address 0x0000004e00000000
+[write_10000] tvsec: 399
+[read_10000] tvsec: 220
+[write_1000] tvsec: 244
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2941
+[read_100000] tvsec: 1280
+[write_1000000] tvsec: 28250
+[read_1000000] tvsec: 9660
+[write_4096] tvsec: 249
+[read_4096] tvsec: 145
+[write_16384] tvsec: 564
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1921
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7948
+[read_262144] tvsec: 2953
+[write_1048576] tvsec: 32225
+[read_1048576] tvsec: 10157
+[write_4194304] tvsec: 123343
+[read_4194304] tvsec: 41229
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15001,1056024448:20:45:02.310381] BYPASSING ALL ACL CHECKS
+[15001,1056024448:20:45:02.310550] Native Client module will be loaded at base address 0x00005ae100000000
+[write_10000] tvsec: 406
+[read_10000] tvsec: 206
+[write_1000] tvsec: 168
+[read_1000] tvsec: 140
+[write_100000] tvsec: 2997
+[read_100000] tvsec: 1229
+[write_1000000] tvsec: 28086
+[read_1000000] tvsec: 9608
+[write_4096] tvsec: 263
+[read_4096] tvsec: 158
+[write_16384] tvsec: 641
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1993
+[read_65536] tvsec: 763
+[write_262144] tvsec: 7879
+[read_262144] tvsec: 2895
+[write_1048576] tvsec: 31952
+[read_1048576] tvsec: 10295
+[write_4194304] tvsec: 123281
+[read_4194304] tvsec: 41218
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15005,395163520:20:45:02.651423] BYPASSING ALL ACL CHECKS
+[15005,395163520:20:45:02.651583] Native Client module will be loaded at base address 0x00006e7600000000
+[write_10000] tvsec: 466
+[read_10000] tvsec: 217
+[write_1000] tvsec: 245
+[read_1000] tvsec: 141
+[write_100000] tvsec: 3020
+[read_100000] tvsec: 1209
+[write_1000000] tvsec: 28302
+[read_1000000] tvsec: 9594
+[write_4096] tvsec: 250
+[read_4096] tvsec: 146
+[write_16384] tvsec: 606
+[read_16384] tvsec: 270
+[write_65536] tvsec: 1964
+[read_65536] tvsec: 767
+[write_262144] tvsec: 7912
+[read_262144] tvsec: 2942
+[write_1048576] tvsec: 32096
+[read_1048576] tvsec: 10255
+[write_4194304] tvsec: 122572
+[read_4194304] tvsec: 41472
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15009,4115441536:20:45:02.992167] BYPASSING ALL ACL CHECKS
+[15009,4115441536:20:45:02.992335] Native Client module will be loaded at base address 0x00005a8a00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 191
+[write_1000] tvsec: 253
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3008
+[read_100000] tvsec: 1197
+[write_1000000] tvsec: 28829
+[read_1000000] tvsec: 9608
+[write_4096] tvsec: 318
+[read_4096] tvsec: 160
+[write_16384] tvsec: 572
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1945
+[read_65536] tvsec: 775
+[write_262144] tvsec: 7969
+[read_262144] tvsec: 2937
+[write_1048576] tvsec: 32580
+[read_1048576] tvsec: 10124
+[write_4194304] tvsec: 121578
+[read_4194304] tvsec: 41145
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15013,840791936:20:45:03.331577] BYPASSING ALL ACL CHECKS
+[15013,840791936:20:45:03.331738] Native Client module will be loaded at base address 0x000004b900000000
+[write_10000] tvsec: 469
+[read_10000] tvsec: 218
+[write_1000] tvsec: 257
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3170
+[read_100000] tvsec: 1206
+[write_1000000] tvsec: 28181
+[read_1000000] tvsec: 9544
+[write_4096] tvsec: 289
+[read_4096] tvsec: 173
+[write_16384] tvsec: 590
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1964
+[read_65536] tvsec: 758
+[write_262144] tvsec: 7813
+[read_262144] tvsec: 2914
+[write_1048576] tvsec: 32879
+[read_1048576] tvsec: 10233
+[write_4194304] tvsec: 122662
+[read_4194304] tvsec: 41385
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15017,3531941760:20:45:03.673501] BYPASSING ALL ACL CHECKS
+[15017,3531941760:20:45:03.673664] Native Client module will be loaded at base address 0x000029b900000000
+[write_10000] tvsec: 398
+[read_10000] tvsec: 193
+[write_1000] tvsec: 251
+[read_1000] tvsec: 168
+[write_100000] tvsec: 2952
+[read_100000] tvsec: 1454
+[write_1000000] tvsec: 28233
+[read_1000000] tvsec: 9645
+[write_4096] tvsec: 247
+[read_4096] tvsec: 145
+[write_16384] tvsec: 596
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1979
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7920
+[read_262144] tvsec: 2901
+[write_1048576] tvsec: 32198
+[read_1048576] tvsec: 10217
+[write_4194304] tvsec: 121528
+[read_4194304] tvsec: 41226
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15021,1830647680:20:45:04.012560] BYPASSING ALL ACL CHECKS
+[15021,1830647680:20:45:04.012728] Native Client module will be loaded at base address 0x000063ee00000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 194
+[write_1000] tvsec: 259
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2995
+[read_100000] tvsec: 1200
+[write_1000000] tvsec: 28574
+[read_1000000] tvsec: 9570
+[write_4096] tvsec: 339
+[read_4096] tvsec: 155
+[write_16384] tvsec: 617
+[read_16384] tvsec: 247
+[write_65536] tvsec: 1914
+[read_65536] tvsec: 760
+[write_262144] tvsec: 7870
+[read_262144] tvsec: 2920
+[write_1048576] tvsec: 32242
+[read_1048576] tvsec: 10229
+[write_4194304] tvsec: 123578
+[read_4194304] tvsec: 41279
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15025,4275771264:20:45:04.354990] BYPASSING ALL ACL CHECKS
+[15025,4275771264:20:45:04.355134] Native Client module will be loaded at base address 0x0000557200000000
+[write_10000] tvsec: 408
+[read_10000] tvsec: 306
+[write_1000] tvsec: 215
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2963
+[read_100000] tvsec: 1244
+[write_1000000] tvsec: 28395
+[read_1000000] tvsec: 9685
+[write_4096] tvsec: 249
+[read_4096] tvsec: 143
+[write_16384] tvsec: 606
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1970
+[read_65536] tvsec: 776
+[write_262144] tvsec: 7919
+[read_262144] tvsec: 2958
+[write_1048576] tvsec: 32173
+[read_1048576] tvsec: 10310
+[write_4194304] tvsec: 121901
+[read_4194304] tvsec: 41918
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15029,2032277376:20:45:04.695820] BYPASSING ALL ACL CHECKS
+[15029,2032277376:20:45:04.695987] Native Client module will be loaded at base address 0x0000353b00000000
+[write_10000] tvsec: 405
+[read_10000] tvsec: 193
+[write_1000] tvsec: 258
+[read_1000] tvsec: 168
+[write_100000] tvsec: 3007
+[read_100000] tvsec: 1227
+[write_1000000] tvsec: 28694
+[read_1000000] tvsec: 9627
+[write_4096] tvsec: 249
+[read_4096] tvsec: 161
+[write_16384] tvsec: 642
+[read_16384] tvsec: 218
+[write_65536] tvsec: 1948
+[read_65536] tvsec: 849
+[write_262144] tvsec: 7949
+[read_262144] tvsec: 2940
+[write_1048576] tvsec: 32419
+[read_1048576] tvsec: 10131
+[write_4194304] tvsec: 122464
+[read_4194304] tvsec: 41239
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15033,1953953664:20:45:05.036494] BYPASSING ALL ACL CHECKS
+[15033,1953953664:20:45:05.036660] Native Client module will be loaded at base address 0x0000422d00000000
+[write_10000] tvsec: 406
+[read_10000] tvsec: 194
+[write_1000] tvsec: 260
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2984
+[read_100000] tvsec: 1207
+[write_1000000] tvsec: 28269
+[read_1000000] tvsec: 9612
+[write_4096] tvsec: 270
+[read_4096] tvsec: 143
+[write_16384] tvsec: 634
+[read_16384] tvsec: 246
+[write_65536] tvsec: 2024
+[read_65536] tvsec: 767
+[write_262144] tvsec: 8013
+[read_262144] tvsec: 2999
+[write_1048576] tvsec: 32812
+[read_1048576] tvsec: 10477
+[write_4194304] tvsec: 123360
+[read_4194304] tvsec: 41918
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15037,3388979072:20:45:05.380506] BYPASSING ALL ACL CHECKS
+[15037,3388979072:20:45:05.380671] Native Client module will be loaded at base address 0x0000488200000000
+[write_10000] tvsec: 407
+[read_10000] tvsec: 192
+[write_1000] tvsec: 243
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3003
+[read_100000] tvsec: 1196
+[write_1000000] tvsec: 28333
+[read_1000000] tvsec: 9745
+[write_4096] tvsec: 289
+[read_4096] tvsec: 133
+[write_16384] tvsec: 570
+[read_16384] tvsec: 223
+[write_65536] tvsec: 1939
+[read_65536] tvsec: 792
+[write_262144] tvsec: 7923
+[read_262144] tvsec: 2938
+[write_1048576] tvsec: 32184
+[read_1048576] tvsec: 10143
+[write_4194304] tvsec: 121938
+[read_4194304] tvsec: 40965
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15041,568579968:20:45:05.719950] BYPASSING ALL ACL CHECKS
+[15041,568579968:20:45:05.720116] Native Client module will be loaded at base address 0x0000005c00000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 179
+[write_1000] tvsec: 230
+[read_1000] tvsec: 160
+[write_100000] tvsec: 2998
+[read_100000] tvsec: 1209
+[write_1000000] tvsec: 28915
+[read_1000000] tvsec: 9700
+[write_4096] tvsec: 300
+[read_4096] tvsec: 133
+[write_16384] tvsec: 631
+[read_16384] tvsec: 249
+[write_65536] tvsec: 1969
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7986
+[read_262144] tvsec: 2958
+[write_1048576] tvsec: 33201
+[read_1048576] tvsec: 10339
+[write_4194304] tvsec: 124884
+[read_4194304] tvsec: 42181
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15045,1796511616:20:45:06.067314] BYPASSING ALL ACL CHECKS
+[15045,1796511616:20:45:06.067516] Native Client module will be loaded at base address 0x00000ba100000000
+[write_10000] tvsec: 478
+[read_10000] tvsec: 181
+[write_1000] tvsec: 208
+[read_1000] tvsec: 142
+[write_100000] tvsec: 3034
+[read_100000] tvsec: 1209
+[write_1000000] tvsec: 28661
+[read_1000000] tvsec: 9705
+[write_4096] tvsec: 199
+[read_4096] tvsec: 108
+[write_16384] tvsec: 532
+[read_16384] tvsec: 230
+[write_65536] tvsec: 1925
+[read_65536] tvsec: 782
+[write_262144] tvsec: 8038
+[read_262144] tvsec: 2965
+[write_1048576] tvsec: 32788
+[read_1048576] tvsec: 10260
+[write_4194304] tvsec: 122497
+[read_4194304] tvsec: 41289
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15049,4132554624:20:45:06.409043] BYPASSING ALL ACL CHECKS
+[15049,4132554624:20:45:06.409209] Native Client module will be loaded at base address 0x00006f0f00000000
+[write_10000] tvsec: 417
+[read_10000] tvsec: 182
+[write_1000] tvsec: 238
+[read_1000] tvsec: 171
+[write_100000] tvsec: 3077
+[read_100000] tvsec: 1312
+[write_1000000] tvsec: 28710
+[read_1000000] tvsec: 9717
+[write_4096] tvsec: 277
+[read_4096] tvsec: 144
+[write_16384] tvsec: 620
+[read_16384] tvsec: 223
+[write_65536] tvsec: 2007
+[read_65536] tvsec: 776
+[write_262144] tvsec: 8022
+[read_262144] tvsec: 2892
+[write_1048576] tvsec: 33350
+[read_1048576] tvsec: 10355
+[write_4194304] tvsec: 125464
+[read_4194304] tvsec: 42031
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15053,3345880960:20:45:06.756763] BYPASSING ALL ACL CHECKS
+[15053,3345880960:20:45:06.756944] Native Client module will be loaded at base address 0x00007a0f00000000
+[write_10000] tvsec: 398
+[read_10000] tvsec: 189
+[write_1000] tvsec: 252
+[read_1000] tvsec: 165
+[write_100000] tvsec: 3050
+[read_100000] tvsec: 1309
+[write_1000000] tvsec: 28402
+[read_1000000] tvsec: 9722
+[write_4096] tvsec: 193
+[read_4096] tvsec: 105
+[write_16384] tvsec: 523
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1914
+[read_65536] tvsec: 785
+[write_262144] tvsec: 7999
+[read_262144] tvsec: 2969
+[write_1048576] tvsec: 32712
+[read_1048576] tvsec: 10288
+[write_4194304] tvsec: 122815
+[read_4194304] tvsec: 41425
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15057,2733729664:20:45:07.098181] BYPASSING ALL ACL CHECKS
+[15057,2733729664:20:45:07.098332] Native Client module will be loaded at base address 0x00004c2400000000
+[write_10000] tvsec: 420
+[read_10000] tvsec: 211
+[write_1000] tvsec: 248
+[read_1000] tvsec: 140
+[write_100000] tvsec: 3033
+[read_100000] tvsec: 1212
+[write_1000000] tvsec: 30071
+[read_1000000] tvsec: 9756
+[write_4096] tvsec: 304
+[read_4096] tvsec: 133
+[write_16384] tvsec: 585
+[read_16384] tvsec: 228
+[write_65536] tvsec: 2001
+[read_65536] tvsec: 785
+[write_262144] tvsec: 8079
+[read_262144] tvsec: 2983
+[write_1048576] tvsec: 32826
+[read_1048576] tvsec: 10326
+[write_4194304] tvsec: 124603
+[read_4194304] tvsec: 41600
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15061,1479452544:20:45:07.445743] BYPASSING ALL ACL CHECKS
+[15061,1479452544:20:45:07.445921] Native Client module will be loaded at base address 0x000067b200000000
+[write_10000] tvsec: 412
+[read_10000] tvsec: 210
+[write_1000] tvsec: 248
+[read_1000] tvsec: 155
+[write_100000] tvsec: 3066
+[read_100000] tvsec: 1270
+[write_1000000] tvsec: 28696
+[read_1000000] tvsec: 9800
+[write_4096] tvsec: 288
+[read_4096] tvsec: 159
+[write_16384] tvsec: 615
+[read_16384] tvsec: 228
+[write_65536] tvsec: 2001
+[read_65536] tvsec: 779
+[write_262144] tvsec: 8121
+[read_262144] tvsec: 2975
+[write_1048576] tvsec: 32754
+[read_1048576] tvsec: 10271
+[write_4194304] tvsec: 124982
+[read_4194304] tvsec: 41927
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15065,3877947264:20:45:07.791866] BYPASSING ALL ACL CHECKS
+[15065,3877947264:20:45:07.792015] Native Client module will be loaded at base address 0x0000340600000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 195
+[write_1000] tvsec: 261
+[read_1000] tvsec: 184
+[write_100000] tvsec: 3066
+[read_100000] tvsec: 1212
+[write_1000000] tvsec: 29285
+[read_1000000] tvsec: 9741
+[write_4096] tvsec: 261
+[read_4096] tvsec: 133
+[write_16384] tvsec: 591
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1972
+[read_65536] tvsec: 785
+[write_262144] tvsec: 8137
+[read_262144] tvsec: 2915
+[write_1048576] tvsec: 32904
+[read_1048576] tvsec: 10324
+[write_4194304] tvsec: 124561
+[read_4194304] tvsec: 41545
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15069,216016768:20:45:08.138262] BYPASSING ALL ACL CHECKS
+[15069,216016768:20:45:08.138427] Native Client module will be loaded at base address 0x0000235500000000
+[write_10000] tvsec: 432
+[read_10000] tvsec: 192
+[write_1000] tvsec: 243
+[read_1000] tvsec: 85
+[write_100000] tvsec: 2888
+[read_100000] tvsec: 1311
+[write_1000000] tvsec: 28514
+[read_1000000] tvsec: 9713
+[write_4096] tvsec: 287
+[read_4096] tvsec: 157
+[write_16384] tvsec: 628
+[read_16384] tvsec: 241
+[write_65536] tvsec: 1951
+[read_65536] tvsec: 762
+[write_262144] tvsec: 7867
+[read_262144] tvsec: 3011
+[write_1048576] tvsec: 32965
+[read_1048576] tvsec: 10367
+[write_4194304] tvsec: 123235
+[read_4194304] tvsec: 41976
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15073,1805789056:20:45:08.481184] BYPASSING ALL ACL CHECKS
+[15073,1805789056:20:45:08.481349] Native Client module will be loaded at base address 0x000075f500000000
+[write_10000] tvsec: 400
+[read_10000] tvsec: 182
+[write_1000] tvsec: 242
+[read_1000] tvsec: 138
+[write_100000] tvsec: 2955
+[read_100000] tvsec: 1276
+[write_1000000] tvsec: 28428
+[read_1000000] tvsec: 9648
+[write_4096] tvsec: 248
+[read_4096] tvsec: 145
+[write_16384] tvsec: 537
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1935
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7928
+[read_262144] tvsec: 2947
+[write_1048576] tvsec: 32309
+[read_1048576] tvsec: 10165
+[write_4194304] tvsec: 122357
+[read_4194304] tvsec: 41423
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15077,3555600256:20:45:08.821605] BYPASSING ALL ACL CHECKS
+[15077,3555600256:20:45:08.821769] Native Client module will be loaded at base address 0x0000329300000000
+[write_10000] tvsec: 410
+[read_10000] tvsec: 209
+[write_1000] tvsec: 243
+[read_1000] tvsec: 177
+[write_100000] tvsec: 3102
+[read_100000] tvsec: 1288
+[write_1000000] tvsec: 28368
+[read_1000000] tvsec: 9593
+[write_4096] tvsec: 287
+[read_4096] tvsec: 158
+[write_16384] tvsec: 614
+[read_16384] tvsec: 242
+[write_65536] tvsec: 2016
+[read_65536] tvsec: 756
+[write_262144] tvsec: 7779
+[read_262144] tvsec: 2854
+[write_1048576] tvsec: 32307
+[read_1048576] tvsec: 10244
+[write_4194304] tvsec: 122631
+[read_4194304] tvsec: 41381
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15081,930826112:20:45:09.162549] BYPASSING ALL ACL CHECKS
+[15081,930826112:20:45:09.162716] Native Client module will be loaded at base address 0x00004ce800000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 180
+[write_1000] tvsec: 214
+[read_1000] tvsec: 140
+[write_100000] tvsec: 2890
+[read_100000] tvsec: 1203
+[write_1000000] tvsec: 28295
+[read_1000000] tvsec: 9642
+[write_4096] tvsec: 251
+[read_4096] tvsec: 145
+[write_16384] tvsec: 544
+[read_16384] tvsec: 222
+[write_65536] tvsec: 1982
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7857
+[read_262144] tvsec: 2897
+[write_1048576] tvsec: 32058
+[read_1048576] tvsec: 10229
+[write_4194304] tvsec: 122917
+[read_4194304] tvsec: 41272
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15085,479934336:20:45:09.502720] BYPASSING ALL ACL CHECKS
+[15085,479934336:20:45:09.502884] Native Client module will be loaded at base address 0x0000052000000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 182
+[write_1000] tvsec: 246
+[read_1000] tvsec: 166
+[write_100000] tvsec: 2971
+[read_100000] tvsec: 1219
+[write_1000000] tvsec: 28841
+[read_1000000] tvsec: 9629
+[write_4096] tvsec: 251
+[read_4096] tvsec: 145
+[write_16384] tvsec: 577
+[read_16384] tvsec: 295
+[write_65536] tvsec: 1965
+[read_65536] tvsec: 781
+[write_262144] tvsec: 8084
+[read_262144] tvsec: 2955
+[write_1048576] tvsec: 32151
+[read_1048576] tvsec: 10166
+[write_4194304] tvsec: 121523
+[read_4194304] tvsec: 41379
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15089,3122853760:20:45:09.842875] BYPASSING ALL ACL CHECKS
+[15089,3122853760:20:45:09.843039] Native Client module will be loaded at base address 0x00002b3a00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 253
+[write_1000] tvsec: 245
+[read_1000] tvsec: 96
+[write_100000] tvsec: 2897
+[read_100000] tvsec: 1209
+[write_1000000] tvsec: 28241
+[read_1000000] tvsec: 9612
+[write_4096] tvsec: 314
+[read_4096] tvsec: 143
+[write_16384] tvsec: 537
+[read_16384] tvsec: 233
+[write_65536] tvsec: 1999
+[read_65536] tvsec: 760
+[write_262144] tvsec: 7890
+[read_262144] tvsec: 2957
+[write_1048576] tvsec: 32257
+[read_1048576] tvsec: 10212
+[write_4194304] tvsec: 123002
+[read_4194304] tvsec: 41292
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15093,3457443712:20:45:10.183495] BYPASSING ALL ACL CHECKS
+[15093,3457443712:20:45:10.183660] Native Client module will be loaded at base address 0x0000789900000000
+[write_10000] tvsec: 485
+[read_10000] tvsec: 216
+[write_1000] tvsec: 231
+[read_1000] tvsec: 95
+[write_100000] tvsec: 2951
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28557
+[read_1000000] tvsec: 9596
+[write_4096] tvsec: 249
+[read_4096] tvsec: 145
+[write_16384] tvsec: 543
+[read_16384] tvsec: 242
+[write_65536] tvsec: 1937
+[read_65536] tvsec: 774
+[write_262144] tvsec: 7868
+[read_262144] tvsec: 2955
+[write_1048576] tvsec: 32387
+[read_1048576] tvsec: 10150
+[write_4194304] tvsec: 121128
+[read_4194304] tvsec: 41310
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15097,3654969216:20:45:10.522730] BYPASSING ALL ACL CHECKS
+[15097,3654969216:20:45:10.522882] Native Client module will be loaded at base address 0x00006aec00000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 181
+[write_1000] tvsec: 219
+[read_1000] tvsec: 163
+[write_100000] tvsec: 2918
+[read_100000] tvsec: 1210
+[write_1000000] tvsec: 28154
+[read_1000000] tvsec: 9591
+[write_4096] tvsec: 313
+[read_4096] tvsec: 156
+[write_16384] tvsec: 615
+[read_16384] tvsec: 239
+[write_65536] tvsec: 1973
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7826
+[read_262144] tvsec: 2943
+[write_1048576] tvsec: 32603
+[read_1048576] tvsec: 10313
+[write_4194304] tvsec: 123378
+[read_4194304] tvsec: 41363
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15101,2091308928:20:45:10.864200] BYPASSING ALL ACL CHECKS
+[15101,2091308928:20:45:10.864340] Native Client module will be loaded at base address 0x0000671600000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 208
+[write_1000] tvsec: 258
+[read_1000] tvsec: 169
+[write_100000] tvsec: 3031
+[read_100000] tvsec: 1201
+[write_1000000] tvsec: 28216
+[read_1000000] tvsec: 9655
+[write_4096] tvsec: 250
+[read_4096] tvsec: 146
+[write_16384] tvsec: 621
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1937
+[read_65536] tvsec: 835
+[write_262144] tvsec: 7972
+[read_262144] tvsec: 2948
+[write_1048576] tvsec: 32332
+[read_1048576] tvsec: 10226
+[write_4194304] tvsec: 123558
+[read_4194304] tvsec: 41374
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15105,725501824:20:45:11.206440] BYPASSING ALL ACL CHECKS
+[15105,725501824:20:45:11.206606] Native Client module will be loaded at base address 0x00003a9f00000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 180
+[write_1000] tvsec: 177
+[read_1000] tvsec: 157
+[write_100000] tvsec: 2915
+[read_100000] tvsec: 1221
+[write_1000000] tvsec: 28572
+[read_1000000] tvsec: 9643
+[write_4096] tvsec: 223
+[read_4096] tvsec: 118
+[write_16384] tvsec: 542
+[read_16384] tvsec: 220
+[write_65536] tvsec: 2013
+[read_65536] tvsec: 768
+[write_262144] tvsec: 7927
+[read_262144] tvsec: 2888
+[write_1048576] tvsec: 32222
+[read_1048576] tvsec: 10168
+[write_4194304] tvsec: 121251
+[read_4194304] tvsec: 40994
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15109,1140393856:20:45:11.544797] BYPASSING ALL ACL CHECKS
+[15109,1140393856:20:45:11.544961] Native Client module will be loaded at base address 0x00005b2800000000
+[write_10000] tvsec: 408
+[read_10000] tvsec: 195
+[write_1000] tvsec: 244
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2968
+[read_100000] tvsec: 1244
+[write_1000000] tvsec: 28182
+[read_1000000] tvsec: 9624
+[write_4096] tvsec: 277
+[read_4096] tvsec: 169
+[write_16384] tvsec: 587
+[read_16384] tvsec: 218
+[write_65536] tvsec: 1945
+[read_65536] tvsec: 766
+[write_262144] tvsec: 7963
+[read_262144] tvsec: 2973
+[write_1048576] tvsec: 32230
+[read_1048576] tvsec: 10251
+[write_4194304] tvsec: 124585
+[read_4194304] tvsec: 41932
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15113,3495892864:20:45:11.888212] BYPASSING ALL ACL CHECKS
+[15113,3495892864:20:45:11.888351] Native Client module will be loaded at base address 0x000069fc00000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 193
+[write_1000] tvsec: 247
+[read_1000] tvsec: 168
+[write_100000] tvsec: 3025
+[read_100000] tvsec: 1210
+[write_1000000] tvsec: 28677
+[read_1000000] tvsec: 9649
+[write_4096] tvsec: 281
+[read_4096] tvsec: 147
+[write_16384] tvsec: 577
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1940
+[read_65536] tvsec: 853
+[write_262144] tvsec: 7986
+[read_262144] tvsec: 2941
+[write_1048576] tvsec: 32376
+[read_1048576] tvsec: 10251
+[write_4194304] tvsec: 122704
+[read_4194304] tvsec: 41691
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15117,3834124160:20:45:12.229766] BYPASSING ALL ACL CHECKS
+[15117,3834124160:20:45:12.229930] Native Client module will be loaded at base address 0x0000287800000000
+[write_10000] tvsec: 410
+[read_10000] tvsec: 224
+[write_1000] tvsec: 246
+[read_1000] tvsec: 168
+[write_100000] tvsec: 2981
+[read_100000] tvsec: 1274
+[write_1000000] tvsec: 28507
+[read_1000000] tvsec: 9655
+[write_4096] tvsec: 289
+[read_4096] tvsec: 159
+[write_16384] tvsec: 597
+[read_16384] tvsec: 249
+[write_65536] tvsec: 2054
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7958
+[read_262144] tvsec: 2919
+[write_1048576] tvsec: 33156
+[read_1048576] tvsec: 10309
+[write_4194304] tvsec: 123951
+[read_4194304] tvsec: 41653
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15121,2060613504:20:45:12.574578] BYPASSING ALL ACL CHECKS
+[15121,2060613504:20:45:12.574746] Native Client module will be loaded at base address 0x000006ee00000000
+[write_10000] tvsec: 419
+[read_10000] tvsec: 178
+[write_1000] tvsec: 246
+[read_1000] tvsec: 151
+[write_100000] tvsec: 2897
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28172
+[read_1000000] tvsec: 9671
+[write_4096] tvsec: 221
+[read_4096] tvsec: 118
+[write_16384] tvsec: 539
+[read_16384] tvsec: 223
+[write_65536] tvsec: 1972
+[read_65536] tvsec: 775
+[write_262144] tvsec: 7915
+[read_262144] tvsec: 2890
+[write_1048576] tvsec: 32325
+[read_1048576] tvsec: 10235
+[write_4194304] tvsec: 122049
+[read_4194304] tvsec: 41585
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15125,167409536:20:45:12.914159] BYPASSING ALL ACL CHECKS
+[15125,167409536:20:45:12.914327] Native Client module will be loaded at base address 0x0000756100000000
+[write_10000] tvsec: 407
+[read_10000] tvsec: 195
+[write_1000] tvsec: 242
+[read_1000] tvsec: 86
+[write_100000] tvsec: 2968
+[read_100000] tvsec: 1309
+[write_1000000] tvsec: 28418
+[read_1000000] tvsec: 9693
+[write_4096] tvsec: 288
+[read_4096] tvsec: 170
+[write_16384] tvsec: 619
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1960
+[read_65536] tvsec: 775
+[write_262144] tvsec: 7852
+[read_262144] tvsec: 2970
+[write_1048576] tvsec: 32163
+[read_1048576] tvsec: 10355
+[write_4194304] tvsec: 122353
+[read_4194304] tvsec: 41830
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15129,1060616064:20:45:13.255720] BYPASSING ALL ACL CHECKS
+[15129,1060616064:20:45:13.255883] Native Client module will be loaded at base address 0x000015ab00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 192
+[write_1000] tvsec: 245
+[read_1000] tvsec: 168
+[write_100000] tvsec: 3061
+[read_100000] tvsec: 1213
+[write_1000000] tvsec: 28362
+[read_1000000] tvsec: 9606
+[write_4096] tvsec: 251
+[read_4096] tvsec: 145
+[write_16384] tvsec: 597
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1903
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7876
+[read_262144] tvsec: 2952
+[write_1048576] tvsec: 32242
+[read_1048576] tvsec: 10189
+[write_4194304] tvsec: 122616
+[read_4194304] tvsec: 41390
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15133,825972608:20:45:13.595767] BYPASSING ALL ACL CHECKS
+[15133,825972608:20:45:13.595932] Native Client module will be loaded at base address 0x00004d2600000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 195
+[write_1000] tvsec: 259
+[read_1000] tvsec: 169
+[write_100000] tvsec: 3019
+[read_100000] tvsec: 1205
+[write_1000000] tvsec: 28704
+[read_1000000] tvsec: 9644
+[write_4096] tvsec: 248
+[read_4096] tvsec: 159
+[write_16384] tvsec: 612
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1942
+[read_65536] tvsec: 850
+[write_262144] tvsec: 7959
+[read_262144] tvsec: 2959
+[write_1048576] tvsec: 32310
+[read_1048576] tvsec: 10182
+[write_4194304] tvsec: 122337
+[read_4194304] tvsec: 41494
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15137,1231435648:20:45:13.937055] BYPASSING ALL ACL CHECKS
+[15137,1231435648:20:45:13.937219] Native Client module will be loaded at base address 0x000016bb00000000
+[write_10000] tvsec: 408
+[read_10000] tvsec: 194
+[write_1000] tvsec: 248
+[read_1000] tvsec: 168
+[write_100000] tvsec: 3069
+[read_100000] tvsec: 1307
+[write_1000000] tvsec: 28779
+[read_1000000] tvsec: 9699
+[write_4096] tvsec: 295
+[read_4096] tvsec: 186
+[write_16384] tvsec: 654
+[read_16384] tvsec: 245
+[write_65536] tvsec: 2015
+[read_65536] tvsec: 758
+[write_262144] tvsec: 8100
+[read_262144] tvsec: 2977
+[write_1048576] tvsec: 32702
+[read_1048576] tvsec: 10310
+[write_4194304] tvsec: 123482
+[read_4194304] tvsec: 41729
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15141,1442297728:20:45:14.281316] BYPASSING ALL ACL CHECKS
+[15141,1442297728:20:45:14.281480] Native Client module will be loaded at base address 0x00004e0800000000
+[write_10000] tvsec: 402
+[read_10000] tvsec: 191
+[write_1000] tvsec: 271
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3006
+[read_100000] tvsec: 1289
+[write_1000000] tvsec: 28424
+[read_1000000] tvsec: 9670
+[write_4096] tvsec: 248
+[read_4096] tvsec: 144
+[write_16384] tvsec: 566
+[read_16384] tvsec: 223
+[write_65536] tvsec: 1993
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7915
+[read_262144] tvsec: 2893
+[write_1048576] tvsec: 32133
+[read_1048576] tvsec: 10160
+[write_4194304] tvsec: 122993
+[read_4194304] tvsec: 41303
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15145,491304832:20:45:14.623037] BYPASSING ALL ACL CHECKS
+[15145,491304832:20:45:14.623197] Native Client module will be loaded at base address 0x000068e600000000
+[write_10000] tvsec: 400
+[read_10000] tvsec: 178
+[write_1000] tvsec: 273
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2945
+[read_100000] tvsec: 1200
+[write_1000000] tvsec: 28296
+[read_1000000] tvsec: 9634
+[write_4096] tvsec: 259
+[read_4096] tvsec: 172
+[write_16384] tvsec: 633
+[read_16384] tvsec: 241
+[write_65536] tvsec: 2007
+[read_65536] tvsec: 760
+[write_262144] tvsec: 7833
+[read_262144] tvsec: 2927
+[write_1048576] tvsec: 32846
+[read_1048576] tvsec: 10258
+[write_4194304] tvsec: 124171
+[read_4194304] tvsec: 41960
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15149,3773212544:20:45:14.967484] BYPASSING ALL ACL CHECKS
+[15149,3773212544:20:45:14.967650] Native Client module will be loaded at base address 0x00002ff300000000
+[write_10000] tvsec: 517
+[read_10000] tvsec: 246
+[write_1000] tvsec: 246
+[read_1000] tvsec: 143
+[write_100000] tvsec: 3028
+[read_100000] tvsec: 1231
+[write_1000000] tvsec: 28510
+[read_1000000] tvsec: 9628
+[write_4096] tvsec: 250
+[read_4096] tvsec: 162
+[write_16384] tvsec: 661
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1956
+[read_65536] tvsec: 805
+[write_262144] tvsec: 7852
+[read_262144] tvsec: 2946
+[write_1048576] tvsec: 32127
+[read_1048576] tvsec: 10223
+[write_4194304] tvsec: 123204
+[read_4194304] tvsec: 41495
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15153,2820659072:20:45:15.309040] BYPASSING ALL ACL CHECKS
+[15153,2820659072:20:45:15.309193] Native Client module will be loaded at base address 0x0000458900000000
+[write_10000] tvsec: 411
+[read_10000] tvsec: 182
+[write_1000] tvsec: 205
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2982
+[read_100000] tvsec: 1216
+[write_1000000] tvsec: 28502
+[read_1000000] tvsec: 9662
+[write_4096] tvsec: 247
+[read_4096] tvsec: 162
+[write_16384] tvsec: 599
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1932
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7907
+[read_262144] tvsec: 2950
+[write_1048576] tvsec: 32166
+[read_1048576] tvsec: 10163
+[write_4194304] tvsec: 121996
+[read_4194304] tvsec: 41522
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15157,364259200:20:45:15.649251] BYPASSING ALL ACL CHECKS
+[15157,364259200:20:45:15.649395] Native Client module will be loaded at base address 0x000047a300000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 221
+[write_1000] tvsec: 230
+[read_1000] tvsec: 166
+[write_100000] tvsec: 3041
+[read_100000] tvsec: 1261
+[write_1000000] tvsec: 28548
+[read_1000000] tvsec: 9576
+[write_4096] tvsec: 287
+[read_4096] tvsec: 157
+[write_16384] tvsec: 612
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1987
+[read_65536] tvsec: 767
+[write_262144] tvsec: 7926
+[read_262144] tvsec: 2897
+[write_1048576] tvsec: 32177
+[read_1048576] tvsec: 10203
+[write_4194304] tvsec: 122624
+[read_4194304] tvsec: 41968
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15161,4293748608:20:45:15.990630] BYPASSING ALL ACL CHECKS
+[15161,4293748608:20:45:15.990811] Native Client module will be loaded at base address 0x00000a5600000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 193
+[write_1000] tvsec: 264
+[read_1000] tvsec: 127
+[write_100000] tvsec: 3144
+[read_100000] tvsec: 1224
+[write_1000000] tvsec: 28676
+[read_1000000] tvsec: 9764
+[write_4096] tvsec: 228
+[read_4096] tvsec: 108
+[write_16384] tvsec: 529
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1930
+[read_65536] tvsec: 784
+[write_262144] tvsec: 8071
+[read_262144] tvsec: 3008
+[write_1048576] tvsec: 32819
+[read_1048576] tvsec: 10326
+[write_4194304] tvsec: 125545
+[read_4194304] tvsec: 41886
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15165,1832736640:20:45:16.337463] BYPASSING ALL ACL CHECKS
+[15165,1832736640:20:45:16.337640] Native Client module will be loaded at base address 0x00001af400000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 207
+[write_1000] tvsec: 232
+[read_1000] tvsec: 151
+[write_100000] tvsec: 2965
+[read_100000] tvsec: 1255
+[write_1000000] tvsec: 28209
+[read_1000000] tvsec: 9631
+[write_4096] tvsec: 259
+[read_4096] tvsec: 143
+[write_16384] tvsec: 600
+[read_16384] tvsec: 247
+[write_65536] tvsec: 1943
+[read_65536] tvsec: 772
+[write_262144] tvsec: 7847
+[read_262144] tvsec: 2881
+[write_1048576] tvsec: 32150
+[read_1048576] tvsec: 10159
+[write_4194304] tvsec: 121148
+[read_4194304] tvsec: 41431
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15169,1101326208:20:45:16.676040] BYPASSING ALL ACL CHECKS
+[15169,1101326208:20:45:16.676206] Native Client module will be loaded at base address 0x000075c400000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 219
+[write_1000] tvsec: 258
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3050
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28225
+[read_1000000] tvsec: 9600
+[write_4096] tvsec: 248
+[read_4096] tvsec: 145
+[write_16384] tvsec: 633
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1949
+[read_65536] tvsec: 831
+[write_262144] tvsec: 7924
+[read_262144] tvsec: 2953
+[write_1048576] tvsec: 32306
+[read_1048576] tvsec: 10152
+[write_4194304] tvsec: 122604
+[read_4194304] tvsec: 41430
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15173,633329536:20:45:17.017026] BYPASSING ALL ACL CHECKS
+[15173,633329536:20:45:17.017194] Native Client module will be loaded at base address 0x00002aef00000000
+[write_10000] tvsec: 431
+[read_10000] tvsec: 234
+[write_1000] tvsec: 259
+[read_1000] tvsec: 166
+[write_100000] tvsec: 3019
+[read_100000] tvsec: 1265
+[write_1000000] tvsec: 28173
+[read_1000000] tvsec: 9525
+[write_4096] tvsec: 272
+[read_4096] tvsec: 172
+[write_16384] tvsec: 616
+[read_16384] tvsec: 250
+[write_65536] tvsec: 1945
+[read_65536] tvsec: 770
+[write_262144] tvsec: 7859
+[read_262144] tvsec: 2958
+[write_1048576] tvsec: 32571
+[read_1048576] tvsec: 10294
+[write_4194304] tvsec: 124340
+[read_4194304] tvsec: 41646
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15177,2626865024:20:45:17.360469] BYPASSING ALL ACL CHECKS
+[15177,2626865024:20:45:17.360636] Native Client module will be loaded at base address 0x0000703e00000000
+[write_10000] tvsec: 407
+[read_10000] tvsec: 183
+[write_1000] tvsec: 246
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2969
+[read_100000] tvsec: 1201
+[write_1000000] tvsec: 28362
+[read_1000000] tvsec: 9621
+[write_4096] tvsec: 254
+[read_4096] tvsec: 144
+[write_16384] tvsec: 605
+[read_16384] tvsec: 222
+[write_65536] tvsec: 1911
+[read_65536] tvsec: 835
+[write_262144] tvsec: 7953
+[read_262144] tvsec: 2956
+[write_1048576] tvsec: 32483
+[read_1048576] tvsec: 10195
+[write_4194304] tvsec: 122780
+[read_4194304] tvsec: 41435
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15181,2393266048:20:45:17.701337] BYPASSING ALL ACL CHECKS
+[15181,2393266048:20:45:17.701501] Native Client module will be loaded at base address 0x0000023a00000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 210
+[write_1000] tvsec: 246
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3052
+[read_100000] tvsec: 1267
+[write_1000000] tvsec: 28876
+[read_1000000] tvsec: 9664
+[write_4096] tvsec: 251
+[read_4096] tvsec: 144
+[write_16384] tvsec: 574
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1986
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7926
+[read_262144] tvsec: 2890
+[write_1048576] tvsec: 32199
+[read_1048576] tvsec: 10186
+[write_4194304] tvsec: 123022
+[read_4194304] tvsec: 41600
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15185,278972288:20:45:18.043562] BYPASSING ALL ACL CHECKS
+[15185,278972288:20:45:18.043728] Native Client module will be loaded at base address 0x000041e200000000
+[write_10000] tvsec: 431
+[read_10000] tvsec: 246
+[write_1000] tvsec: 244
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2970
+[read_100000] tvsec: 1228
+[write_1000000] tvsec: 28168
+[read_1000000] tvsec: 9538
+[write_4096] tvsec: 290
+[read_4096] tvsec: 172
+[write_16384] tvsec: 646
+[read_16384] tvsec: 304
+[write_65536] tvsec: 1958
+[read_65536] tvsec: 760
+[write_262144] tvsec: 7965
+[read_262144] tvsec: 2933
+[write_1048576] tvsec: 32199
+[read_1048576] tvsec: 10194
+[write_4194304] tvsec: 121010
+[read_4194304] tvsec: 41294
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15189,2758461312:20:45:18.382707] BYPASSING ALL ACL CHECKS
+[15189,2758461312:20:45:18.382873] Native Client module will be loaded at base address 0x00000a7e00000000
+[write_10000] tvsec: 409
+[read_10000] tvsec: 181
+[write_1000] tvsec: 264
+[read_1000] tvsec: 111
+[write_100000] tvsec: 2897
+[read_100000] tvsec: 1199
+[write_1000000] tvsec: 28647
+[read_1000000] tvsec: 9590
+[write_4096] tvsec: 254
+[read_4096] tvsec: 144
+[write_16384] tvsec: 553
+[read_16384] tvsec: 219
+[write_65536] tvsec: 2026
+[read_65536] tvsec: 768
+[write_262144] tvsec: 8060
+[read_262144] tvsec: 2949
+[write_1048576] tvsec: 32407
+[read_1048576] tvsec: 10191
+[write_4194304] tvsec: 122386
+[read_4194304] tvsec: 41323
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15193,2817075072:20:45:18.723509] BYPASSING ALL ACL CHECKS
+[15193,2817075072:20:45:18.723676] Native Client module will be loaded at base address 0x00002a9d00000000
+[write_10000] tvsec: 471
+[read_10000] tvsec: 178
+[write_1000] tvsec: 202
+[read_1000] tvsec: 135
+[write_100000] tvsec: 2938
+[read_100000] tvsec: 1211
+[write_1000000] tvsec: 28258
+[read_1000000] tvsec: 9605
+[write_4096] tvsec: 246
+[read_4096] tvsec: 106
+[write_16384] tvsec: 567
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1933
+[read_65536] tvsec: 769
+[write_262144] tvsec: 7784
+[read_262144] tvsec: 2944
+[write_1048576] tvsec: 32239
+[read_1048576] tvsec: 10336
+[write_4194304] tvsec: 122594
+[read_4194304] tvsec: 41701
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15197,329963392:20:45:19.063774] BYPASSING ALL ACL CHECKS
+[15197,329963392:20:45:19.063941] Native Client module will be loaded at base address 0x00000ff700000000
+[write_10000] tvsec: 410
+[read_10000] tvsec: 194
+[write_1000] tvsec: 261
+[read_1000] tvsec: 168
+[write_100000] tvsec: 3029
+[read_100000] tvsec: 1206
+[write_1000000] tvsec: 28210
+[read_1000000] tvsec: 9650
+[write_4096] tvsec: 254
+[read_4096] tvsec: 146
+[write_16384] tvsec: 626
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1930
+[read_65536] tvsec: 769
+[write_262144] tvsec: 7933
+[read_262144] tvsec: 2962
+[write_1048576] tvsec: 32526
+[read_1048576] tvsec: 10258
+[write_4194304] tvsec: 123067
+[read_4194304] tvsec: 41423
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15201,1553409920:20:45:19.405532] BYPASSING ALL ACL CHECKS
+[15201,1553409920:20:45:19.405697] Native Client module will be loaded at base address 0x0000592400000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 179
+[write_1000] tvsec: 177
+[read_1000] tvsec: 113
+[write_100000] tvsec: 3011
+[read_100000] tvsec: 1275
+[write_1000000] tvsec: 28722
+[read_1000000] tvsec: 9666
+[write_4096] tvsec: 221
+[read_4096] tvsec: 117
+[write_16384] tvsec: 542
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1971
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7959
+[read_262144] tvsec: 2884
+[write_1048576] tvsec: 32270
+[read_1048576] tvsec: 10217
+[write_4194304] tvsec: 122398
+[read_4194304] tvsec: 41483
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15205,3373156224:20:45:19.745774] BYPASSING ALL ACL CHECKS
+[15205,3373156224:20:45:19.745913] Native Client module will be loaded at base address 0x00004ab900000000
+[write_10000] tvsec: 412
+[read_10000] tvsec: 209
+[write_1000] tvsec: 244
+[read_1000] tvsec: 166
+[write_100000] tvsec: 3009
+[read_100000] tvsec: 1269
+[write_1000000] tvsec: 28196
+[read_1000000] tvsec: 9570
+[write_4096] tvsec: 287
+[read_4096] tvsec: 144
+[write_16384] tvsec: 621
+[read_16384] tvsec: 244
+[write_65536] tvsec: 2030
+[read_65536] tvsec: 787
+[write_262144] tvsec: 7927
+[read_262144] tvsec: 2897
+[write_1048576] tvsec: 32271
+[read_1048576] tvsec: 10216
+[write_4194304] tvsec: 123560
+[read_4194304] tvsec: 41509
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15209,1995761536:20:45:20.087855] BYPASSING ALL ACL CHECKS
+[15209,1995761536:20:45:20.088019] Native Client module will be loaded at base address 0x0000447600000000
+[write_10000] tvsec: 402
+[read_10000] tvsec: 182
+[write_1000] tvsec: 242
+[read_1000] tvsec: 112
+[write_100000] tvsec: 2987
+[read_100000] tvsec: 1207
+[write_1000000] tvsec: 28621
+[read_1000000] tvsec: 9613
+[write_4096] tvsec: 246
+[read_4096] tvsec: 144
+[write_16384] tvsec: 597
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1925
+[read_65536] tvsec: 826
+[write_262144] tvsec: 7921
+[read_262144] tvsec: 2951
+[write_1048576] tvsec: 32199
+[read_1048576] tvsec: 10157
+[write_4194304] tvsec: 121316
+[read_4194304] tvsec: 41442
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15213,4055758720:20:45:20.426889] BYPASSING ALL ACL CHECKS
+[15213,4055758720:20:45:20.427053] Native Client module will be loaded at base address 0x00006e5c00000000
+[write_10000] tvsec: 402
+[read_10000] tvsec: 275
+[write_1000] tvsec: 232
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2952
+[read_100000] tvsec: 1193
+[write_1000000] tvsec: 28291
+[read_1000000] tvsec: 9573
+[write_4096] tvsec: 288
+[read_4096] tvsec: 156
+[write_16384] tvsec: 619
+[read_16384] tvsec: 245
+[write_65536] tvsec: 1985
+[read_65536] tvsec: 765
+[write_262144] tvsec: 7844
+[read_262144] tvsec: 2917
+[write_1048576] tvsec: 32736
+[read_1048576] tvsec: 10230
+[write_4194304] tvsec: 122418
+[read_4194304] tvsec: 41312
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15217,818546560:20:45:20.768054] BYPASSING ALL ACL CHECKS
+[15217,818546560:20:45:20.768222] Native Client module will be loaded at base address 0x00002e8300000000
+[write_10000] tvsec: 406
+[read_10000] tvsec: 192
+[write_1000] tvsec: 247
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2985
+[read_100000] tvsec: 1209
+[write_1000000] tvsec: 28102
+[read_1000000] tvsec: 9611
+[write_4096] tvsec: 252
+[read_4096] tvsec: 146
+[write_16384] tvsec: 602
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1948
+[read_65536] tvsec: 768
+[write_262144] tvsec: 7954
+[read_262144] tvsec: 2966
+[write_1048576] tvsec: 32278
+[read_1048576] tvsec: 10152
+[write_4194304] tvsec: 122025
+[read_4194304] tvsec: 41332
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15221,2820867968:20:45:21.107454] BYPASSING ALL ACL CHECKS
+[15221,2820867968:20:45:21.107619] Native Client module will be loaded at base address 0x00000f8400000000
+[write_10000] tvsec: 487
+[read_10000] tvsec: 180
+[write_1000] tvsec: 205
+[read_1000] tvsec: 139
+[write_100000] tvsec: 2998
+[read_100000] tvsec: 1220
+[write_1000000] tvsec: 28755
+[read_1000000] tvsec: 9607
+[write_4096] tvsec: 252
+[read_4096] tvsec: 145
+[write_16384] tvsec: 577
+[read_16384] tvsec: 223
+[write_65536] tvsec: 1933
+[read_65536] tvsec: 776
+[write_262144] tvsec: 7919
+[read_262144] tvsec: 2948
+[write_1048576] tvsec: 32396
+[read_1048576] tvsec: 10164
+[write_4194304] tvsec: 122226
+[read_4194304] tvsec: 41434
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15225,3878745984:20:45:21.448403] BYPASSING ALL ACL CHECKS
+[15225,3878745984:20:45:21.448573] Native Client module will be loaded at base address 0x0000252800000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 207
+[write_1000] tvsec: 231
+[read_1000] tvsec: 151
+[write_100000] tvsec: 2969
+[read_100000] tvsec: 1201
+[write_1000000] tvsec: 28166
+[read_1000000] tvsec: 9534
+[write_4096] tvsec: 259
+[read_4096] tvsec: 144
+[write_16384] tvsec: 620
+[read_16384] tvsec: 247
+[write_65536] tvsec: 1946
+[read_65536] tvsec: 858
+[write_262144] tvsec: 7974
+[read_262144] tvsec: 2947
+[write_1048576] tvsec: 32382
+[read_1048576] tvsec: 10131
+[write_4194304] tvsec: 122564
+[read_4194304] tvsec: 41301
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15229,1764542336:20:45:21.788363] BYPASSING ALL ACL CHECKS
+[15229,1764542336:20:45:21.788528] Native Client module will be loaded at base address 0x000058f400000000
+[write_10000] tvsec: 406
+[read_10000] tvsec: 183
+[write_1000] tvsec: 173
+[read_1000] tvsec: 106
+[write_100000] tvsec: 2973
+[read_100000] tvsec: 1212
+[write_1000000] tvsec: 28756
+[read_1000000] tvsec: 9723
+[write_4096] tvsec: 282
+[read_4096] tvsec: 110
+[write_16384] tvsec: 547
+[read_16384] tvsec: 226
+[write_65536] tvsec: 1924
+[read_65536] tvsec: 851
+[write_262144] tvsec: 8013
+[read_262144] tvsec: 2978
+[write_1048576] tvsec: 32472
+[read_1048576] tvsec: 10163
+[write_4194304] tvsec: 121123
+[read_4194304] tvsec: 41516
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15233,1684150144:20:45:22.127990] BYPASSING ALL ACL CHECKS
+[15233,1684150144:20:45:22.128157] Native Client module will be loaded at base address 0x00002f3800000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 212
+[write_1000] tvsec: 259
+[read_1000] tvsec: 169
+[write_100000] tvsec: 3046
+[read_100000] tvsec: 1212
+[write_1000000] tvsec: 28502
+[read_1000000] tvsec: 9589
+[write_4096] tvsec: 291
+[read_4096] tvsec: 172
+[write_16384] tvsec: 626
+[read_16384] tvsec: 253
+[write_65536] tvsec: 1971
+[read_65536] tvsec: 775
+[write_262144] tvsec: 7850
+[read_262144] tvsec: 2937
+[write_1048576] tvsec: 32904
+[read_1048576] tvsec: 10353
+[write_4194304] tvsec: 123322
+[read_4194304] tvsec: 41327
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15237,2884990848:20:45:22.470786] BYPASSING ALL ACL CHECKS
+[15237,2884990848:20:45:22.470937] Native Client module will be loaded at base address 0x00006cc800000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 233
+[write_1000] tvsec: 241
+[read_1000] tvsec: 157
+[write_100000] tvsec: 2916
+[read_100000] tvsec: 1225
+[write_1000000] tvsec: 28980
+[read_1000000] tvsec: 9723
+[write_4096] tvsec: 258
+[read_4096] tvsec: 151
+[write_16384] tvsec: 586
+[read_16384] tvsec: 306
+[write_65536] tvsec: 1948
+[read_65536] tvsec: 785
+[write_262144] tvsec: 7988
+[read_262144] tvsec: 2983
+[write_1048576] tvsec: 32445
+[read_1048576] tvsec: 10276
+[write_4194304] tvsec: 122893
+[read_4194304] tvsec: 41515
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15241,964761472:20:45:22.812944] BYPASSING ALL ACL CHECKS
+[15241,964761472:20:45:22.813109] Native Client module will be loaded at base address 0x0000776f00000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 194
+[write_1000] tvsec: 246
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3007
+[read_100000] tvsec: 1262
+[write_1000000] tvsec: 28409
+[read_1000000] tvsec: 9579
+[write_4096] tvsec: 286
+[read_4096] tvsec: 157
+[write_16384] tvsec: 597
+[read_16384] tvsec: 250
+[write_65536] tvsec: 1960
+[read_65536] tvsec: 767
+[write_262144] tvsec: 7944
+[read_262144] tvsec: 2858
+[write_1048576] tvsec: 32421
+[read_1048576] tvsec: 10322
+[write_4194304] tvsec: 123411
+[read_4194304] tvsec: 41782
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15245,1168643968:20:45:23.155947] BYPASSING ALL ACL CHECKS
+[15245,1168643968:20:45:23.156113] Native Client module will be loaded at base address 0x0000303600000000
+[write_10000] tvsec: 404
+[read_10000] tvsec: 223
+[write_1000] tvsec: 247
+[read_1000] tvsec: 96
+[write_100000] tvsec: 3040
+[read_100000] tvsec: 1214
+[write_1000000] tvsec: 28261
+[read_1000000] tvsec: 9677
+[write_4096] tvsec: 197
+[read_4096] tvsec: 105
+[write_16384] tvsec: 524
+[read_16384] tvsec: 221
+[write_65536] tvsec: 1924
+[read_65536] tvsec: 785
+[write_262144] tvsec: 8067
+[read_262144] tvsec: 2969
+[write_1048576] tvsec: 32841
+[read_1048576] tvsec: 10249
+[write_4194304] tvsec: 123695
+[read_4194304] tvsec: 41382
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15249,2653706112:20:45:23.498409] BYPASSING ALL ACL CHECKS
+[15249,2653706112:20:45:23.498578] Native Client module will be loaded at base address 0x0000766500000000
+[write_10000] tvsec: 430
+[read_10000] tvsec: 194
+[write_1000] tvsec: 197
+[read_1000] tvsec: 147
+[write_100000] tvsec: 2940
+[read_100000] tvsec: 1193
+[write_1000000] tvsec: 28516
+[read_1000000] tvsec: 9644
+[write_4096] tvsec: 250
+[read_4096] tvsec: 161
+[write_16384] tvsec: 571
+[read_16384] tvsec: 219
+[write_65536] tvsec: 1977
+[read_65536] tvsec: 770
+[write_262144] tvsec: 7907
+[read_262144] tvsec: 2937
+[write_1048576] tvsec: 32316
+[read_1048576] tvsec: 10208
+[write_4194304] tvsec: 121887
+[read_4194304] tvsec: 41485
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15253,1665484672:20:45:23.838734] BYPASSING ALL ACL CHECKS
+[15253,1665484672:20:45:23.838894] Native Client module will be loaded at base address 0x0000110900000000
+[write_10000] tvsec: 411
+[read_10000] tvsec: 246
+[write_1000] tvsec: 199
+[read_1000] tvsec: 141
+[write_100000] tvsec: 2932
+[read_100000] tvsec: 1203
+[write_1000000] tvsec: 27983
+[read_1000000] tvsec: 9615
+[write_4096] tvsec: 289
+[read_4096] tvsec: 172
+[write_16384] tvsec: 572
+[read_16384] tvsec: 243
+[write_65536] tvsec: 1996
+[read_65536] tvsec: 794
+[write_262144] tvsec: 7829
+[read_262144] tvsec: 2989
+[write_1048576] tvsec: 32695
+[read_1048576] tvsec: 10332
+[write_4194304] tvsec: 123721
+[read_4194304] tvsec: 41764
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15257,927852416:20:45:24.181403] BYPASSING ALL ACL CHECKS
+[15257,927852416:20:45:24.181567] Native Client module will be loaded at base address 0x00004daf00000000
+[write_10000] tvsec: 402
+[read_10000] tvsec: 178
+[write_1000] tvsec: 219
+[read_1000] tvsec: 155
+[write_100000] tvsec: 3026
+[read_100000] tvsec: 1311
+[write_1000000] tvsec: 28418
+[read_1000000] tvsec: 9783
+[write_4096] tvsec: 252
+[read_4096] tvsec: 149
+[write_16384] tvsec: 569
+[read_16384] tvsec: 229
+[write_65536] tvsec: 1977
+[read_65536] tvsec: 792
+[write_262144] tvsec: 7941
+[read_262144] tvsec: 2907
+[write_1048576] tvsec: 32359
+[read_1048576] tvsec: 10320
+[write_4194304] tvsec: 122885
+[read_4194304] tvsec: 41582
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15261,757647232:20:45:24.523165] BYPASSING ALL ACL CHECKS
+[15261,757647232:20:45:24.523365] Native Client module will be loaded at base address 0x000007cd00000000
+[write_10000] tvsec: 462
+[read_10000] tvsec: 190
+[write_1000] tvsec: 271
+[read_1000] tvsec: 167
+[write_100000] tvsec: 2935
+[read_100000] tvsec: 1202
+[write_1000000] tvsec: 28219
+[read_1000000] tvsec: 9645
+[write_4096] tvsec: 289
+[read_4096] tvsec: 156
+[write_16384] tvsec: 627
+[read_16384] tvsec: 240
+[write_65536] tvsec: 1990
+[read_65536] tvsec: 760
+[write_262144] tvsec: 7879
+[read_262144] tvsec: 2922
+[write_1048576] tvsec: 32676
+[read_1048576] tvsec: 10251
+[write_4194304] tvsec: 122793
+[read_4194304] tvsec: 41435
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15265,2266892160:20:45:24.864321] BYPASSING ALL ACL CHECKS
+[15265,2266892160:20:45:24.864485] Native Client module will be loaded at base address 0x000016b100000000
+[write_10000] tvsec: 405
+[read_10000] tvsec: 222
+[write_1000] tvsec: 245
+[read_1000] tvsec: 167
+[write_100000] tvsec: 3051
+[read_100000] tvsec: 1224
+[write_1000000] tvsec: 28427
+[read_1000000] tvsec: 9639
+[write_4096] tvsec: 280
+[read_4096] tvsec: 145
+[write_16384] tvsec: 576
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1910
+[read_65536] tvsec: 788
+[write_262144] tvsec: 7921
+[read_262144] tvsec: 2956
+[write_1048576] tvsec: 32176
+[read_1048576] tvsec: 10208
+[write_4194304] tvsec: 122825
+[read_4194304] tvsec: 41615
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15269,4198819712:20:45:25.205844] BYPASSING ALL ACL CHECKS
+[15269,4198819712:20:45:25.206009] Native Client module will be loaded at base address 0x000061a600000000
+[write_10000] tvsec: 410
+[read_10000] tvsec: 182
+[write_1000] tvsec: 174
+[read_1000] tvsec: 111
+[write_100000] tvsec: 2955
+[read_100000] tvsec: 1316
+[write_1000000] tvsec: 28654
+[read_1000000] tvsec: 9655
+[write_4096] tvsec: 217
+[read_4096] tvsec: 130
+[write_16384] tvsec: 539
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1976
+[read_65536] tvsec: 773
+[write_262144] tvsec: 7965
+[read_262144] tvsec: 2889
+[write_1048576] tvsec: 32240
+[read_1048576] tvsec: 10224
+[write_4194304] tvsec: 122127
+[read_4194304] tvsec: 41370
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15273,1125431168:20:45:25.545290] BYPASSING ALL ACL CHECKS
+[15273,1125431168:20:45:25.545431] Native Client module will be loaded at base address 0x00003f9700000000
+[write_10000] tvsec: 409
+[read_10000] tvsec: 196
+[write_1000] tvsec: 248
+[read_1000] tvsec: 142
+[write_100000] tvsec: 3000
+[read_100000] tvsec: 1273
+[write_1000000] tvsec: 28221
+[read_1000000] tvsec: 9748
+[write_4096] tvsec: 290
+[read_4096] tvsec: 161
+[write_16384] tvsec: 600
+[read_16384] tvsec: 247
+[write_65536] tvsec: 1985
+[read_65536] tvsec: 782
+[write_262144] tvsec: 7985
+[read_262144] tvsec: 2934
+[write_1048576] tvsec: 32521
+[read_1048576] tvsec: 10347
+[write_4194304] tvsec: 122702
+[read_4194304] tvsec: 41929
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15277,2405894016:20:45:25.887870] BYPASSING ALL ACL CHECKS
+[15277,2405894016:20:45:25.888014] Native Client module will be loaded at base address 0x00007cfb00000000
+[write_10000] tvsec: 403
+[read_10000] tvsec: 194
+[write_1000] tvsec: 230
+[read_1000] tvsec: 140
+[write_100000] tvsec: 3035
+[read_100000] tvsec: 1264
+[write_1000000] tvsec: 28415
+[read_1000000] tvsec: 9647
+[write_4096] tvsec: 252
+[read_4096] tvsec: 144
+[write_16384] tvsec: 612
+[read_16384] tvsec: 224
+[write_65536] tvsec: 1953
+[read_65536] tvsec: 837
+[write_262144] tvsec: 7946
+[read_262144] tvsec: 2956
+[write_1048576] tvsec: 32249
+[read_1048576] tvsec: 10152
+[write_4194304] tvsec: 122124
+[read_4194304] tvsec: 41626
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15281,3924326272:20:45:26.228476] BYPASSING ALL ACL CHECKS
+[15281,3924326272:20:45:26.228663] Native Client module will be loaded at base address 0x000069f500000000
+[write_10000] tvsec: 401
+[read_10000] tvsec: 175
+[write_1000] tvsec: 254
+[read_1000] tvsec: 160
+[write_100000] tvsec: 2993
+[read_100000] tvsec: 1230
+[write_1000000] tvsec: 28203
+[read_1000000] tvsec: 9635
+[write_4096] tvsec: 269
+[read_4096] tvsec: 134
+[write_16384] tvsec: 603
+[read_16384] tvsec: 248
+[write_65536] tvsec: 1942
+[read_65536] tvsec: 833
+[write_262144] tvsec: 7792
+[read_262144] tvsec: 2923
+[write_1048576] tvsec: 32230
+[read_1048576] tvsec: 10160
+[write_4194304] tvsec: 121563
+[read_4194304] tvsec: 41457
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15285,1547057024:20:45:26.568035] BYPASSING ALL ACL CHECKS
+[15285,1547057024:20:45:26.568200] Native Client module will be loaded at base address 0x0000157500000000
+[write_10000] tvsec: 412
+[read_10000] tvsec: 176
+[write_1000] tvsec: 234
+[read_1000] tvsec: 159
+[write_100000] tvsec: 3044
+[read_100000] tvsec: 1199
+[write_1000000] tvsec: 28348
+[read_1000000] tvsec: 9633
+[write_4096] tvsec: 240
+[read_4096] tvsec: 146
+[write_16384] tvsec: 553
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1958
+[read_65536] tvsec: 865
+[write_262144] tvsec: 7941
+[read_262144] tvsec: 2951
+[write_1048576] tvsec: 32161
+[read_1048576] tvsec: 10149
+[write_4194304] tvsec: 122405
+[read_4194304] tvsec: 41306
+done!
+DEBUG MODE ENABLED (bypass acl)
+[15289,2377164672:20:45:26.908400] BYPASSING ALL ACL CHECKS
+[15289,2377164672:20:45:26.908552] Native Client module will be loaded at base address 0x00006e8c00000000
+[write_10000] tvsec: 413
+[read_10000] tvsec: 182
+[write_1000] tvsec: 177
+[read_1000] tvsec: 112
+[write_100000] tvsec: 2982
+[read_100000] tvsec: 1217
+[write_1000000] tvsec: 28638
+[read_1000000] tvsec: 9644
+[write_4096] tvsec: 222
+[read_4096] tvsec: 134
+[write_16384] tvsec: 561
+[read_16384] tvsec: 220
+[write_65536] tvsec: 1907
+[read_65536] tvsec: 836
+[write_262144] tvsec: 7946
+[read_262144] tvsec: 2959
+[write_1048576] tvsec: 32305
+[read_1048576] tvsec: 10198
+[write_4194304] tvsec: 122777
+[read_4194304] tvsec: 41730
+done!

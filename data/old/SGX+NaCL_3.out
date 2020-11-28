@@ -1,0 +1,10 @@
+[write_1000] tvsec: 36530
+[write_10000] tvsec: 25801
+[write_100000] tvsec: 76112
+[write_1000000] tvsec: 751702
+[write_10000000] tvsec: 7612569
+[read_1000] tvsec: 6762
+[read_10000] tvsec: 11515
+[read_100000] tvsec: 106787
+[read_1000000] tvsec: 783188
+[read_10000000] tvsec: 9471614

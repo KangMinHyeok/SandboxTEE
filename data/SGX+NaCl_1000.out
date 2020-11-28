@@ -1,0 +1,260 @@
+[5222,3692325824:15:42:29.552135] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x562ac8a31945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14570979
+[read_10000] tvsec: 6737
+[write_1000] tvsec: 15391409
+[read_1000] tvsec: 3694
+[write_100000] tvsec: 25712437
+[read_100000] tvsec: 39086
+done!
+[3] tvsec: 5105572587514028 0
+[5] tvsec: 5105572587735504 0
+[6] tvsec: 5105573544325744 0
+[4] tvsec: 5105573544930732 0
+[99] tvsec: 5105629926885495 0
+[5306,3069836224:15:43:30.341376] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x55c02367f945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14354949
+[read_10000] tvsec: 6920
+[write_1000] tvsec: 14514847
+[read_1000] tvsec: 3711
+[write_100000] tvsec: 15245596
+[read_100000] tvsec: 38819
+done!
+[3] tvsec: 5105633369640947 0
+[5] tvsec: 5105633369830083 0
+[6] tvsec: 5105634333380031 0
+[4] tvsec: 5105634333976829 0
+[99] tvsec: 5105679145656444 0
+[5318,298929088:15:44:19.330628] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x55d36fd6d945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14335520
+[read_10000] tvsec: 6833
+[write_1000] tvsec: 14933851
+[read_1000] tvsec: 3688
+[write_100000] tvsec: 15519292
+[read_100000] tvsec: 38966
+done!
+[3] tvsec: 5105682388153517 0
+[5] tvsec: 5105682388359058 0
+[6] tvsec: 5105683385764173 0
+[4] tvsec: 5105683386410954 0
+[99] tvsec: 5105728871177649 0
+[5329,2163452864:15:45:09.019799] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x564a63e9c945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14473907
+[read_10000] tvsec: 6862
+[write_1000] tvsec: 14559381
+[read_1000] tvsec: 3743
+[write_100000] tvsec: 15360885
+[read_100000] tvsec: 38885
+done!
+[3] tvsec: 5105732046868267 0
+[5] tvsec: 5105732047079581 0
+[6] tvsec: 5105732981908135 0
+[4] tvsec: 5105732982545817 0
+[99] tvsec: 5105778080457027 0
+[5336,3047963584:15:45:58.042354] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x563d2e23f945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14553332
+[read_10000] tvsec: 6856
+[write_1000] tvsec: 14385161
+[read_1000] tvsec: 3692
+[write_100000] tvsec: 15102495
+[read_100000] tvsec: 38863
+done!
+[3] tvsec: 5105781077413008 0
+[5] tvsec: 5105781077626673 0
+[6] tvsec: 5105782049511210 0
+[4] tvsec: 5105782050121457 0
+[99] tvsec: 5105826788261738 0
+[5343,1158192064:15:46:46.764974] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x55590a48d945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14643607
+[read_10000] tvsec: 6867
+[write_1000] tvsec: 14601227
+[read_1000] tvsec: 3773
+[write_100000] tvsec: 15360850
+[read_100000] tvsec: 39027
+done!
+[3] tvsec: 5105829824220643 0
+[5] tvsec: 5105829824464832 0
+[6] tvsec: 5105830766210658 0
+[4] tvsec: 5105830766869685 0
+[99] tvsec: 5105876070133359 0
+[5352,2618190784:15:47:35.898663] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x55ed3a029945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14392496
+[read_10000] tvsec: 7104
+[write_1000] tvsec: 14304428
+[read_1000] tvsec: 3693
+[write_100000] tvsec: 15289393
+[read_100000] tvsec: 38791
+done!
+[3] tvsec: 5105878983849381 0
+[5] tvsec: 5105878984228358 0
+[6] tvsec: 5105879963557116 0
+[4] tvsec: 5105879964241552 0
+[99] tvsec: 5105924646673068 0
+[5359,3381734336:15:48:24.621397] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x56346d1bd945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14641435
+[read_10000] tvsec: 6873
+[write_1000] tvsec: 14138587
+[read_1000] tvsec: 3689
+[write_100000] tvsec: 15562333
+[read_100000] tvsec: 38763
+done!
+[3] tvsec: 5105927712182877 0
+[5] tvsec: 5105927712421715 0
+[6] tvsec: 5105928647319201 0
+[4] tvsec: 5105928648013972 0
+[99] tvsec: 5105973691458133 0
+[5367,607853504:15:49:13.510441] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x56074c8e0945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14643350
+[read_10000] tvsec: 6870
+[write_1000] tvsec: 14475190
+[read_1000] tvsec: 3729
+[write_100000] tvsec: 15109664
+[read_100000] tvsec: 39032
+done!
+[3] tvsec: 5105976554710600 0
+[5] tvsec: 5105976554951502 0
+[6] tvsec: 5105977519908255 0
+[4] tvsec: 5105977520671396 0
+[99] tvsec: 5106022444863733 0
+[5377,115043264:15:50:02.621899] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x5587959db945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 14202002
+[read_10000] tvsec: 6834
+[write_1000] tvsec: 14298866
+[read_1000] tvsec: 3623
+[write_100000] tvsec: 15565264
+[read_100000] tvsec: 38702
+done!
+[3] tvsec: 5106025702654110 0
+[5] tvsec: 5106025702816798 0
+[6] tvsec: 5106026668971657 0
+[4] tvsec: 5106026669643369 0
+[99] tvsec: 5106071447665441 0

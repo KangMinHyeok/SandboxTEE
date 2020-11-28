@@ -1,0 +1,26 @@
+[5690,3598666688:16:19:33.129773] Native Client module will be loaded at base address 0x0000001100000000
+NaClSelLdrMain 137
+NaClSelLdrMain 143
+NaClSelLdrMain 165
+TODO Should be fixed
+>>>> [put this address in sel_ldr.c file] syscallseg: c001a71b0
+NaClSyscallSeg: c0000f14c
+NaClCreateMainThread 565 argc: 1 argc * sizeof(argv len): 8
+copying arg 0  0x5621fabd9945 -> 0x1fffeffe8 (9)
+system stack ptr : 00000001fffeffb8
+  user stack ptr : 00000001fffeffb8
+  user break_addr: 0000000010434068
+10434068 10434068 0
+NaClAppThreadMake 194
+[write_10000] tvsec: 145015002
+[read_10000] tvsec: 67838
+[write_1000] tvsec: 145821555
+[read_1000] tvsec: 36355
+[write_100000] tvsec: 152678524
+[read_100000] tvsec: 389603
+done!
+[3] tvsec: 5107796153116856 0
+[5] tvsec: 5107796153287580 0
+[6] tvsec: 5107797103283057 0
+[4] tvsec: 5107797103969290 0
+[99] tvsec: 5108241759104972 0

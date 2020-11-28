@@ -1,0 +1,706 @@
+error while writing /home/mkpark/pave/depot_tools/native_client/write_1000 [ret: -1, count: 10000] 
+[write_10000] tvsec: 41001
+error while reading /home/mkpark/pave/depot_tools/native_client/write_1000 [ret: -1, count: 10000] 
+error while writing /home/mkpark/pave/depot_tools/native_client/write_1000 [ret: -1, count: 10000] 
+[write_10000] tvsec: 37325
+error while reading /home/mkpark/pave/depot_tools/native_client/write_1000 [ret: -1, count: 10000] 
+[write_10000] tvsec: 13428
+[read_10000] tvsec: 3161
+[write_1000] tvsec: 4815
+[read_1000] tvsec: 1205
+[write_100000] tvsec: 43179
+[read_100000] tvsec: 6549
+done!
+[write_10000] tvsec: 10819
+[read_10000] tvsec: 2559
+[write_1000] tvsec: 3606
+[read_1000] tvsec: 977
+[write_100000] tvsec: 37809
+[read_100000] tvsec: 5372
+done!
+[write_10000] tvsec: 30800
+[read_10000] tvsec: 3991
+[write_1000] tvsec: 5935
+[read_1000] tvsec: 1379
+[write_100000] tvsec: 51684
+[read_100000] tvsec: 8175
+done!
+[write_10000] tvsec: 46218
+[read_10000] tvsec: 9854
+[write_1000] tvsec: 14907
+[read_1000] tvsec: 3700
+[write_100000] tvsec: 163426
+[read_100000] tvsec: 25283
+done!
+[write_10000] tvsec: 55553
+[read_10000] tvsec: 10342
+[write_1000] tvsec: 14959
+[read_1000] tvsec: 3717
+[write_100000] tvsec: 133921
+[read_100000] tvsec: 22538
+done!
+[write_10000] tvsec: 41190
+[read_10000] tvsec: 10276
+[write_1000] tvsec: 14864
+[read_1000] tvsec: 3662
+[write_100000] tvsec: 136477
+[read_100000] tvsec: 21994
+done!
+[write_10000] tvsec: 42912
+[read_10000] tvsec: 11132
+[write_1000] tvsec: 65457
+[read_1000] tvsec: 4598
+[write_100000] tvsec: 244013
+[read_100000] tvsec: 24061
+done!
+[write_10000] tvsec: 12662
+[read_10000] tvsec: 2826
+[write_1000] tvsec: 4137
+[read_1000] tvsec: 1030
+[write_100000] tvsec: 38463
+[read_100000] tvsec: 5828
+done!
+[write_10000] tvsec: 43460
+[read_10000] tvsec: 10178
+[write_1000] tvsec: 14859
+[read_1000] tvsec: 3925
+[write_100000] tvsec: 135662
+[read_100000] tvsec: 22945
+done!
+[write_10000] tvsec: 49966
+[read_10000] tvsec: 9733
+[write_1000] tvsec: 14749
+[read_1000] tvsec: 3705
+[write_100000] tvsec: 134431
+[read_100000] tvsec: 21672
+done!
+[write_10000] tvsec: 8559
+[read_10000] tvsec: 1483
+[write_1000] tvsec: 3241
+[read_1000] tvsec: 779
+[write_100000] tvsec: 32898
+[read_100000] tvsec: 4891
+done!
+[write_10000] tvsec: 42052
+[read_10000] tvsec: 11039
+[write_1000] tvsec: 15474
+[read_1000] tvsec: 3700
+[write_100000] tvsec: 129265
+[read_100000] tvsec: 22044
+done!
+[write_10000] tvsec: 22154
+[read_10000] tvsec: 5182
+[write_1000] tvsec: 7843
+[read_1000] tvsec: 1940
+[write_100000] tvsec: 69675
+[read_100000] tvsec: 26685
+done!
+[write_10000] tvsec: 50719
+[read_10000] tvsec: 9908
+[write_1000] tvsec: 14884
+[read_1000] tvsec: 3890
+[write_100000] tvsec: 136870
+[read_100000] tvsec: 21662
+done!
+[write_10000] tvsec: 49833
+[read_10000] tvsec: 10023
+[write_1000] tvsec: 14817
+[read_1000] tvsec: 3910
+[write_100000] tvsec: 123412
+[read_100000] tvsec: 21573
+done!
+[write_10000] tvsec: 42767
+[read_10000] tvsec: 10492
+[write_1000] tvsec: 15188
+[read_1000] tvsec: 3735
+[write_100000] tvsec: 136344
+[read_100000] tvsec: 21961
+done!
+[write_10000] tvsec: 44929
+[read_10000] tvsec: 10424
+[write_1000] tvsec: 15079
+[read_1000] tvsec: 3708
+[write_100000] tvsec: 133548
+[read_100000] tvsec: 21421
+done!
+[write_10000] tvsec: 44775
+[read_10000] tvsec: 10795
+[write_1000] tvsec: 15317
+[read_1000] tvsec: 4004
+[write_100000] tvsec: 133511
+[read_100000] tvsec: 22630
+done!
+[write_10000] tvsec: 31498
+[read_10000] tvsec: 8063
+[write_1000] tvsec: 11976
+[read_1000] tvsec: 2691
+[write_100000] tvsec: 101129
+[read_100000] tvsec: 16897
+done!
+[write_10000] tvsec: 40282
+[read_10000] tvsec: 10057
+[write_1000] tvsec: 14757
+[read_1000] tvsec: 4005
+[write_100000] tvsec: 137853
+[read_100000] tvsec: 21384
+done!
+[write_10000] tvsec: 41848
+[read_10000] tvsec: 10143
+[write_1000] tvsec: 15082
+[read_1000] tvsec: 3610
+[write_100000] tvsec: 135125
+[read_100000] tvsec: 21464
+done!
+[write_10000] tvsec: 48059
+[read_10000] tvsec: 10791
+[write_1000] tvsec: 15425
+[read_1000] tvsec: 3631
+[write_100000] tvsec: 133691
+[read_100000] tvsec: 21536
+done!
+[write_10000] tvsec: 40563
+[read_10000] tvsec: 10425
+[write_1000] tvsec: 14940
+[read_1000] tvsec: 3739
+[write_100000] tvsec: 136018
+[read_100000] tvsec: 22025
+done!
+[write_10000] tvsec: 49993
+[read_10000] tvsec: 10726
+[write_1000] tvsec: 16502
+[read_1000] tvsec: 4092
+[write_100000] tvsec: 130720
+[read_100000] tvsec: 21656
+done!
+[write_10000] tvsec: 20669
+[read_10000] tvsec: 4452
+[write_1000] tvsec: 6467
+[read_1000] tvsec: 1571
+[write_100000] tvsec: 73377
+[read_100000] tvsec: 10874
+done!
+[write_10000] tvsec: 40390
+[read_10000] tvsec: 10194
+[write_1000] tvsec: 14723
+[read_1000] tvsec: 3734
+[write_100000] tvsec: 128287
+[read_100000] tvsec: 21523
+done!
+[write_10000] tvsec: 45861
+[read_10000] tvsec: 10142
+[write_1000] tvsec: 14687
+[read_1000] tvsec: 3607
+[write_100000] tvsec: 162491
+[read_100000] tvsec: 25537
+done!
+[write_10000] tvsec: 25218
+[read_10000] tvsec: 6405
+[write_1000] tvsec: 9219
+[read_1000] tvsec: 2173
+[write_100000] tvsec: 84039
+[read_100000] tvsec: 13475
+done!
+[write_10000] tvsec: 41459
+[read_10000] tvsec: 10416
+[write_1000] tvsec: 14963
+[read_1000] tvsec: 3456
+[write_100000] tvsec: 134757
+[read_100000] tvsec: 21705
+done!
+[write_10000] tvsec: 46321
+[read_10000] tvsec: 10214
+[write_1000] tvsec: 15095
+[read_1000] tvsec: 3755
+[write_100000] tvsec: 134442
+[read_100000] tvsec: 21833
+done!
+[write_10000] tvsec: 41794
+[read_10000] tvsec: 10545
+[write_1000] tvsec: 14628
+[read_1000] tvsec: 3653
+[write_100000] tvsec: 132836
+[read_100000] tvsec: 21686
+done!
+[write_10000] tvsec: 39335
+[read_10000] tvsec: 10488
+[write_1000] tvsec: 15621
+[read_1000] tvsec: 3930
+[write_100000] tvsec: 133191
+[read_100000] tvsec: 53183
+done!
+[write_10000] tvsec: 35616
+[read_10000] tvsec: 7859
+[write_1000] tvsec: 12015
+[read_1000] tvsec: 2662
+[write_100000] tvsec: 103643
+[read_100000] tvsec: 16235
+done!
+[write_10000] tvsec: 40741
+[read_10000] tvsec: 10198
+[write_1000] tvsec: 15169
+[read_1000] tvsec: 3896
+[write_100000] tvsec: 130535
+[read_100000] tvsec: 22172
+done!
+[write_10000] tvsec: 40051
+[read_10000] tvsec: 10393
+[write_1000] tvsec: 14848
+[read_1000] tvsec: 3743
+[write_100000] tvsec: 162536
+[read_100000] tvsec: 23327
+done!
+[write_10000] tvsec: 51296
+[read_10000] tvsec: 10813
+[write_1000] tvsec: 15798
+[read_1000] tvsec: 3613
+[write_100000] tvsec: 127738
+[read_100000] tvsec: 21452
+done!
+[write_10000] tvsec: 49876
+[read_10000] tvsec: 10272
+[write_1000] tvsec: 14723
+[read_1000] tvsec: 3834
+[write_100000] tvsec: 128360
+[read_100000] tvsec: 21641
+done!
+[write_10000] tvsec: 40132
+[read_10000] tvsec: 10231
+[write_1000] tvsec: 16998
+[read_1000] tvsec: 4019
+[write_100000] tvsec: 214073
+[read_100000] tvsec: 58022
+done!
+[write_10000] tvsec: 88652
+[read_10000] tvsec: 11747
+[write_1000] tvsec: 16852
+[read_1000] tvsec: 3681
+[write_100000] tvsec: 130417
+[read_100000] tvsec: 68266
+done!
+[write_10000] tvsec: 40583
+[read_10000] tvsec: 10035
+[write_1000] tvsec: 14935
+[read_1000] tvsec: 3703
+[write_100000] tvsec: 134853
+[read_100000] tvsec: 21635
+done!
+[write_10000] tvsec: 41352
+[read_10000] tvsec: 10098
+[write_1000] tvsec: 14820
+[read_1000] tvsec: 3692
+[write_100000] tvsec: 130486
+[read_100000] tvsec: 21081
+done!
+[write_10000] tvsec: 20957
+[read_10000] tvsec: 3537
+[write_1000] tvsec: 5255
+[read_1000] tvsec: 1304
+[write_100000] tvsec: 45637
+[read_100000] tvsec: 7485
+done!
+[write_10000] tvsec: 40629
+[read_10000] tvsec: 10559
+[write_1000] tvsec: 15404
+[read_1000] tvsec: 3847
+[write_100000] tvsec: 167512
+[read_100000] tvsec: 25156
+done!
+[write_10000] tvsec: 42228
+[read_10000] tvsec: 10261
+[write_1000] tvsec: 14924
+[read_1000] tvsec: 3726
+[write_100000] tvsec: 134199
+[read_100000] tvsec: 21856
+done!
+[write_10000] tvsec: 40282
+[read_10000] tvsec: 10378
+[write_1000] tvsec: 15056
+[read_1000] tvsec: 3827
+[write_100000] tvsec: 136864
+[read_100000] tvsec: 21488
+done!
+[write_10000] tvsec: 42559
+[read_10000] tvsec: 10747
+[write_1000] tvsec: 17219
+[read_1000] tvsec: 4125
+[write_100000] tvsec: 135980
+[read_100000] tvsec: 21644
+done!
+[write_10000] tvsec: 44910
+[read_10000] tvsec: 9900
+[write_1000] tvsec: 14991
+[read_1000] tvsec: 3807
+[write_100000] tvsec: 130994
+[read_100000] tvsec: 21263
+done!
+[write_10000] tvsec: 40498
+[read_10000] tvsec: 10118
+[write_1000] tvsec: 15339
+[read_1000] tvsec: 3885
+[write_100000] tvsec: 134717
+[read_100000] tvsec: 56095
+done!
+[write_10000] tvsec: 51446
+[read_10000] tvsec: 9936
+[write_1000] tvsec: 14586
+[read_1000] tvsec: 3809
+[write_100000] tvsec: 132361
+[read_100000] tvsec: 21327
+done!
+[write_10000] tvsec: 40200
+[read_10000] tvsec: 10486
+[write_1000] tvsec: 14832
+[read_1000] tvsec: 3704
+[write_100000] tvsec: 133748
+[read_100000] tvsec: 21803
+done!
+[write_10000] tvsec: 43193
+[read_10000] tvsec: 10323
+[write_1000] tvsec: 15722
+[read_1000] tvsec: 3854
+[write_100000] tvsec: 133784
+[read_100000] tvsec: 21796
+done!
+[write_10000] tvsec: 25583
+[read_10000] tvsec: 6721
+[write_1000] tvsec: 9972
+[read_1000] tvsec: 2381
+[write_100000] tvsec: 114634
+[read_100000] tvsec: 15537
+done!
+[write_10000] tvsec: 40809
+[read_10000] tvsec: 10205
+[write_1000] tvsec: 14690
+[read_1000] tvsec: 3531
+[write_100000] tvsec: 133612
+[read_100000] tvsec: 21710
+done!
+[write_10000] tvsec: 45334
+[read_10000] tvsec: 10680
+[write_1000] tvsec: 16332
+[read_1000] tvsec: 4101
+[write_100000] tvsec: 129314
+[read_100000] tvsec: 21663
+done!
+[write_10000] tvsec: 42149
+[read_10000] tvsec: 10154
+[write_1000] tvsec: 14956
+[read_1000] tvsec: 3810
+[write_100000] tvsec: 134226
+[read_100000] tvsec: 21461
+done!
+[write_10000] tvsec: 42943
+[read_10000] tvsec: 10169
+[write_1000] tvsec: 15489
+[read_1000] tvsec: 3858
+[write_100000] tvsec: 132776
+[read_100000] tvsec: 52360
+done!
+[write_10000] tvsec: 41722
+[read_10000] tvsec: 10217
+[write_1000] tvsec: 15190
+[read_1000] tvsec: 3888
+[write_100000] tvsec: 128897
+[read_100000] tvsec: 23092
+done!
+[write_10000] tvsec: 51354
+[read_10000] tvsec: 11226
+[write_1000] tvsec: 15829
+[read_1000] tvsec: 3562
+[write_100000] tvsec: 133696
+[read_100000] tvsec: 22452
+done!
+[write_10000] tvsec: 46896
+[read_10000] tvsec: 10144
+[write_1000] tvsec: 14592
+[read_1000] tvsec: 3824
+[write_100000] tvsec: 127622
+[read_100000] tvsec: 21700
+done!
+[write_10000] tvsec: 44848
+[read_10000] tvsec: 10154
+[write_1000] tvsec: 15211
+[read_1000] tvsec: 3654
+[write_100000] tvsec: 162339
+[read_100000] tvsec: 25937
+done!
+[write_10000] tvsec: 45665
+[read_10000] tvsec: 11573
+[write_1000] tvsec: 16635
+[read_1000] tvsec: 3643
+[write_100000] tvsec: 128636
+[read_100000] tvsec: 21777
+done!
+[write_10000] tvsec: 39846
+[read_10000] tvsec: 10216
+[write_1000] tvsec: 14982
+[read_1000] tvsec: 3825
+[write_100000] tvsec: 126697
+[read_100000] tvsec: 21318
+done!
+[write_10000] tvsec: 110563
+[read_10000] tvsec: 10916
+[write_1000] tvsec: 16804
+[read_1000] tvsec: 3644
+[write_100000] tvsec: 133546
+[read_100000] tvsec: 21469
+done!
+[write_10000] tvsec: 50897
+[read_10000] tvsec: 10537
+[write_1000] tvsec: 14872
+[read_1000] tvsec: 3817
+[write_100000] tvsec: 133675
+[read_100000] tvsec: 21652
+done!
+[write_10000] tvsec: 40178
+[read_10000] tvsec: 10098
+[write_1000] tvsec: 14720
+[read_1000] tvsec: 3454
+[write_100000] tvsec: 137486
+[read_100000] tvsec: 22322
+done!
+[write_10000] tvsec: 40949
+[read_10000] tvsec: 10319
+[write_1000] tvsec: 14993
+[read_1000] tvsec: 3857
+[write_100000] tvsec: 128436
+[read_100000] tvsec: 21469
+done!
+[write_10000] tvsec: 40475
+[read_10000] tvsec: 10260
+[write_1000] tvsec: 14847
+[read_1000] tvsec: 3634
+[write_100000] tvsec: 135605
+[read_100000] tvsec: 21752
+done!
+[write_10000] tvsec: 40193
+[read_10000] tvsec: 10389
+[write_1000] tvsec: 14780
+[read_1000] tvsec: 3497
+[write_100000] tvsec: 134881
+[read_100000] tvsec: 21821
+done!
+[write_10000] tvsec: 40427
+[read_10000] tvsec: 10596
+[write_1000] tvsec: 15236
+[read_1000] tvsec: 3496
+[write_100000] tvsec: 136265
+[read_100000] tvsec: 22424
+done!
+[write_10000] tvsec: 50318
+[read_10000] tvsec: 10363
+[write_1000] tvsec: 15088
+[read_1000] tvsec: 3603
+[write_100000] tvsec: 135617
+[read_100000] tvsec: 21819
+done!
+[write_10000] tvsec: 41572
+[read_10000] tvsec: 10418
+[write_1000] tvsec: 15366
+[read_1000] tvsec: 3784
+[write_100000] tvsec: 125299
+[read_100000] tvsec: 21231
+done!
+[write_10000] tvsec: 31249
+[read_10000] tvsec: 8051
+[write_1000] tvsec: 11504
+[read_1000] tvsec: 2681
+[write_100000] tvsec: 106694
+[read_100000] tvsec: 17162
+done!
+[write_10000] tvsec: 41825
+[read_10000] tvsec: 10231
+[write_1000] tvsec: 15111
+[read_1000] tvsec: 3615
+[write_100000] tvsec: 134824
+[read_100000] tvsec: 21528
+done!
+[write_10000] tvsec: 40300
+[read_10000] tvsec: 10099
+[write_1000] tvsec: 15535
+[read_1000] tvsec: 3551
+[write_100000] tvsec: 135140
+[read_100000] tvsec: 21923
+done!
+[write_10000] tvsec: 42135
+[read_10000] tvsec: 10697
+[write_1000] tvsec: 16943
+[read_1000] tvsec: 3953
+[write_100000] tvsec: 137444
+[read_100000] tvsec: 21844
+done!
+[write_10000] tvsec: 16121
+[read_10000] tvsec: 3898
+[write_1000] tvsec: 5682
+[read_1000] tvsec: 1372
+[write_100000] tvsec: 52617
+[read_100000] tvsec: 8061
+done!
+[write_10000] tvsec: 40192
+[read_10000] tvsec: 10560
+[write_1000] tvsec: 15480
+[read_1000] tvsec: 3882
+[write_100000] tvsec: 135525
+[read_100000] tvsec: 21829
+done!
+[write_10000] tvsec: 76517
+[read_10000] tvsec: 9774
+[write_1000] tvsec: 17726
+[read_1000] tvsec: 4066
+[write_100000] tvsec: 195746
+[read_100000] tvsec: 23284
+done!
+[write_10000] tvsec: 34051
+[read_10000] tvsec: 9439
+[write_1000] tvsec: 14852
+[read_1000] tvsec: 3828
+[write_100000] tvsec: 136570
+[read_100000] tvsec: 22097
+done!
+[write_10000] tvsec: 45590
+[read_10000] tvsec: 10083
+[write_1000] tvsec: 15041
+[read_1000] tvsec: 3860
+[write_100000] tvsec: 129128
+[read_100000] tvsec: 21322
+done!
+[write_10000] tvsec: 42393
+[read_10000] tvsec: 10312
+[write_1000] tvsec: 14866
+[read_1000] tvsec: 3803
+[write_100000] tvsec: 133751
+[read_100000] tvsec: 21783
+done!
+[write_10000] tvsec: 11350
+[read_10000] tvsec: 2691
+[write_1000] tvsec: 4026
+[read_1000] tvsec: 964
+[write_100000] tvsec: 37470
+[read_100000] tvsec: 5967
+done!
+[write_10000] tvsec: 105125
+[read_10000] tvsec: 10271
+[write_1000] tvsec: 14902
+[read_1000] tvsec: 3939
+[write_100000] tvsec: 161940
+[read_100000] tvsec: 25192
+done!
+[write_10000] tvsec: 41203
+[read_10000] tvsec: 10226
+[write_1000] tvsec: 14920
+[read_1000] tvsec: 3843
+[write_100000] tvsec: 135205
+[read_100000] tvsec: 21728
+done!
+[write_10000] tvsec: 40086
+[read_10000] tvsec: 10019
+[write_1000] tvsec: 14432
+[read_1000] tvsec: 3607
+[write_100000] tvsec: 134745
+[read_100000] tvsec: 21397
+done!
+[write_10000] tvsec: 69692
+[read_10000] tvsec: 10664
+[write_1000] tvsec: 15561
+[read_1000] tvsec: 3685
+[write_100000] tvsec: 134028
+[read_100000] tvsec: 21643
+done!
+[write_10000] tvsec: 41628
+[read_10000] tvsec: 10039
+[write_1000] tvsec: 14703
+[read_1000] tvsec: 3829
+[write_100000] tvsec: 136607
+[read_100000] tvsec: 21823
+done!
+[write_10000] tvsec: 43101
+[read_10000] tvsec: 10041
+[write_1000] tvsec: 15145
+[read_1000] tvsec: 3719
+[write_100000] tvsec: 134094
+[read_100000] tvsec: 22125
+done!
+[write_10000] tvsec: 42041
+[read_10000] tvsec: 10354
+[write_1000] tvsec: 15319
+[read_1000] tvsec: 3911
+[write_100000] tvsec: 135399
+[read_100000] tvsec: 21401
+done!
+[write_10000] tvsec: 28248
+[read_10000] tvsec: 6400
+[write_1000] tvsec: 9071
+[read_1000] tvsec: 2252
+[write_100000] tvsec: 79980
+[read_100000] tvsec: 13113
+done!
+[write_10000] tvsec: 46039
+[read_10000] tvsec: 10245
+[write_1000] tvsec: 15070
+[read_1000] tvsec: 3633
+[write_100000] tvsec: 128984
+[read_100000] tvsec: 21449
+done!
+[write_10000] tvsec: 41085
+[read_10000] tvsec: 10377
+[write_1000] tvsec: 15341
+[read_1000] tvsec: 3305
+[write_100000] tvsec: 134242
+[read_100000] tvsec: 21436
+done!
+[write_10000] tvsec: 41441
+[read_10000] tvsec: 9976
+[write_1000] tvsec: 15215
+[read_1000] tvsec: 3850
+[write_100000] tvsec: 129319
+[read_100000] tvsec: 22885
+done!
+[write_10000] tvsec: 43166
+[read_10000] tvsec: 10311
+[write_1000] tvsec: 15121
+[read_1000] tvsec: 3601
+[write_100000] tvsec: 133503
+[read_100000] tvsec: 22008
+done!
+[write_10000] tvsec: 54550
+[read_10000] tvsec: 10313
+[write_1000] tvsec: 14961
+[read_1000] tvsec: 4027
+[write_100000] tvsec: 135112
+[read_100000] tvsec: 21913
+done!
+[write_10000] tvsec: 41181
+[read_10000] tvsec: 10414
+[write_1000] tvsec: 14813
+[read_1000] tvsec: 3650
+[write_100000] tvsec: 135120
+[read_100000] tvsec: 21701
+done!
+[write_10000] tvsec: 42234
+[read_10000] tvsec: 11062
+[write_1000] tvsec: 16318
+[read_1000] tvsec: 3727
+[write_100000] tvsec: 135000
+[read_100000] tvsec: 22002
+done!
+[write_10000] tvsec: 81884
+[read_10000] tvsec: 10681
+[write_1000] tvsec: 15866
+[read_1000] tvsec: 3818
+[write_100000] tvsec: 189383
+[read_100000] tvsec: 25093
+done!
+[write_10000] tvsec: 38170
+[read_10000] tvsec: 10208
+[write_1000] tvsec: 15158
+[read_1000] tvsec: 3703
+[write_100000] tvsec: 131496
+[read_100000] tvsec: 21565
+done!
+[write_10000] tvsec: 41219
+[read_10000] tvsec: 10431
+[write_1000] tvsec: 16942
+[read_1000] tvsec: 3666
+[write_100000] tvsec: 194071
+[read_100000] tvsec: 27198
+done!
