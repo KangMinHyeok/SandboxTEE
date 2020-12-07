@@ -1,0 +1,12 @@
+# manifest for running `hello` from LMBench.
+#
+# This manifest was prepared and tested on Ubuntu 16.04.
+
+# The executable to load in Graphene.
+loader.exec = file:hello
+
+# Graphene environment, including the path of the library OS and the debug
+# option (inline/none).
+loader.preload = file:../../../../../Runtime/libsysdb.so
+loader.debug_type = none
+
