@@ -164,3 +164,29 @@ DESCRIPTOR.message_types_by_name['GetTokenReq'] = _GETTOKENREQ
 DESCRIPTOR.message_types_by_name['GetTokenRetRaw'] = _GETTOKENRETRAW
 DESCRIPTOR.message_types_by_name['GetTokenRet'] = _GETTOKENRET
 
+class GetTokenReqRaw(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETTOKENREQRAW
+
+  # @@protoc_insertion_point(class_scope:GetTokenReqRaw)
+
+class GetTokenReq(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETTOKENREQ
+
+  # @@protoc_insertion_point(class_scope:GetTokenReq)
+
+class GetTokenRetRaw(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETTOKENRETRAW
+
+  # @@protoc_insertion_point(class_scope:GetTokenRetRaw)
+
+class GetTokenRet(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _GETTOKENRET
+
+  # @@protoc_insertion_point(class_scope:GetTokenRet)
+
+
+# @@protoc_insertion_point(module_scope)
