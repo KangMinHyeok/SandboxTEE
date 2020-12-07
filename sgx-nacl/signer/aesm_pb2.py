@@ -67,3 +67,31 @@ _GETTOKENREQRAW = _descriptor.Descriptor(
 )
 
 
+_GETTOKENREQ = _descriptor.Descriptor(
+  name='GetTokenReq',
+  full_name='GetTokenReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='req', full_name='GetTokenReq.req', index=0,
+      number=3, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=101,
+  serialized_end=144,
+)
+
+
