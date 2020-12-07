@@ -130,4 +130,37 @@ _GETTOKENRETRAW = _descriptor.Descriptor(
 )
 
 
+_GETTOKENRET = _descriptor.Descriptor(
+  name='GetTokenRet',
+  full_name='GetTokenRet',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='ret', full_name='GetTokenRet.ret', index=0,
+      number=3, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=194,
+  serialized_end=237,
+)
+
+_GETTOKENREQ.fields_by_name['req'].message_type = _GETTOKENREQRAW
+_GETTOKENRET.fields_by_name['ret'].message_type = _GETTOKENRETRAW
+DESCRIPTOR.message_types_by_name['GetTokenReqRaw'] = _GETTOKENREQRAW
+DESCRIPTOR.message_types_by_name['GetTokenReq'] = _GETTOKENREQ
+DESCRIPTOR.message_types_by_name['GetTokenRetRaw'] = _GETTOKENRETRAW
+DESCRIPTOR.message_types_by_name['GetTokenRet'] = _GETTOKENRET
 
