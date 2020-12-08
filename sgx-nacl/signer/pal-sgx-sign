@@ -676,4 +676,167 @@ def generate_sigstruct(mrenclave):
     
     return buffer
 
+""" Main Program """
+
+options = {
+#       Option name : (Required  Value)
+        'output':    (True,    'output'),
+        'libsel':    (True,    'libsel path'),
+        'key':       (True,    'signing key'),
+        'manifest':  (False,    'manifest'),
+        'exec':  (True,    'executable'),
+        # 'exec':      (False,   'executable'),
+    }
+
+def usage():
+    usage_message = 'USAGE: ' + sys.argv[0] + ' -help|-h'
+
+    for opt, optval in options.items():
+        if not optval[0]:
+            usage_message += '['
+        usage_message += '|-' + opt
+        if optval[1]:
+            usage_message += ' <' + optval[1] + '>'
+        if not optval[0]:
+            usage_message += ']'
+
+    print >> sys.stderr, usage_message
+    os._exit(-1)
+
+def parse_args():
+    args = dict()
+    for opt, optval in options.items():
+        if not optval[1]:
+            args[opt] = False
+
+    i = 1
+    while i < len(sys.argv):
+        got = sys.argv[i]
+
+        if got == '-help' or got == '-h':
+            usage()
+
+        invalid = True
+        for opt, optval in options.items():
+            if got != '-' + opt:
+                continue
+
+            if optval[1] is not None:
+                i += 1
+                if i == len(sys.argv):
+                    print >>sys.stderr, "Option %s needs a value." % (opt)
+                    usage()
+                args[opt] = sys.argv[i]
+            else:
+                args[opt] = True
+
+            invalid = False
+            break
+
+        if invalid:
+            print >>sys.stderr, "Unknown option: %s." % (got[1:])
+            usage()
+        i += 1
+
+    for opt, optval in options.items():
+        if optval[0] and opt not in args:
+            print >>sys.stderr, "Must specify %s <%s>." % (opt, optval[1])
+            usage()
+
+    return args
+
+if __name__ == "__main__":
+
+    # Parse arguments
+    
+    args = parse_args()
+
+    (manifest, manifest_layout) = read_manifest(args['manifest'])
+    ''' 
+    if 'exec' not in args:
+        if 'loader.exec' in manifest:
+            exec_url = manifest['loader.exec']
+            if exec_url[:5] != 'file:':
+                print "executable must be a local file"
+                os._exit(-1)
+
+            args['exec'] = os.path.join(os.path.dirname(args['manifest']), exec_url[5:])
+
+    args['root'] = os.path.dirname(os.path.abspath(args['output']))
+
+    if 'sgx.sigfile' in manifest:
+        args['sigfile'] = resolve_uri(manifest['sgx.sigfile'], False)
+    else:
+        sigfile = args['output']
+        for ext in ['.manifest.sgx', '.manifest']:
+            if sigfile.endswith(ext):
+                sigfile = sigfile[:-len(ext)]
+                break
+        args['sigfile'] = sigfile + '.sig'
+        manifest['sgx.sigfile'] = 'file:' + os.path.basename(args['sigfile'])
+    '''
+    # Get attributes from manifest
+    attr = dict()
+
+    for key, default, parse in [
+        ('enclave_size', DEFAULT_ENCLAVE_SIZE,    parse_size),
+        ('thread_num',   str(DEFAULT_THREAD_NUM), parse_int),
+        ('isvprodid',    '0',                     parse_int),
+        ('isvsvn',       '0',                     parse_int),
+    ]:
+        if 'sgx.' + key not in manifest:
+            manifest['sgx.' + key] = default
+        attr[key] = parse(manifest['sgx.' + key])
+
+    (attr['flags'], attr['xfrms'], attr['miscs']) = get_enclave_attributes(manifest)
+
+    print >>sys.stderr, "Attributes:"
+    print >>sys.stderr, "    size:      %d" % (attr['enclave_size'])
+    print >>sys.stderr, "    threadnum: %d" % (attr['thread_num'])
+    print >>sys.stderr, "    isvprodid: %d" % (attr['isvprodid'])
+    print >>sys.stderr, "    isvsvn:    %d" % (attr['isvsvn'])
+    print >>sys.stderr, "    flags:     %016x" % (bytes_to_int(attr['flags']))
+    print >>sys.stderr, "    xfrms:     %016x" % (bytes_to_int(attr['xfrms']))
+    print >>sys.stderr, "    miscs:     %08x"  % (bytes_to_int(attr['miscs']))
+    '''
+    # Get trusted checksums and measurements
+    print >>sys.stderr, "Trusted files:"
+    for key, val in get_trusted_files(manifest, args).items():
+        (uri, target, checksum) = val
+        print >>sys.stderr, "    %s %s" % (checksum, uri)
+        manifest['sgx.trusted_checksum.' + key] = checksum
+
+    print >>sys.stderr, "Trusted children:"
+    for key, val in get_trusted_children(manifest, args).items():
+        (uri, target, mrenclave) = val
+        print >>sys.stderr, "    %s %s" % (mrenclave, uri)
+        manifest['sgx.trusted_mrenclave.' + key] = mrenclave
+    '''
+    # Try populate memory areas
+    memory_areas = get_memory_areas(attr, args) # manifest, attr, args)
+
+    '''
+    if len([a for a in memory_areas if a.addr is not None]) > 0:
+        manifest['sgx.static_address'] = '1'
+    else:
+        ENCLAVE_HEAP_MIN = 0
+
+    # Add manifest at the top
+    shutil.copy2(args['manifest'], args['output'])
+    output_manifest(args['output'], manifest, manifest_layout)
+    '''
+    # memory_areas = [
+    #        MemoryArea('manifest', file=args['output'],
+    #                    flags=PAGEINFO_R|PAGEINFO_REG)
+    #         ] + memory_areas
+
+    print >>sys.stderr, "Memory:"
+    # Generate measurement
+    mrenclave = generate_measurement(memory_areas)
+
+    print >>sys.stderr, "Measurement:"
+    print >>sys.stderr, "    " + mrenclave.encode('hex')
+
+    # Generate sigstruct
+    open('sample2.sig', 'wb').write(generate_sigstruct(mrenclave))
 
