@@ -2253,7 +2253,19 @@ def MakeSGXEnv():
     subarch = '64'
   else:
     subarch = '32'
-  
+   
+  sgx_env.Replace(BUILD_FULLARCH=platform)
+  sgx_env.Replace(BUILD_ARCHITECTURE=arch)
+  sgx_env.Replace(BUILD_SUBARCH=subarch)
+  sgx_env.Replace(TARGET_FULLARCH=platform)
+  sgx_env.Replace(TARGET_ARCHITECTURE=arch)
+  sgx_env.Replace(TARGET_SUBARCH=subarch)
+
+  sgx_env.SetBits('build_%s' % platform.replace('-', '_'))
+  sgx_env.SetBits('build_x86')
+  sgx_env.SetBits('sgx')
+
+
 
 def BiasedBitcodeFlags(env):
   """ Return clang flags to use biased bitcode and generate native-ABI-compliant
