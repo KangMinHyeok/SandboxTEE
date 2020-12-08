@@ -4,4 +4,12 @@ display_usage() {
 	echo "Usage: ./scripts" 
 	
 	} 
+if [  $# -le 0 ] 
+	then 
+		display_usage
+		exit 1
+	fi 
+
+export NACL_HOME=$HOME/pave/depot_tools/native_client/
+
 
