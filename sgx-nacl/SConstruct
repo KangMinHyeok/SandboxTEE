@@ -463,18 +463,6 @@ pre_base_env = Environment(
 )
 
 
-if 'generate_ninja' in ARGUMENTS:
-  import pynacl.scons_to_ninja
-  pynacl.scons_to_ninja.GenerateNinjaFile(
-      pre_base_env, dest_file=ARGUMENTS['generate_ninja'])
-
-
-breakpad_tools_dir = ARGUMENTS.get('breakpad_tools_dir')
-if breakpad_tools_dir is not None:
-  pre_base_env['BREAKPAD_TOOLS_DIR'] = pre_base_env.Dir(
-      os.path.abspath(breakpad_tools_dir))
-
-
 # CLANG
 DeclareBit('clang', 'Use clang to build trusted code')
 pre_base_env.SetBitFromOption('clang', False)
@@ -499,11 +487,7 @@ DeclareBit('coverage_enabled', 'The build should be instrumented to generate'
 # if we are running in a VM by the lack of a '-bare-' (aka bare metal) in the
 # bot name.  Otherwise if the builder name is not set, then assume real HW.
 DeclareBit('running_on_vm', 'Returns true when environment is running in a VM')
-builder = os.environ.get('BUILDBOT_BUILDERNAME')
-if builder and builder.find('-bare-') == -1:
-  pre_base_env.SetBits('running_on_vm')
-else:
-  pre_base_env.ClearBits('running_on_vm')
+pre_base_env.ClearBits('running_on_vm')
 
 DeclareBit('nacl_glibc', 'Use nacl-glibc for building untrusted code')
 pre_base_env.SetBitFromOption('nacl_glibc', False)
@@ -547,16 +531,20 @@ if pre_base_env.Bit('clang'):
 # from the path of correctness.
 
 def EnsureRequiredBuildWarnings(env):
-  if (env.Bit('linux') or env.Bit('mac')) and not env.Bit('android'):
-    required_env_flags = set(['-pedantic', '-Wall'] + werror_flags)
-    ccflags = set(env.get('CCFLAGS'))
+  ##syseok
+  # pedantic exclude
 
-    if not required_env_flags.issubset(ccflags):
-      raise UserError('required build flags missing: '
-                      + ' '.join(required_env_flags.difference(ccflags)))
-  else:
-    # windows get a pass for now
-    pass
+  if env.Bit('usgx'):
+      Return()
+  
+  #required_env_flags = set(['-Wall'] + werror_flags)
+  required_env_flags = set(['-pedantic', '-Wall'] + werror_flags)
+  ccflags = set(env.get('CCFLAGS'))
+
+  if not required_env_flags.issubset(ccflags):
+    raise UserError('required build flags missing: '
+                    + ' '.join(required_env_flags.difference(ccflags)))
+
 
 pre_base_env.AddMethod(EnsureRequiredBuildWarnings)
 
@@ -796,7 +784,6 @@ def AddNodeToTestSuite(env, node, suite_name, node_name, is_broken=False,
       'test %r does not match "run_..._test" naming convention '
       '(precise regex is %s)' % (node_name, test_name_regex))
 
-  suite_name = AddImplicitTestSuites(suite_name, node_name)
   ValidateTestSuiteNames(suite_name, node_name)
 
   AlwaysBuild(node)
