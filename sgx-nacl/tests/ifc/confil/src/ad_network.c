@@ -54,12 +54,12 @@ int main(int argc, char *argv[]) {
 
 	// data format idx sim0 sim1 sim2 sim3
 	while (fgets(buffer, BUFF_LEN, fp) != NULL) {
-		//printf("%s", buffer);
+		printf("%s", buffer);
 
 		line = strtok(buffer, " ");
 		i = atoi(line);
 		j = 0;
-		//printf("user: %d\n", user);
+		printf("user: %d\n", user);
 		while ((line = strtok(NULL, " "))!= NULL) {
 			product_sim = atoi(line);
 			cosine_sim[i][j++] = product_sim;
@@ -101,6 +101,7 @@ int main(int argc, char *argv[]) {
 
 	memcpy(&len, buffer, sizeof(len));
 	memcpy(profile, buffer+sizeof(len), len+1);
+
 
 	printf("%s\n", profile);
 	
