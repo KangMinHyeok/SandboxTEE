@@ -436,3 +436,244 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     return areas
 
 
+def generate_measurement(areas):
+
+    def do_ecreate(digest, size):
+        data = struct.pack("<8sLQ44s", "ECREATE", SSAFRAMESIZE/PAGESIZE, size, "")
+        digest.update(data)
+
+    def do_eadd(digest, offset, flags):
+        data = struct.pack("<8sQQ40s", "EADD", offset, flags, "")
+        digest.update(data)
+
+    def do_eextend(digest, offset):
+        data = struct.pack("<8sQ48s", "EEXTEND", offset, "")
+        digest.update(data)
+
+    class mrenclave_digest:
+        def __init__(self):
+            self.digest = hashlib.sha256()
+
+        def update(self, payload):
+            for er in range(0, len(payload), 64):
+                self.digest.update(payload[er:er+64])
+
+        def finalize(self):
+            return self.digest.digest()
+
+    mrenclave = mrenclave_digest()
+    # virtual memory size = 64GB
+    do_ecreate(mrenclave, 1024*1024*1024*64)
+
+    def print_area(addr, size, flags, desc, measured):
+        if flags & PAGEINFO_REG:
+            type = 'REG'
+        if flags & PAGEINFO_TCS:
+            type = 'TCS'
+        else:
+            type = 'REG'
+        prot = ['-', '-', '-']
+        if flags & PAGEINFO_R:
+            prot[0] = 'R'
+        if flags & PAGEINFO_W:
+            prot[1] = 'W'
+        if flags & PAGEINFO_X:
+            prot[2] = 'X'
+        prot = ''.join(prot)
+
+        desc = '(' + desc + ')'
+        if measured:
+            desc += ' measured'
+
+        if size == PAGESIZE:
+            print >>sys.stderr, "    %016x [%s:%s] %s" % (addr, type, prot, desc)
+        else:
+            print >>sys.stderr, "    %016x-%016lx [%s:%s] %s" % (addr, addr + size, type, prot, desc)
+
+    def load_file(digest, f, offset, addr, filesize, memsize, desc, flags, area):
+        f_addr = rounddown(offset)
+        m_addr = rounddown(addr)
+        f_size = roundup(offset + filesize) - f_addr
+        m_size = roundup(addr + memsize) - m_addr
+
+        print_area(m_addr, f_size, flags, desc, True)
+        if f_size < m_size:
+            print_area(m_addr + f_size, m_size - f_size, flags, "bss", False)
+
+        print (m_addr, m_size, flags)
+        for pg in range(m_addr, m_addr + m_size, PAGESIZE):
+            do_eadd(digest, pg, flags)
+            continue
+
+            if (pg >= m_addr + f_size):
+                continue
+
+            if (desc == "manifest" or area.desc == "exec"): #mkpark
+                continue
+
+            for er in range(pg, pg + PAGESIZE, 256):
+                do_eextend(digest, er)
+                start = er - m_addr + f_addr
+                end = start + 256
+                start_zero = ""
+                if start < offset:
+                    if offset - start >= 256:
+                        start_zero = chr(0) * 256
+                    else:
+                        start_zero = chr(0) * (offset - start)
+                end_zero = ""
+                if end > offset + filesize:
+                    if end - offset - filesize >= 256:
+                        end_zero = chr(0) * 256
+                    else:
+                        end_zero = chr(0) * (end - offset - filesize)
+                start += len(start_zero)
+                end -= len(end_zero)
+                if start < end:
+                    f.seek(start)
+                    data = f.read(end - start)
+                else:
+                    data = ""
+                if len(start_zero + data + end_zero) != 256:
+                    raise Exception("wrong calculation")
+                digest.update(start_zero + data + end_zero)
+
+    for area in areas:
+        if area.file:
+            with open(area.file, 'rb') as f:
+                if area.is_binary:
+                    print (area.addr)
+                    loadcmds = get_loadcmds(area.file)
+                    if loadcmds:
+                        mapaddr = 0xffffffffffffffff
+                        for (offset, addr, filesize, memsize, prot) in loadcmds:
+                            if rounddown(addr) < mapaddr:
+                                mapaddr = rounddown(addr)
+                    print ("1: ", area.addr, mapaddr)
+                    baseaddr = area.addr - mapaddr
+                    for (offset, addr, filesize, memsize, prot) in loadcmds:
+                        flags = area.flags
+                        if prot & 4:
+                            flags = flags | PAGEINFO_R
+                        if prot & 2:
+                            flags = flags | PAGEINFO_W
+                        if prot & 1:
+                            flags = flags | PAGEINFO_X
+
+                        if flags & PAGEINFO_X:
+                            desc = 'code'
+                        else:
+                            desc = 'data'
+                        print ("4")
+                        load_file(mrenclave, f, offset, baseaddr + addr,
+                                  filesize, memsize, desc, flags, area)
+                        print ("2")
+                else:
+                    load_file(mrenclave, f, 0, area.addr,
+                              os.stat(area.file).st_size, area.size,
+                              area.desc, area.flags, area)
+                    print ("2")
+        else:
+            for a in range(area.addr, area.addr + area.size, PAGESIZE):
+                do_eadd(mrenclave, a, area.flags)
+                '''
+                for er in range(a, a + PAGESIZE, 256):
+                    do_eextend(mrenclave, er)
+                    start_zero = chr(0) * 256
+                    mrenclave.update(start_zero)
+                '''
+            print_area(area.addr, area.size, area.flags, area.desc, False)
+
+    return mrenclave.finalize()
+
+""" Generate Sigstruct """
+
+def generate_sigstruct(mrenclave):
+    today = datetime.date.today()
+
+    # field format: (offset, type, value)
+    fields = dict()
+
+    fields['header']    = (   0, "<4L",  0x00000006, 0x000000e1, 0x00010000, 0x00000000)
+    fields['vendor']    = (  16, "<L",   0x00000000)
+    fields['date']      = (  20, "<HBB", today.year, today.month, today.day)
+    fields['header2']   = (  24, "<4L",  0x00000101, 0x00000060, 0x00000060, 0x00000001)
+    fields['swdefined'] = (  40, "<L",   0x00000000)
+
+    fields['miscs']     = ( 900, "4s",   attr['miscs'])
+    
+    fields['miscmask']  = ( 904, "4s",   attr['miscs'])
+    fields['attrs']     = ( 928, "8s8s", attr['flags'], attr['xfrms'])
+    fields['attrmask']  = ( 944, "8s8s", attr['flags'], attr['xfrms'])
+    fields['mrencalve'] = ( 960, "32s",  mrenclave) # different
+    fields['isvprodid'] = (1024, "<H",   attr['isvprodid'])
+    fields['isvsvn']    = (1026, "<H",   attr['isvsvn'])
+
+    sign_buffer = bytearray(128 + 128)
+
+    for key, field in fields.items():
+        if field[0] >= 900:
+            struct.pack_into(field[1], sign_buffer, field[0] - 900 + 128, *field[2:])
+        else:
+            struct.pack_into(field[1], sign_buffer, field[0], *field[2:])
+
+    #p = subprocess.Popen(['openssl', 'rsa', '-modulus', '-in', args['key'], '-noout'], stdout=subprocess.PIPE)
+    p = subprocess.Popen(['openssl', 'rsa', '-modulus', '-in', 'enclave-key.pem', '-noout'], stdout=subprocess.PIPE)
+
+    
+    modulus_out = p.communicate()[0]
+    
+    # print(modulus_out)
+    modulus = modulus_out[8:8+384*2].lower().decode('hex')
+    modulus = modulus[::-1]
+    # print(modulus)
+    # p = subprocess.Popen(['openssl', 'sha256', '-binary', '-sign', args['key']],
+    p = subprocess.Popen(['openssl', 'sha256', '-binary', '-sign', 'enclave-key.pem'],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    signature = p.communicate(sign_buffer)[0]
+    signature = signature[::-1]
+
+    def bytes_to_int(bytes):
+        i = 0
+        q = 1
+        for digit in bytes:
+            if ord(digit) != 0:
+                i = i + ord(digit) * q
+            q = q * 256
+        return i
+
+    def int_to_bytes(i):
+        b = ""
+        l = 0
+        while i > 0:
+            b = b + chr(i % 256)
+            i = i // 256
+            l = l + 1
+        return b
+
+    modulus_int = bytes_to_int(modulus)
+    signature_int = bytes_to_int(signature)
+
+    tmp1   = signature_int * signature_int
+    q1_int = tmp1 // modulus_int
+    tmp2   = tmp1 % modulus_int
+    q2_int = tmp2 * signature_int // modulus_int
+
+    q1 = int_to_bytes(q1_int)
+    q2 = int_to_bytes(q2_int)
+
+    fields['modulus']   = ( 128, "384s", modulus)
+    fields['exponent']  = ( 512, "<L",   3)
+    fields['signature'] = ( 516, "384s", signature) #different
+
+    fields['q1']        = (1040, "384s", q1) #different
+    fields['q2']        = (1424, "384s", q2) #different
+
+    buffer = bytearray(1808)
+    
+    for key, field in fields.items():
+        struct.pack_into(field[1], buffer, field[0], *field[2:])
+    
+    return buffer
+
+
