@@ -1,0 +1,300 @@
+#!/usr/bin/env python2
+
+import os
+import sys
+import struct
+import socket
+from google.protobuf import message as _message
+from Crypto.PublicKey import RSA
+import aesm_pb2
+
+""" Utilities """
+
+def int_to_bytes(i):
+    b = ""
+    l = 0
+    while i > 0:
+        b = b + chr(i % 256)
+        i = i // 256
+        l = l + 1
+    return b
+
+def bytes_to_int(b):
+    i = 0
+    for c in b:
+        i = i * 256 + ord(c)
+    return i
+
+
+""" Reading Sigstruct """
+
+def read_sigstruct(sig):
+    # field format: (offset, type, value)
+    fields = dict()
+    
+    fields['header']    = (   0, "<4L",  'a', 'b', 'c','d')
+    fields['vendor']    = (  16, "<L",   'vendor')
+    fields['date']      = (  20, "<HBB", 'year', 'month', 'day')
+    fields['header2']   = (  24, "<4L",  'e', 'f', 'g', 'h')
+    fields['swdefined'] = (  40, "<L",   'i')
+
+    fields['modulus']   = ( 128, "384s", 'modulus')
+    fields['exponent']  = ( 512, "<L",   'exponent')
+    fields['signature'] = ( 516, "384s", 'signature')
+
+    fields['miscs']     = ( 900, "4s",   'miscs')
+    fields['miscmask']  = ( 904, "4s",   'miscmask')
+    fields['isvfamilyid'] = (912, "<H",   'isvfamilyid')
+    fields['attrs']     = ( 928, "8s8s", 'flags', 'xfrms')
+    fields['attrmask']  = ( 944, "8s8s", 'flagmask', 'xfrmmask')
+    fields['mrencalve'] = ( 960, "32s",  'mrenclave')
+    fields['isvextprodid'] = (1008, "<H",   'isvextprodid')
+    fields['isvprodid'] = (1024, "<H",   'isvprodid')
+    fields['isvsvn']    = (1026, "<H",   'isvsvn')
+    
+    fields['q1']        = (1040, "384s", 'q1') #different
+    fields['q2']        = (1424, "384s", 'q2') #different
+    
+    attr = dict()
+
+    for key, field in fields.items():
+        print(key, field)
+        values = struct.unpack_from(field[1], sig, field[0])
+        
+        for i in range(len(values)):
+            attr[field[i + 2]] = values[i]
+            
+
+    
+    return attr
+
+""" Connect with AESMD """
+
+def connect_aesmd(attr):
+    req_msg = aesm_pb2.GetTokenReq()
+    req_msg.req.signature = attr['mrenclave']
+    req_msg.req.key = attr['modulus']
+    req_msg.req.attributes = attr['flags'] + attr['xfrms']
+    req_msg.req.timeout = 10000
+
+    req_msg_raw = req_msg.SerializeToString()
+
+    aesm_service = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    connected = False
+
+    # try to connect to the unnamed socket (for PSW 1.6 and 1.7)
+    if not connected:
+        try:
+            aesm_service.connect("\0sgx_aesm_socket_base" + "\0" * 87)
+            connected = True
+        except socket.error:
+            pass
+
+    # try to connect to the named socket (for PSW 1.8+)
+    if not connected:
+        try:
+            aesm_service.connect("/var/run/aesmd/aesm.socket")
+            connected = True
+        except socket.error:
+            pass
+
+    if not connected:
+        raise socket.error("Cannot connect to the AESMD service")
+
+    aesm_service.send(struct.pack("<I", len(req_msg_raw)))
+    aesm_service.send(req_msg_raw)
+
+    ret_msg_size = struct.unpack("<I", aesm_service.recv(4))[0]
+    ret_msg = aesm_pb2.GetTokenRet()
+    ret_msg_raw = aesm_service.recv(ret_msg_size)
+    ret_msg.ParseFromString(ret_msg_raw)
+
+    if ret_msg.ret.error != 0:
+        raise Exception("Failed. (Error Code = %d)" % (ret_msg.ret.error))
+
+    return ret_msg.ret.token
+
+""" Main Program """
+
+options = {
+#       Option name : (Required  Value)
+        'output':    (True,    'output'),
+        'sig':       (True,    'sigstruct file'),
+    }
+
+def usage():
+    usage_message = 'USAGE: ' + sys.argv[0] + ' -help|-h'
+
+    for opt, optval in options.items():
+        if not optval[0]:
+            usage_message += '['
+        usage_message += '|-' + opt
+        if optval[1]:
+            usage_message += ' <' + optval[1] + '>'
+        if not optval[0]:
+            usage_message += ']'
+
+    print >> sys.stderr, usage_message
+    os._exit(-1)
+
+def parse_args():
+    args = dict()
+    for opt, optval in options.items():
+        if optval[1] is None:
+            args[opt] = False
+
+    i = 1
+    while i < len(sys.argv):
+        got = sys.argv[i]
+
+        if got == '-help' or got == '-h':
+            usage()
+
+        invalid = True
+        for opt, optval in options.items():
+            if got != '-' + opt:
+                continue
+
+            if optval[1] is not None:
+                i += 1
+                if i == len(sys.argv):
+                    print >>sys.stderr, "Option %s needs a value." % (opt)
+                    usage()
+                args[opt] = sys.argv[i]
+            else:
+                args[opt] = True
+
+            invalid = False
+            break
+
+        if invalid:
+            print >>sys.stderr, "Unknown option: %s." % (got[1:])
+            usage()
+        i += 1
+
+    for opt, optval in options.items():
+        if optval[0] and opt not in args:
+            print >>sys.stderr, "Must specify %s <%s>." % (opt, optval[1])
+            usage()
+
+    return args
+
+if __name__ == "__main__":
+
+    # Parse arguments
+    args = parse_args()
+
+    f=open("out.txt",'wb')
+    def hexto8digit(hexto):
+        a = hex(int(hexto))[2:]
+
+        while(len(a)<8):
+            a='0'+a
+
+        return a[6:8]+a[4:6]+a[2:4]+a[0:2]
+
+    
+    attr = read_sigstruct(open(args['sig'], 'rb').read())
+
+    print >>sys.stderr, "Attributes:"
+    print >>sys.stderr, "    header: %s %s %s %s" % (hexto8digit(attr['a']),hexto8digit(attr['b']),hexto8digit(attr['c']),hexto8digit(attr['d']))
+    f.write(hexto8digit(attr['a'])+hexto8digit(attr['b'])+hexto8digit(attr['c'])+hexto8digit(attr['d']))
+
+    print >>sys.stderr, "    vendor: %s" % (hexto8digit(attr['vendor']))
+    f.write(hexto8digit(attr['vendor']))
+
+    print >>sys.stderr, "    date: %s" % (hexto8digit(str(attr['year'])+str(attr['month']).zfill(2)+str(attr['day'])))
+    f.write(hexto8digit(str(attr['year'])+str(attr['month']).zfill(2)+str(attr['day'])))
+
+    print >>sys.stderr, "    header2: %s %s %s %s" % (hexto8digit(attr['e']),hexto8digit(attr['f']),hexto8digit(attr['g']),hexto8digit(attr['h']))
+    f.write(hexto8digit(attr['e'])+hexto8digit(attr['f'])+hexto8digit(attr['g'])+hexto8digit(attr['h']))
+
+    print >>sys.stderr, "    swdefined : %s" % (hexto8digit(attr['i']))
+    f.write(hexto8digit(attr['i']))
+
+    print >>sys.stderr, "    reserve :"
+    for i in range(0,21):
+        print >>sys.stderr, " %s" % ("00000000")
+        f.write("00000000")
+
+    print >>sys.stderr, "    CET_ATTRIBUTES : 0000 or 0101 "
+    f.write("0000")
+
+    print >>sys.stderr, "    reserve : 0000"
+    f.write("0000")    
+
+    print >>sys.stderr, "    modulus:   %s..." % (attr['modulus'].encode('hex'))
+    # f.write("modulus is\n")
+    f.write(attr['modulus'].encode('hex'))
+    # f.write("\n")
+
+    print >>sys.stderr, "    exponent:  %s" % (hexto8digit(attr['exponent']))
+    f.write(hexto8digit(attr['exponent']))
+
+    print >>sys.stderr, "    signature: %s..." % (attr['signature'].encode('hex'))
+    # f.write("signature is\n")
+    f.write(attr['signature'].encode('hex'))
+    # f.write("\n")
+
+
+    print >>sys.stderr, "    miscselect:     %08x"  % (bytes_to_int(attr['miscs']))
+    temp = "%08x" % (bytes_to_int(attr['miscs']))
+    print("miscs temp is ")
+    print(temp)
+    f.write(temp)
+
+    print >>sys.stderr, "    miscmask:     %08x"  % (bytes_to_int(attr['miscmask']))
+    f.write("%08x" % bytes_to_int(attr['miscmask']))
+
+    print >>sys.stderr, "    isvfamilyid:    %032x" % ((attr['isvfamilyid']))
+    print("isvfamily temp is ")
+    temp = "%032x" % (attr['isvfamilyid'])
+    print(temp)
+    f.write(temp)
+
+    print >>sys.stderr, "    flags:     %016x" % (bytes_to_int(attr['flags']))
+    f.write("%016x" % bytes_to_int(attr['flags']))
+    print >>sys.stderr, "    xfrms:     %016x" % (bytes_to_int(attr['xfrms']))
+    f.write("%016x" % bytes_to_int(attr['xfrms']))
+
+
+    print >>sys.stderr, "    flagmask:     %016x" % (bytes_to_int(attr['flagmask']))
+    f.write("%016x" % bytes_to_int(attr['flagmask']))
+    print >>sys.stderr, "    xfrmmask:     %016x" % (bytes_to_int(attr['xfrmmask']))
+    f.write("%016x" % bytes_to_int(attr['xfrmmask']))
+
+    print >>sys.stderr, "    mrenclave: %s" % (attr['mrenclave'].encode('hex'))
+    f.write(attr['mrenclave'].encode('hex'))
+
+    print >>sys.stderr, "    reserve :"
+    for i in range(0,4):
+        print >>sys.stderr, " %s" % ("00000000")
+        f.write("00000000")
+
+    print >>sys.stderr, "    isvextprodid: %s" % (str(attr['isvextprodid']).zfill(32))
+    f.write(str(attr['isvextprodid']).zfill(32))
+
+    print >>sys.stderr, "    isvprodid: %s" % (str(attr['isvprodid']).zfill(4))
+    f.write(str(attr['isvprodid']).zfill(4))
+
+    print >>sys.stderr, "    isvsvn:    %s" % (str(attr['isvsvn']).zfill(4))
+    f.write(str(attr['isvsvn']).zfill(4))
+
+
+    print >>sys.stderr, "    reserve :"
+    for i in range(0,3):
+        print >>sys.stderr, " %s" % ("00000000")
+        f.write("00000000")
+    
+    
+    
+    print >>sys.stderr, "    q1: %s..." % (attr['q1'].encode('hex'))
+    # f.write("q1 is\n")
+    f.write(attr['q1'].encode('hex'))
+    # f.write("\n")
+    print >>sys.stderr, "    q2: %s..." % (attr['q2'].encode('hex'))
+    # f.write("q2 is\n")
+    f.write(attr['q2'].encode('hex'))
+    # f.write("\n")
+    token = connect_aesmd(attr)
+    open(args['output'], 'wb').write(token)
