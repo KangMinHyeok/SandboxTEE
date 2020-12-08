@@ -260,4 +260,179 @@ def get_trusted_children(manifest, args):
 
     return targets
 
+""" Populate Enclave Memory """
+
+PAGEINFO_R = 0x1
+PAGEINFO_W = 0x2
+PAGEINFO_X = 0x4
+PAGEINFO_TCS = 0x100
+PAGEINFO_UNVAL = 0x1000
+PAGEINFO_REG = 0x200
+
+def get_loadcmds(filename):
+    loadcmds = []
+    p = subprocess.Popen(['readelf', '-l', '-W', filename],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+    while True:
+        line = p.stdout.readline()
+        if line == '':
+            break
+        stripped = line.strip()
+        if not stripped.startswith('LOAD'):
+            continue
+        tokens = stripped.split()
+        if len(tokens) < 6:
+            continue
+        if len(tokens) >= 7 and tokens[7] == "E":
+            tokens[6] += tokens[7]
+        prot = 0
+        for t in tokens[6]:
+            if t == "R":
+                prot = prot | 4
+            if t == "W":
+                prot = prot | 2
+            if t == "E":
+                prot = prot | 1
+
+        loadcmds.append((int(tokens[1][2:], 16),  # offset
+                         int(tokens[2][2:], 16),  # addr
+                         int(tokens[4][2:], 16),  # filesize
+                         int(tokens[5][2:], 16),  # memsize
+                         prot))
+    p.wait()
+    if p.returncode != 0:
+        return None
+    return loadcmds
+
+class MemoryArea:
+    def __init__(self, desc, file=None, addr=None, size=None, flags=None):
+        self.desc = desc
+        self.file = file
+        self.addr = addr
+        self.size = size
+        self.flags = flags
+        self.is_binary = False
+
+        if file:
+            loadcmds = get_loadcmds(file)
+            print loadcmds
+            if loadcmds:
+                mapaddr = 0xffffffffffffffff
+                mapaddr_end = 0
+                for (offset, addr, filesize, memsize, prot) in loadcmds:
+                    if rounddown(addr) < mapaddr:
+                        mapaddr = rounddown(addr)
+                    if roundup(addr + memsize) > mapaddr_end:
+                        mapaddr_end = roundup(addr + memsize)
+
+                self.is_binary = True
+                self.size = mapaddr_end - mapaddr
+                if mapaddr >= 0:
+                    self.addr = mapaddr
+            else:
+                self.size = os.stat(file).st_size
+
+        if self.addr is not None:
+            self.addr = rounddown(self.addr)
+        if self.size is not None:
+            self.size = roundup(self.size)
+
+NACL_MAP_PAGESIZE = 65536
+
+#syseok : for page allocation
+def NaClTruncAllocPage(nbytes) :
+  return nbytes & ~(NACL_MAP_PAGESIZE - 1);
+
+
+def get_memory_areas(attr, args): # manifest, attr, args):
+    areas = []
+
+    # untrusted area: 4GG
+    addr_base = 0x100000000 
+    # NACL_TRAMPOLINE_START (==1<NACL_NULL_REGION_SHIFT; null area)
+    addr_tramp_start = 0x10000
+    size =  0x10000 # NACL_TRAMPOLINE_SIZE
+    areas.append(MemoryArea('trampoline', size=size,
+                            flags=PAGEINFO_R|PAGEINFO_X|PAGEINFO_REG, addr = addr_base + addr_tramp_start))
+
+
+    # Executable module's LOAD segments
+    loadlist = get_loadcmds(args['exec'])
+    segnum=0
+    # index: offset, addr, filesz, memsz, flags 
+    for segments in loadlist:
+        size = segments[0]+segments[3]-NaClTruncAllocPage(segments[0])
+        size = ((size/PAGESIZE)+1)*PAGESIZE
+
+        flag = PAGEINFO_REG        
+        flags = segments[4]
+        if(flags&4):
+            flag= flag|PAGEINFO_R
+        if(flags&2):
+            flag=flag|PAGEINFO_W
+        if(flags&1):
+            flag=flag|PAGEINFO_X
+
+        areas.append(MemoryArea("exec" + str(segnum), size = size,
+                            flags = flag, 
+                            addr = addr_base + NaClTruncAllocPage(segments[1])))                    
+        segnum += 1
+
+    hole_start = 0x1f0000000;
+    stack_start = 0x1ff000000;
+    areas.append(MemoryArea('hole', size = stack_start - hole_start,
+        flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
+        addr = hole_start));
+  
+    areas.append(MemoryArea('exec_stack', size= 0x1000000, 
+        flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
+        addr = stack_start))
+
+
+    size = (int((os.path.getsize(args['libsel']))/TCSSIZE)+1)*TCSSIZE
+
+    addr_index = 48*1024*1024*1024
+
+    print("libsel size is "+str(size))
+    areas.append(MemoryArea('libsel', file=args['libsel'], 
+        flags=PAGEINFO_REG, addr = addr_index))
+    addr_index += 0x20000000
+
+    size = ENCLAVE_STACK_SIZE
+    for t in range(attr['thread_num']):
+        areas.append(MemoryArea('stack', size= size,
+                            flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
+                            addr = addr_index))                    
+        addr_index += size
+
+    
+    size = size=attr['thread_num'] * PAGESIZE
+    areas.append(MemoryArea('tls', size=size,
+                           flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
+    addr_index += size
+
+
+    size = attr['thread_num'] * TCSSIZE # TCSSIZE == PAGESIZE
+    areas.append(MemoryArea('tcs', size = size,
+                            flags = PAGEINFO_TCS, addr = addr_index))
+    addr_index += size
+
+    size = attr['thread_num'] * SSAFRAMESIZE * SSAFRAMENUM
+    areas.append(MemoryArea('ssa', size = size,
+                            flags = PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
+    addr_index += size
+
+    # 
+    #     areas.append(MemoryArea('stack', size=ENCLAVE_STACK_SIZE,
+    #                             flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG))
+
+    # areas.append(MemoryArea('pal', file=args['libpal'], flags=PAGEINFO_REG))
+
+    # if 'exec' in args:
+    #     areas.append(MemoryArea('exec', file=args['exec'],
+    #                             flags=PAGEINFO_W|PAGEINFO_REG))
+    # return areas
+    return areas
+
 
