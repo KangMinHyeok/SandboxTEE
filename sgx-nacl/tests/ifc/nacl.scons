@@ -1,0 +1,103 @@
+# -*- python -*-
+# Copyright (c) 2020 The SandboxTEE Authors. All rights reserved.
+# Use of this source code is governed by a GPLv2 license that can be
+# found in the LICENSE file.
+
+
+Import('env')
+
+util_obj = env.ComponentObject('util.c')
+
+rtb_analyzer1_nexe = env.ComponentProgram('iitp',
+                                 ['iitp.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+
+rtb_analyzer1_nexe = env.ComponentProgram('rtb_analyzer1',
+                                 ['rtb_analyzer1.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+network_analyzer_nexe = env.ComponentProgram('network_analyzer',
+                                 ['network_analyzer.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+
+rtb_analyzer2_nexe = env.ComponentProgram('rtb_analyzer2',
+                                 ['rtb_analyzer2.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+rtb_dsp2_nexe = env.ComponentProgram('rtb_dsp2',
+                                 ['rtb_dsp2.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+rtb_dsp1_nexe = env.ComponentProgram('rtb_dsp1',
+                                 ['rtb_dsp1.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+rtb_ad_exchange_nexe = env.ComponentProgram('rtb_ad_exchange',
+                                 ['rtb_ad_exchange.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+
+rtb_ssp_nexe = env.ComponentProgram('rtb_ssp',
+                                 ['rtb_ssp.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+cf_ad_network_nexe = env.ComponentProgram('cf_ad_network',
+                                 ['cf_ad_network.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+dt_ad_network_nexe = env.ComponentProgram('dt_ad_network',
+                                 ['dt_ad_network.c', util_obj],
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+'''
+server_nexe = env.ComponentProgram('server',
+                                 'server.c',
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+
+client_nexe = env.ComponentProgram('client',
+                                 'client.c',
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+'''
+
+custom_nexe = env.ComponentProgram('custom',
+                                 'custom.c',
+                                 EXTRA_LIBS=['${IFC_LIBS}',
+                                             '${NONIRT_LIBS}'],
+                                 )
+
+node = env.CommandSelLdrTestNacl(
+    'custom_test.out',
+    custom_nexe,
+    stdout_golden=env.File('custom.stdout'),
+    )
+env.AddNodeToTestSuite(node,
+                       ['small_tests', 'sel_ldr_tests'],
+                       'run_custom_test')
+
+
