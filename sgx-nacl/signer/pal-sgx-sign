@@ -196,3 +196,68 @@ def get_enclave_attributes(manifest):
     return flags_raw, xfrms_raw, miscs_raw
 
 
+""" Generate Checksums / Measurement """
+
+def resolve_uri(uri, check_exist=True):
+    orig_uri = uri
+    if uri.startswith('file:'):
+        print(uri)
+        target = os.path.normpath(uri[5:])
+    else:
+        target = os.path.normpath(uri)
+    if check_exist and not os.path.exists(target):
+        raise Exception('Cannot resolve ' + orig_uri + ' or the file does not exist.')
+    return target
+
+def get_checksum(file):
+    digest = hashlib.sha256()
+    with open(file, 'rb') as f:
+        digest.update(f.read())
+    return digest.digest()
+
+def get_trusted_files(manifest, args):
+    targets = dict()
+
+    if 'exec' in args: # mkpark
+        targets['exec'] = (args['exec'], resolve_uri(args['exec']))
+
+    if 'loader.preload' in manifest:
+        i = 0
+        preloads = []
+        for uri in str.split(manifest['loader.preload'], ','):
+            targets['preload' + str(i)] = (uri, resolve_uri(uri))
+            preloads.append(uri)
+            i += 1
+
+    for (key, val) in manifest.items():
+        if not key.startswith('sgx.trusted_files.'):
+            continue
+        key = key[len('sgx.trusted_files.'):]
+        if key in targets:
+            raise Exception('repeated key in manifest: sgx.trusted_files.' + key)
+        targets[key] = (val, resolve_uri(val))
+
+    for (key, val) in targets.items():
+        (uri, target) = val
+        checksum = get_checksum(target).encode('hex')
+        targets[key] = (uri, target, checksum)
+
+    return targets
+
+def get_trusted_children(manifest, args):
+    targets = dict()
+
+    for (key, val) in manifest.items():
+        if not key.startswith('sgx.trusted_children.'):
+            continue
+        key = key[len('sgx.trusted_children.'):]
+        if key in targets:
+            raise Exception('repeated key in manifest: sgx.trusted_children.' + key)
+
+        target = resolve_uri(val)
+        sig = open(target, 'rb').read()[960:992].encode('hex')
+        targets[key] = (val, target, sig)
+
+    return targets
+
+
