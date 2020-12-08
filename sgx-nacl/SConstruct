@@ -3331,6 +3331,9 @@ if nacl_env in selected_envs:
 if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
+selected_envs.append(sgx_env)
+
+
 DumpEnvironmentInfo(selected_envs)
 LinkTrustedEnv(selected_envs)
 
