@@ -2231,6 +2231,23 @@ def MakeTrustedLinuxEnv(platform=None):
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
 
+
+# mkpark: sgx_env
+# Makes a SGX nacl environment inside enclave
+# First, I'll start with validator module
+# TODO remove the above comment after nacl validator
+def MakeSGXEnv():
+  # MakeArchSpecificEnv start
+  
+  sgx_env = pre_base_env.Clone(
+        BUILD_TYPE = 'sgx-linux',
+        BUILD_TYPE_DESCRIPTION = 'Linux SGX build',
+        tools = ['target_platform_sgx'] ,
+        #LINK = '$CXX', # g++..?,
+        #COMPONENT_STATIC=False,
+        #CC = '$CXX', # c compiler -> which incurs errors (from warnings) 
+  )
+
 def BiasedBitcodeFlags(env):
   """ Return clang flags to use biased bitcode and generate native-ABI-compliant
       code. Does not imply pre-translation.
