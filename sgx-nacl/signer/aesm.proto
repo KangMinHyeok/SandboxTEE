@@ -1,0 +1,11 @@
+message GetTokenReqRaw {
+}
+
+message GetTokenReq {
+}
+
+message GetTokenRetRaw {
+}
+
+message GetTokenRet {
+}
