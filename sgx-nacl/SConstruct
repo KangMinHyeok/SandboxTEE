@@ -2247,6 +2247,13 @@ def MakeSGXEnv():
         #COMPONENT_STATIC=False,
         #CC = '$CXX', # c compiler -> which incurs errors (from warnings) 
   )
+  platform = GetTargetPlatform()
+  arch = pynacl.platform.GetArch(platform)
+  if pynacl.platform.IsArch64Bit(platform):
+    subarch = '64'
+  else:
+    subarch = '32'
+  
 
 def BiasedBitcodeFlags(env):
   """ Return clang flags to use biased bitcode and generate native-ABI-compliant
