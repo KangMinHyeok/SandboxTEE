@@ -1,0 +1,256 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{cite}
+\usepackage{framed}
+\usepackage{a4wide}
+\usepackage{float}
+\usepackage{epsfig}
+\usepackage{longtable}
+\usepackage{enumerate}
+\usepackage{afterpage}
+\usepackage{multirow}
+\usepackage{ragged2e}
+\usepackage{gensymb}
+\usepackage{amsfonts} 
+\usepackage[left=3.5cm,top=1.5cm,right=3cm,bottom=4cm]{geometry}
+\usepackage{setspace}           
+\usepackage{float}
+\usepackage{txfonts}
+\usepackage{lipsum}
+
+\newcommand{\Usefont}[1]{\fontfamily{#1}\selectfont}
+
+\usepackage{lscape} % for landscape tables
+\renewcommand{\baselinestretch}{1.7} 
+
+\usepackage{blindtext}
+\usepackage{xpatch}
+\usepackage{url}
+\usepackage{leqno}
+\usepackage{subcaption}
+
+\linespread{1.5}
+\usepackage[intoc, english]{nomencl}
+\hyphenpenalty=5000
+\tolerance=1000
+\usepackage[nottoc]{tocbibind}
+\bibliographystyle{IEEEtran}
+\renewcommand{\bibname}{References}
+
+%*******************************************************************
+%                        Header and Footer   
+% This is not required in Technical reports submitted to CET ECE department.
+% Please leave it commented                       
+%*******************************************************************
+%\pagestyle{fancy}
+%\fancyhead{}
+%\header and footer section
+%\renewcommand\headrulewidth{0.1pt}
+%\fancyhead[L]{\footnotesize \leftmark}
+%\fancyhead[R]{\footnotesize \thepage}
+%\renewcommand\headrulewidth{0pt}
+%\fancyfoot[R]{\small College of Engineering Trivandrum}
+%\renewcommand\footrulewidth{0.1pt}
+%\fancyfoot[C]{2020 - 2021}
+%\fancyfoot[L]{\small Title of the Seminar/Project}
+%*******************************************************************
+
+
+%*********************Figures*****************************
+% Save all figures in the folder figures and include them in your 
+% report using the command \includegraphics{figure-name}
+
+\graphicspath{{figures/}}
+
+% figure files can be in jpeg,jpg, png or pdf formats
+%*******************************************************************
+
+
+\begin{document}
+    
+    
+%****The entries in this section are to be filled in by the student with appropriate values *************
+
+% These values are used thoroughout the report 
+% please fill in the appropriate values
+
+\gdef \title{How to prepare a Technical report using \LaTeX } % Seminar title
+\gdef \author{Student Name}  %student name
+\gdef \dept{Electronics and Communication Engineering} %Department
+\gdef \degree{Bachelor of Technology} %degree
+\gdef \branch{Electronics and Communication Engineering} %branch
+\gdef \college{College of Engineering}
+\gdef \collegeplace{Trivandrum}
+\gdef \rollno{TVE17EC0XY} %KTU Reg No
+\gdef \deptabbr{Dept.of ECE} %Dept name abbreviation
+
+\gdef \guide{Prof. Seminar guide} %Seminar guide
+\gdef \guidedes{Assistant Professor}%Seminar guide designation
+
+\gdef \semcordinatorA{Prof. Joaquim Ignatious M.}% Seminar coordinator 1 
+\gdef \semcordinatorAdes{Assistant Professor}% Seminar coordinator 1 designation
+
+\gdef \semcordinatorB{Prof. Seminar coordinator 2} % Seminar coordinator 2 
+\gdef \semcordinatorBdes{Assistant Professor}% Seminar coordinator 2 designation
+
+\gdef \hod{Dr. Santhosh Kumar S.} %Head of Department
+\gdef \hoddes{Professor and Head} %HOD designation
+
+\gdef \acadyear{2020 - 21} % Academic year
+\gdef \month{November 2020} %Month of Report submission
+\gdef \date{21-11-2020} %Date of signing the declaration
+
+%*******************************************************************
+% The font pages. The source tex files are there in the folder
+\include{coverpage} %Unless essential Do not edit this tex file
+
+
+
+%%********************Certificate*******************
+
+% To print name of only the seminar coordinator 1 in the certificate page
+\include{certificate1} 
+
+% To print names of both the seminar coordinators in the certificate page
+%\include{certificate2} %Please uncomment this and comment the previous line
+
+%%***************************************************
+
+
+\include{declaration} %Unless essential Do not edit this tex file
+
+\pagenumbering{roman} 
+
+%%********************************Abstract***********************
+\include{abstract} % Please type in the abstract in this tex file abstract.tex
+
+%%***************************************************
+% Default Acknowledgement page
+\include{acknowledgement}  %Unless essential Do not edit this tex file
+
+
+%%***************************************************
+%%**If you have only one seminar coordinator faculty member
+% please comment the above line and uncomment this line
+
+%\include{acknowledgement1}  %Unless essential Do not edit this tex file
+%*******************************************************************
+
+\thispagestyle{empty}
+\newpage
+    
+%%**********************Table of Contents***********************
+\tableofcontents
+\listoffigures
+\listoftables
+\include{symbol} %List of Symbols (Optional) comment if not required.
+% symbold may be added in the file symbol.tex
+
+%%********************Body of the report**********
+% Arabic numbering is used in the body of the report
+
+\cleardoublepage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+%%********************Chapter 1**********
+\chapter{Introduction}
+\lipsum[1] % Please comment this line and type in the introduction chapter
+
+%%********************Chapter 2**********
+\chapter{Literature Review}
+Technical writing is writing or drafting technical communication used in technical and occupational fields\cite{india}, such as computer hardware and software\cite{rpi}, engineering, chemistry, aeronautics, robotics, finance\cite{japan}, medical, consumer electronics, biotechnology, and forestry. Technical writing encompasses the largest sub-field in technical communication. See figure \ref{net2} that shows the autonomous systems in Internet.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{ospf}
+    \caption{Autonomous System Hierarchy}
+    \label{net2}
+\end{figure}
+
+\section{section1}
+\lipsum[2] % Please comment this line and type in the introduction chapter
+
+
+\subsection{title 2}
+\lipsum[3] % Please comment this line and type in the introduction chapter
+
+\noindent The system is described by the equation \ref{sys_eq1} below. Here y is the ordinate and x is the abscissa , m is the slope and c a constant.
+
+\begin{equation} \label{sys_eq1}
+y = mx + c
+\end{equation}
+\noindent Page centered and unnumbered multiple equations. The * symbol supresses equation numbering.
+% Page centered and unnumbered equations
+\begin{align*}
+2x - 5y &=  8 \\ 
+3x + 9y &=  -12
+\end{align*}
+
+\noindent Side by side figures can be created using this environment. See fig \ref{wave} below.
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{sinewave}
+        \caption{Sine Wave}
+        \label{fig:1}
+    \end{subfigure}
+    \hspace{20mm}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[width=\linewidth]{cosine}
+        \caption{Cosine Wave}
+        \label{fig:2}
+    \end{subfigure}
+\caption{The Sine and Cosine waves}
+\label{wave}
+\end{figure}
+
+%%********************Chapter 3**********
+\chapter{Results}
+\lipsum[5-7] % Please comment this line and type in the results chapter
+    
+\begin{table}[h!]
+    \centering
+    \caption{test table}
+    \vspace*{5pt}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Sl. No & Item 1 & Itm 2 \\ \hline
+        1      & 37     & 45    \\ \hline
+        2      & 42     & 23    \\ \hline
+        3      & 47     & 1     \\ \hline
+        4      & 52     & -21   \\ \hline
+        5      & 57     & -43   \\ \hline
+        6      & 62     & -65   \\ \hline
+        7      & 67     & -87   \\ \hline
+        8      & 72     & -109  \\ \hline
+        9      & 77     & -131  \\ \hline
+        10     & 82     & -153  \\ \hline
+    \end{tabular}
+\end{table}
+
+%%********************Chapter 4**********
+\chapter{Conclusion}
+\lipsum[2] 
+
+%%********************References**********
+%%****This template uses IEEE bibliography style
+
+ \begin{thebibliography}{99}
+    \bibitem{india} HU, Yun Chao, et al., \emph{Mobile edge computing?A key technology
+        towards 5G}, ETSI white paper, 2015, vol. 11, no 11, p. 1-16.
+    
+    
+    \bibitem{rpi}
+    @online{ Raspberry pi,
+        \url{https://www.raspberrypi.org/}
+        Online; accessed 10-June-2019
+    }
+    
+    \bibitem{japan} HU, Yun Chao, et al., \emph{Mobile edge computing?A key technology
+        towards 5G}, ETSI white paper, 2015, vol. 11, no 11, p. 1-16.       
+\end{thebibliography}
+
+\end{document}
