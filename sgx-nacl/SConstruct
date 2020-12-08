@@ -628,45 +628,6 @@ nacl_glibc_skiplist = set([
     ])
 nacl_glibc_skiplist.update(['%s_irt' % test for test in nacl_glibc_skiplist])
 
-# Whitelist of tests to run for Non-SFI Mode.  Note that typos here will
-# not be caught automatically!
-# TODO(mseaborn): Eventually we should run all of small_tests instead of
-# this whitelist.
-nonsfi_test_whitelist = set([
-    'run_arm_float_abi_test',
-    'run_clock_get_test',
-    'run_clone_test',
-    'run_directory_test',
-    'run_dup_test',
-    'run_example_irt_caller_test',
-    'run_exception_test',
-    'run_fcntl_test',
-    'run_file_descriptor_test',
-    'run_float_test',
-    'run_fork_test',
-    'run_getpid_test',
-    'run_hello_world_test',
-    'run_icache_test',
-    'run_irt_futex_test',
-    'run_malloc_realloc_calloc_free_test',
-    'run_mmap_test',
-    'run_nanosleep_test',
-    'run_nonsfi_syscall_test',
-    'run_prctl_test',
-    'run_printf_test',
-    'run_pwrite_test',
-    'run_random_test',
-    'run_rlimit_test',
-    'run_sigaction_test',
-    'run_signal_sigbus_test',
-    'run_signal_test',
-    'run_socket_test',
-    'run_stack_alignment_asm_test',
-    'run_stack_alignment_test',
-    'run_syscall_test',
-    'run_thread_test',
-    'run_user_async_signal_test',
-    ])
 
 
 # If a test is not in one of these suites, it will probally not be run on a
@@ -688,8 +649,6 @@ MAJOR_TEST_SUITES = set([
   'ncval_testing',
   # Environment for validator difference testing
   'validator_diff_tests',
-  # Subset of tests enabled for Non-SFI Mode.
-  'nonsfi_tests',
 ])
 
 # These are the test suites we know exist, but aren't run on a regular basis.
@@ -838,12 +797,6 @@ def ShouldSkipTest(env, node_name):
   return False
 
 pre_base_env.AddMethod(ShouldSkipTest)
-
-
-def AddImplicitTestSuites(suite_list, node_name):
-  if node_name in nonsfi_test_whitelist:
-    suite_list = suite_list + ['nonsfi_tests']
-  return suite_list
 
 
 def AddNodeToTestSuite(env, node, suite_name, node_name, is_broken=False,
@@ -1239,18 +1192,6 @@ def AddBootstrap(env, executable, args):
 pre_base_env.AddMethod(AddBootstrap)
 
 
-def GetNonSfiLoader(env):
-  if env.Bit('use_newlib_nonsfi_loader'):
-    return nacl_env.GetTranslatedNexe(nacl_env.File(
-        '${STAGING_DIR}/${PROGPREFIX}nonsfi_loader${PROGSUFFIX}'))
-
-  if 'TRUSTED_ENV' not in env:
-    return None
-  return env['TRUSTED_ENV'].File(
-      '${STAGING_DIR}/${PROGPREFIX}nonsfi_loader${PROGSUFFIX}')
-
-pre_base_env.AddMethod(GetNonSfiLoader)
-
 
 def GetIrtNexe(env, chrome_irt=False):
   image = ARGUMENTS.get('force_irt')
@@ -1529,10 +1470,7 @@ def CommandSelLdrTestNacl(env, name, nexe,
     return env.CommandTest(name, command, size, **extra)
 
   if loader is None:
-    if env.Bit('nonsfi_nacl'):
-      loader = env.GetNonSfiLoader()
-    else:
-      loader = env.GetSelLdr()
+    loader = env.GetSelLdr()
     if loader is None:
       print 'WARNING: no sel_ldr found. Skipping test %s' % name
       return []
@@ -1602,12 +1540,7 @@ def CommandSelLdrTestNacl(env, name, nexe,
   else:
     loader_cmd = env.AddBootstrap(loader, [])
 
-  if env.Bit('nonsfi_nacl'):
-    # nonsfi_loader does not accept the same flags as sel_ldr yet, so
-    # we ignore sel_ldr_flags here.
-    command = [loader] + command
-  else:
-    command = loader_cmd + sel_ldr_flags + ['--'] + command
+  command = loader_cmd + sel_ldr_flags + ['--'] + command
 
   if env.Bit('host_linux'):
     extra['using_nacl_signal_handler'] = True
@@ -2068,8 +2001,8 @@ def MakeBaseTrustedEnv(platform=None):
       # KEEP THIS SORTED PLEASE
       'build/package_version/build.scons',
       'pynacl/build.scons',
-      'src/nonsfi/irt/build.scons',
-      'src/nonsfi/loader/build.scons',
+      #'src/nonsfi/irt/build.scons',
+      #'src/nonsfi/loader/build.scons',
       'src/shared/gio/build.scons',
       'src/shared/imc/build.scons',
       'src/shared/platform/build.scons',
@@ -2878,8 +2811,7 @@ def AllowInlineAssembly(env):
     # with PNaCl/Clang at all.
     #
     # For Non-SFI NaCl we use inline assembly in PNaCl/Clang.
-    if not (env.Bit('build_arm') or env.Bit('build_mips32')
-            or env.Bit('nonsfi_nacl')):
+    if not (env.Bit('nonsfi_nacl')):
       return False
     # Inline assembly does not work in pexes.
     if env.Bit('pnacl_generate_pexe'):
@@ -3111,9 +3043,9 @@ if not nacl_env.Bit('nacl_glibc'):
 nacl_env.Append(
     BUILD_SCONSCRIPTS = [
     ####  ALPHABETICALLY SORTED ####
-    'src/nonsfi/irt/build.scons',
-    'src/nonsfi/linux/nacl.scons',
-    'src/nonsfi/loader/build.scons',
+    #'src/nonsfi/irt/build.scons',
+    #'src/nonsfi/linux/nacl.scons',
+    #'src/nonsfi/loader/build.scons',
     'src/shared/gio/nacl.scons',
     'src/shared/imc/nacl.scons',
     'src/shared/platform/nacl.scons',
@@ -3192,7 +3124,7 @@ irt_variant_tests = [
     'tests/mmap_race_protect/nacl.scons',
     'tests/nacl_log/nacl.scons',
     'tests/nanosleep/nacl.scons',
-    'tests/nonsfi/nacl.scons',
+    #'tests/nonsfi/nacl.scons',
     'tests/noop/nacl.scons',
     'tests/nrd_xfer/nacl.scons',
     'tests/nthread_nice/nacl.scons',
