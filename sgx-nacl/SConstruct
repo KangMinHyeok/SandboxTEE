@@ -880,13 +880,10 @@ DeclareBit('build_x86_64', 'Building binaries for the x86-64 architecture',
            exclusive_groups='build_arch')
 DeclareBit('build_mips32', 'Building binaries for the MIPS architecture',
            exclusive_groups='build_arch')
-DeclareBit('build_arm_arm', 'Building binaries for the ARM architecture',
-           exclusive_groups='build_arch')
 
 # Shorthand for either the 32 or 64 bit version of x86.
 DeclareBit('build_x86', 'Building binaries for the x86 architecture')
 
-DeclareBit('build_arm', 'Building binaries for the arm architecture')
 
 
 def MakeArchSpecificEnv(platform=None):
@@ -911,8 +908,6 @@ def MakeArchSpecificEnv(platform=None):
 
   if env.Bit('build_x86_32') or env.Bit('build_x86_64'):
     env.SetBits('build_x86')
-  if env.Bit('build_arm_arm'):
-    env.SetBits('build_arm')
 
   env.Replace(BUILD_ISA_NAME=platform)
 
@@ -994,12 +989,7 @@ def GetValidator(env, validator):
 
   # TODO(shyamsundarr): rename ncval_new to ncval.
   if validator is None:
-    if env.Bit('build_arm'):
-      validator = 'arm-ncval-core'
-    elif env.Bit('build_mips32'):
-      validator = 'mips-ncval-core'
-    else:
-      validator = 'ncval_new'
+    validator = 'ncval_new'
 
   trusted_env = env['TRUSTED_ENV']
   return trusted_env.File('${STAGING_DIR}/${PROGPREFIX}%s${PROGSUFFIX}' %
