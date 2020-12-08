@@ -1452,12 +1452,6 @@ def CommandSelLdrTestNacl(env, name, nexe,
                    os.path.dirname(env.subst('${NACL_SDK_LIB}'))] + command
         sel_ldr_flags.extend(['-E', 'LD_LIBRARY_PATH=' + library_path])
 
-  # Turn off sandbox for mac so coverage files can be written out.
-  if ('TRUSTED_ENV' in env and
-      env['TRUSTED_ENV'].Bit('coverage_enabled') and
-      env.Bit('host_mac') and
-      '-a' not in sel_ldr_flags):
-    sel_ldr_flags += ['-a']
 
   if env.Bit('tests_use_irt'):
     sel_ldr_flags += ['-B', nacl_env.GetIrtNexe()]
@@ -1605,12 +1599,6 @@ def CommandTest(env, name, command, size='small', direct_emulation=True,
     # codes for some tests.
     asan_options.append('abort_on_error=0')
 
-    if env.Bit('host_mac') and int(platform.mac_ver()[0].split('.')[1]) < 7:
-      # MacOS 10.6 has a bug in the libsandbox system library where it
-      # makes a memcmp call that reads off the end of a malloc'd block.
-      # The bug appears to be harmless, but trips an ASan report.  So
-      # tell ASan to suppress memcmp checks.
-      asan_options.append('strict_memcmp=0')
     # TODO(mcgrathr): Remove this when we clean up all the crufty old
     # code to be leak-free.
     # https://code.google.com/p/nativeclient/issues/detail?id=3874
@@ -1845,9 +1833,6 @@ def CustomCommandPrinter(cmd, targets, source, env):
     # The SCons default (copied from print_cmd_line in Action.py)
     sys.stdout.write(cmd + u'\n')
 
-if 'generate_ninja' not in ARGUMENTS:
-  pre_base_env.Append(PRINT_CMD_LINE_FUNC=CustomCommandPrinter)
-
 
 def GetAbsDirArg(env, argument, target):
   """Fetch the named command-line argument and turn it into an absolute
@@ -1900,7 +1885,7 @@ pre_base_env.AddMethod(MakeGTestEnv)
 
 def MakeUntrustedNativeEnv(env):
   native_env = nacl_env.Clone()
-  if native_env.Bit('bitcode') and not native_env.Bit('build_mips32'):
+  if native_env.Bit('bitcode'):
     native_env = native_env.PNaClGetNNaClEnv()
   return native_env
 
@@ -1942,7 +1927,7 @@ def MakeBaseTrustedEnv(platform=None):
       'src/trusted/nacl_base/build.scons',
       'src/trusted/perf_counter/build.scons',
       'src/trusted/platform_qualify/build.scons',
-      'src/trusted/seccomp_bpf/build.scons',
+      #'src/trusted/seccomp_bpf/build.scons',
       'src/trusted/service_runtime/build.scons',
       'src/trusted/validator/build.scons',
       'src/trusted/validator/driver/build.scons',
@@ -1952,7 +1937,7 @@ def MakeBaseTrustedEnv(platform=None):
       'tests/lock_manager/build.scons',
       'tests/performance/build.scons',
       'tests/python_version/build.scons',
-      'tests/sel_ldr_seccomp/build.scons',
+      #'tests/sel_ldr_seccomp/build.scons',
       'tests/tools/build.scons',
       'tests/unittests/shared/imc/build.scons',
       'tests/unittests/shared/platform/build.scons',
@@ -1973,7 +1958,7 @@ def MakeBaseTrustedEnv(platform=None):
   #        'src/trusted/validator_mips/build.scons',
   #      ])
 
-  base_env.AddChromeFilesFromGroup('trusted_scons_files')
+  #base_env.AddChromeFilesFromGroup('trusted_scons_files')
 
   base_env.Replace(
       NACL_BUILD_FAMILY = 'TRUSTED',
@@ -2049,25 +2034,7 @@ def SetUpClang(env):
                            '-gline-tables-only',
                            '-fno-omit-frame-pointer',
                            '-DADDRESS_SANITIZER'])
-    if env.Bit('host_mac'):
-      # The built executables will try to find this library at runtime
-      # in the directory containing the executable itself.  In the
-      # Chromium build, the library just gets copied into that
-      # directory.  Here, there isn't a single directory from which
-      # all the test binaries are run (sel_ldr is run from staging/
-      # but other trusted test binaries are run from their respective
-      # obj/.../ directories).  So instead just point the dynamic linker
-      # at the right directory using an environment variable.
-      # Be sure to check and update clang_lib_version whenever updating
-      # tools/clang revs in DEPS.
-      clang_lib_version = '4.0.0'
-      clang_lib_dir = str(env.Dir('${CLANG_DIR}/../lib/clang/%s/lib/darwin' %
-                                  clang_lib_version).abspath)
-      env['ENV']['DYLD_LIBRARY_PATH'] = clang_lib_dir
-      if 'PROPAGATE_ENV' not in env:
-        env['PROPAGATE_ENV'] = []
-      env['PROPAGATE_ENV'].append('DYLD_LIBRARY_PATH')
-
+    
   if env.Bit('msan'):
     if not env.Bit('host_linux') or not env.Bit('build_x86_64'):
       raise UserError('ERROR: MSan is only available for x86-64 Linux')
@@ -2125,65 +2092,6 @@ The optional target argument overrides the setting of what that target is."""
     install_node = env.InstallAs(os.path.join(dir, output_name), node)
     env.Alias('install_bin', install_node)
 
-
-def MakeWindowsEnv(platform=None):
-  base_env = MakeBaseTrustedEnv(platform)
-  windows_env = base_env.Clone(
-      BUILD_TYPE = '${OPTIMIZATION_LEVEL}-win',
-      BUILD_TYPE_DESCRIPTION = 'Windows ${OPTIMIZATION_LEVEL} build',
-      tools = ['target_platform_windows'],
-      # Windows /SAFESEH linking requires either an .sxdata section be
-      # present or that @feat.00 be defined as a local, absolute symbol
-      # with an odd value.
-      ASCOM = ('$ASPPCOM /E /D__ASSEMBLER__ | '
-               '$WINASM -defsym @feat.00=1 -o $TARGET'),
-      PDB = '${TARGET.base}.pdb',
-      # Strict doesn't currently work for Windows since some of the system
-      # libraries like wsock32 are magical.
-      LIBS_STRICT = False,
-      TARGET_ARCH='x86_64' if base_env.Bit('build_x86_64') else 'x86',
-  )
-
-  windows_env.Append(
-      CPPDEFINES = [
-          ['_WIN32_WINNT', '0x0501'],
-          ['__STDC_LIMIT_MACROS', '1'],
-          ['NOMINMAX', '1'],
-          # WIN32 is used by ppapi
-          ['WIN32', '1'],
-          # WIN32_LEAN_AND_MEAN tells windows.h to omit obsolete and rarely
-          # used #include files. This allows use of Winsock 2.0 which otherwise
-          # would conflict with Winsock 1.x included by windows.h.
-          ['WIN32_LEAN_AND_MEAN', ''],
-      ],
-      LIBS = ['ws2_32', 'advapi32'],
-      # TODO(bsy) remove 4355 once cross-repo
-      # NACL_ALLOW_THIS_IN_INITIALIZER_LIST changes go in.
-      CCFLAGS = ['/EHsc', '/WX', '/wd4355', '/wd4800']
-  )
-
-  # This linker option allows us to ensure our builds are compatible with
-  # Chromium, which uses it.
-  if windows_env.Bit('build_x86_32'):
-    windows_env.Append(LINKFLAGS = "/safeseh")
-
-  # We use the GNU assembler (gas) on Windows so that we can use the
-  # same .S assembly files on all platforms.  Microsoft's assembler uses
-  # a completely different syntax for x86 code.
-  if windows_env.Bit('build_x86_64'):
-    # This assembler only works for x86-64 code.
-    windows_env['WINASM'] = \
-        windows_env.File('$SOURCE_ROOT/third_party/mingw-w64/mingw/bin/'
-                         'x86_64-w64-mingw32-as.exe').abspath
-  else:
-    # This assembler only works for x86-32 code.
-    windows_env['WINASM'] = \
-        windows_env.File('$SOURCE_ROOT/third_party/gnu_binutils/files/'
-                         'as').abspath
-  return windows_env
-
-(windows_debug_env,
- windows_optimized_env) = GenerateOptimizationLevels(MakeWindowsEnv())
 
 def MakeUnixLikeEnv(platform=None):
   unix_like_env = MakeBaseTrustedEnv(platform)
