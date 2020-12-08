@@ -3341,11 +3341,6 @@ LinkTrustedEnv(selected_envs)
 dbg_build_env, opt_build_env = GenerateOptimizationLevels(MakeBuildEnv())
 LinkBuildEnv(selected_envs)
 
-# This must happen after LinkTrustedEnv, since that is where TRUSTED_ENV
-# is finally set, and env.UsingEmulator() checks TRUSTED_ENV for the emulator.
-# This must also happen before BuildEnvironments.
-PnaclSetEmulatorForSandboxedTranslator(selected_envs)
-
 BuildEnvironments(selected_envs)
 
 # Change default to build everything, but not run tests.
