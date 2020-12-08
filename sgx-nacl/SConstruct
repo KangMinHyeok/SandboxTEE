@@ -3349,7 +3349,8 @@ PnaclSetEmulatorForSandboxedTranslator(selected_envs)
 BuildEnvironments(selected_envs)
 
 # Change default to build everything, but not run tests.
-Default(['all_programs', 'all_bundles', 'all_test_programs', 'all_libraries'])
+# mkpark: 'all_bundles': mac?
+Default(['all_programs', 'all_test_programs', 'all_libraries'])
 
 
 # Sanity check whether we are ready to build nacl modules
