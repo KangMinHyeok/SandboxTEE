@@ -14,4 +14,6 @@ export NACL_HOME=$HOME/pave/depot_tools/native_client/
 
 ./pal-sgx-sign -key enclave-key.pem -manifest hello.manifest.sgx -output sample2.sig -libsel $NACL_HOME/scons-out/sgx-linux-x86-64/staging/libsgx_entry.so -exec $1
 ./pal-sgx-get-token -output sample2.token -sig sample2.sig
+cp sample2.sig ~/pave/depot_tools/native_client/src/trusted/sgxlib/
+cp sample2.token ~/pave/depot_tools/native_client/src/trusted/sgxlib/
 
