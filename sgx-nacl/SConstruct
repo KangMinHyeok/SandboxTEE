@@ -2334,6 +2334,73 @@ def MakeSGXEnv():
   
 
 
+  # --------------------------------------
+  # --- compile and link flag settings ---
+  # --------------------------------------
+
+  sgx_env.Replace(SGX_SDK='/opt/intel/sgxsdk')
+  # COMPILE FLAGS
+  common_flags = [
+          '-Wall', '-Wextra', 
+          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
+          '-Werror-implicit-function-declaration', '-Wstrict-prototypes',
+          # the below line is reuiqred for the error
+          #'-pedantic', '-Wno-variadic-macros',
+          # '-Werror', 
+          '-ffunction-sections',
+          '-fdata-sections',
+          '-g',
+          #'-fstack-protector-strong', # https://stackoverflow.com/questions/1629685/when-and-how-to-use-gccs-stack-protection-feature,
+          # The ARM toolchain has a linker that doesn't handle the code its
+          # compiler generates under -fPIE.
+          '-fPIE', # was only in CCFLAGS.. but
+          '-D__linux__',
+          '-DPAVE',
+          '-DCRYPTO_USE_MBEDTLS', '-DDEBUG',
+          '-DIN_ENCLAVE',
+          # '-I/home/syseok/wolfssl',
+          # '-I/home/syseok/wolfssl/wolfcrypt',
+          # '-malign-double',
+          #'-pedantic', # TODO check
+          # '-fpermissive',
+          '-DWOLFSSL_SGX_ATTESTATION', '-DWOLFSSL_ALWAYS_VERIFY_CB',
+          '-DKEEP_PEER_CERT','-DNO_INLINE',
+          '-fno-builtin',
+          '-fno-stack-protector', # show options to hide warning
+          '-fdiagnostics-show-option', # show options to hide warning
+          '-fvisibility=hidden' # hide symbol for so see https://stackoverflow.com/questions/2222162/how-to-apply-fvisibility-option-to-symbols-in-static-libraries
+        # TODO check below
+  ] + ['--param', 'ssp-buffer-size=4']
+
+  sgx_include = [
+          '-I${SGX_SDK}/include/', 
+  #        '-I${SGX_SDK}/include/tlibc/', 
+  #        '-I${SGX_SDK}/include/libcxx/', 
+  #        '-I${SGX_SDK}/include/tlibc++/',
+  #        '-D_TLIBC_WARN_DEPRECATED_FUNCTIONS_',
+          '-Wextra', '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', #'-Werror-implicit-function-declaration',
+  ]
+
+  sgx_env.Prepend(
+    ## syseok Werror, pedantic 
+    CCFLAGS = common_flags + [
+        ] + sgx_include, 
+    CFLAGS = [
+        #'-Wdeclaration-after-statement',
+        # Require defining functions as "foo(void)" rather than
+        # "foo()" because, in C (but not C++), the latter defines a
+        # function with unspecified arguments rather than no
+        # arguments.
+        #'-nostdinc', 
+        '-std=c11',
+        ] + sgx_include,
+    CXXFLAGS = [
+        '-std=c++11',
+        #'-nostdinc++',
+        ]
+    )
+
+
 
 
 def BiasedBitcodeFlags(env):
