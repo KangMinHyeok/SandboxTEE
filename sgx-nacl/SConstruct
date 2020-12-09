@@ -2271,7 +2271,7 @@ def MakeSGXEnv():
     subarch = '64'
   else:
     subarch = '32'
-   
+  
   sgx_env.Replace(BUILD_FULLARCH=platform)
   sgx_env.Replace(BUILD_ARCHITECTURE=arch)
   sgx_env.Replace(BUILD_SUBARCH=subarch)
@@ -2309,7 +2309,7 @@ def MakeSGXEnv():
     CFLAGS = ['${EXTRA_CFLAGS}'],
     CXXFLAGS = ['${EXTRA_CXXFLAGS}'],
   )
-
+  
   sgx_env.Append(BUILD_SCONSCRIPTS = [
       # KEEP THIS SORTED PLEASE
       #'build/package_version/build.scons',
@@ -2530,7 +2530,11 @@ def MakeSGXEnv():
   
   return sgx_env
 
+# TODO(mkpark) + syseok
+sgx_env = MakeSGXEnv()
+usgx_env = MakeUntrustedSGXEnv()
 
+#sgx_env.AddMethod(EnsureRequiredBuildWarnings)
 
 
 def BiasedBitcodeFlags(env):
@@ -2541,10 +2545,6 @@ def BiasedBitcodeFlags(env):
     return ['--target=i686-unknown-nacl']
   if env.Bit('build_x86_64'):
     return ['--target=x86_64-unknown-nacl']
-  if env.Bit('build_arm'):
-    return ['--target=armv7-unknown-nacl-gnueabihf', '-mfloat-abi=hard']
-  if env.Bit('build_mips32'):
-    return []
   raise UserError('No known target bits set')
 
 pre_base_env.AddMethod(BiasedBitcodeFlags)
