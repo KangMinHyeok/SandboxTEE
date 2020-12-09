@@ -2291,15 +2291,15 @@ def MakeSGXEnv():
     CFLAGS = ['${EXTRA_CFLAGS}'],
     CXXFLAGS = ['${EXTRA_CXXFLAGS}'],
   )
-  
+
   sgx_env.Append(BUILD_SCONSCRIPTS = [
       # KEEP THIS SORTED PLEASE
       #'build/package_version/build.scons',
-      'src/shared/gio/build.scons',
+      #'src/shared/gio/build.scons',
       #'src/shared/imc/build.scons',
       'src/shared/platform/build.scons',
       #'src/third_party/gtest/build.scons',
-      'src/trusted/cpu_features/build.scons',
+      #'src/trusted/cpu_features/build.scons',
       'src/trusted/debug_stub/build.scons',
       'src/trusted/desc/build.scons',
       'src/trusted/fault_injection/build.scons',
@@ -2312,6 +2312,9 @@ def MakeSGXEnv():
       'src/trusted/validator_ragel/build.scons',
       'src/trusted/validator_x86/build.scons',
       'src/trusted/service_runtime/build.scons',
+      'src/trusted/wolfssl/build.scons',
+      'src/trusted/stdlib/build.scons',
+      #'src/trusted/sgxlib/build.scons',
       # TODO: uncomment other files & add test files
   ])
 
