@@ -3499,6 +3499,8 @@ def LinkBuildEnv(selected_envs):
     # Did not find a matching environment, append the build environment now.
     selected_envs.append(build_env)
 
+  print("Link Build Env Done")
+
 def DumpEnvironmentInfo(selected_envs):
   if VerboseConfigInfo(pre_base_env):
     Banner("The following environments have been configured")
@@ -3520,27 +3522,13 @@ def DumpEnvironmentInfo(selected_envs):
         if "Revision:" in line:
           print "PNACL : %s" % line
 
-def PnaclSetEmulatorForSandboxedTranslator(selected_envs):
-  # Slip in emulator flags if necessary, for the sandboxed pnacl translator
-  # on ARM, once emulator is actually known (vs in naclsdk.py, where it
-  # is not yet known).
-  for env in selected_envs:
-    if (env['NACL_BUILD_FAMILY'] != 'TRUSTED'
-        and env.Bit('bitcode')
-        and env.Bit('use_sandboxed_translator')
-        and env.UsingEmulator()):
-      # This must modify the LINK command itself, since LINKFLAGS may
-      # be filtered (e.g., in barebones tests).
-      env.Append(LINK=' --pnacl-use-emulator')
-      env.Append(TRANSLATE=' --pnacl-use-emulator')
-
 
 # Blank out defaults.
 Default(None)
 
 # Apply optional supplement if present in the directory tree.
-if os.path.exists(pre_base_env.subst('$MAIN_DIR/supplement/supplement.scons')):
-  SConscript('supplement/supplement.scons', exports=['environment_list'])
+#if os.path.exists(pre_base_env.subst('$MAIN_DIR/supplement/supplement.scons')):
+#  SConscript('supplement/supplement.scons', exports=['environment_list'])
 
 # print sytem info (optionally)
 if VerboseConfigInfo(pre_base_env):
