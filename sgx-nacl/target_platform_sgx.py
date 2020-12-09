@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Build tool setup for Linux.
+"""Build tool setup for enclave.
 
 This module is a SCons tool which should be include in the topmost windows
 environment.
@@ -30,7 +30,7 @@ def ComponentPlatformSetup(env, builder_name):
 def generate(env):
   # NOTE: SCons requires the use of this name, which fails gpylint.
   """SCons entry point for this tool."""
-  print('target_platform_linux')
+  print ("target_platform_sgx")
 
   # Preserve some variables that get blown away by the tools.
   saved = dict()
