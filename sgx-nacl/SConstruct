@@ -2223,19 +2223,29 @@ def MakeGenericLinuxEnv(platform=None):
   linux_env.Prepend(LINKFLAGS=['-pie'])
   # The ARM toolchain has a linker that doesn't handle the code its
   # compiler generates under -fPIE.
-  if linux_env.Bit('build_arm') or linux_env.Bit('build_mips32'):
-    linux_env.Prepend(CCFLAGS=['-fPIC'])
-    # TODO(mcgrathr): Temporarily punt _FORTIFY_SOURCE for ARM because
-    # it causes a libc dependency newer than the old bots have installed.
-    linux_env.FilterOut(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
-  else:
-    linux_env.Prepend(CCFLAGS=['-fPIE'])
-
+  linux_env.Prepend(CCFLAGS=['-fPIE'])
+  
   # We always want to use the same flags for .S as for .c because
   # code-generation flags affect the predefines we might test there.
   linux_env.Replace(ASFLAGS=['${CCFLAGS}'])
 
   return linux_env
+
+# Makes a generic Linux development environment.
+# Linux development environments are used in two different ways.
+# 1) To produce trusted tools (e.g., sel_ldr), called TRUSTED_ENV
+# 2) To produce build tools (e.g., tls_edit), called BUILD_ENV
+def MakeUntrustedSGXEnv(platform=None):
+  usgx_env = MakeUnixLikeEnv(platform).Clone(
+      BUILD_TYPE = 'usgx-linux',
+      BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
+      tools = ['target_platform_usgx'],
+      # TODO(bradnelson): this should really be able to live in unix_like_env
+      #                   but can't due to what the target_platform_x module is
+      #                   doing.
+      LINK = '$CXX',
+  )
+
 
 # Specializes a generic Linux development environment to be a trusted
 # environment.
@@ -3552,7 +3562,7 @@ if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
 selected_envs.append(sgx_env)
-
+selected_envs.append(usgx_env)
 
 DumpEnvironmentInfo(selected_envs)
 LinkTrustedEnv(selected_envs)
@@ -3585,3 +3595,4 @@ if BROKEN_TEST_COUNT > 0:
 
 # separate warnings from actual build output
 Banner('B U I L D - O U T P U T:')
+
