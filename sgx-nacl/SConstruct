@@ -2883,6 +2883,7 @@ nacl_env.Append(
     'src/shared/gio/nacl.scons',
     'src/shared/imc/nacl.scons',
     'src/shared/platform/nacl.scons',
+    #'src/shared/sgxplatform/nacl.scons',
     'src/trusted/service_runtime/nacl.scons',
     'src/trusted/validator/nacl.scons',
     'src/untrusted/irt/nacl_headers.scons',
@@ -2912,6 +2913,7 @@ irt_only_tests = [
 # The nacl_irt_test mode runs them in the IRT variants.
 irt_variant_tests = [
     #### ALPHABETICALLY SORTED ####
+    'tests/ifc/nacl.scons',
     'tests/app_lib/nacl.scons',
     'tests/benchmark/nacl.scons',
     'tests/bigalloc/nacl.scons',
@@ -2974,7 +2976,7 @@ irt_variant_tests = [
     'tests/rodata_not_writable/nacl.scons',
     'tests/run_py/nacl.scons',
     'tests/sel_ldr/nacl.scons',
-    'tests/sel_ldr_seccomp/nacl.scons',
+    #'tests/sel_ldr_seccomp/nacl.scons',
     'tests/sel_main_chrome/nacl.scons',
     'tests/signal_handler/nacl.scons',
     'tests/simd/nacl.scons',
@@ -3121,7 +3123,6 @@ nacl_irt_env.Replace(EXTRA_CFLAGS=nacl_env['EXTRA_CFLAGS'],
                      CCFLAGS=nacl_env['CCFLAGS'],
                      CFLAGS=nacl_env['CFLAGS'],
                      CXXFLAGS=nacl_env['CXXFLAGS'])
-FixWindowsAssedmbler(nacl_irt_env)
 # Make it find the libraries it builds, rather than the SDK ones.
 nacl_irt_env.Replace(LIBPATH='${LIB_DIR}')
 
@@ -3215,7 +3216,7 @@ def AddImplicitLibs(env):
   # Require the pnacl_irt_shim for pnacl x86-64 and arm.
   # Use -B to have the compiler look for the fresh libpnacl_irt_shim.a.
   if ( env.Bit('bitcode') and
-       (env.Bit('build_x86_64') or env.Bit('build_arm'))
+       (env.Bit('build_x86_64'))
        and env['NACL_BUILD_FAMILY'] != 'UNTRUSTED_IRT'):
     # Note: without this hack ibpnacl_irt_shim.a will be deleted
     #       when "built_elsewhere=1"
@@ -3311,7 +3312,7 @@ if nacl_env.Bit('nonsfi_nacl'):
 
 # If a tests/.../nacl.scons file builds a library, we will just use
 # the one already built in nacl_env instead.
-def IrtTestDummyLibrary(*args, **kwargs)d:
+def IrtTestDummyLibrary(*args, **kwargs):
   pass
 nacl_irt_test_env.AddMethod(IrtTestDummyLibrary, 'ComponentLibrary')
 
