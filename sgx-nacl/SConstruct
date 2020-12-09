@@ -856,12 +856,27 @@ else:
   Alias('tsan_bot_tests', [])
 
 
+# mkpark sgx : read as an input
+if pre_base_env.Bit('sgx_debug'):
+  sgx_debug = ['-O0','-g']
+else:
+  sgx_debug = ['-O2']
+
 def Banner(text):
   print '=' * 70
   print text
   print '=' * 70
 
 pre_base_env.AddMethod(Banner)
+
+
+
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
 
 
 # PLATFORM LOGIC
@@ -884,6 +899,9 @@ DeclareBit('build_mips32', 'Building binaries for the MIPS architecture',
 # Shorthand for either the 32 or 64 bit version of x86.
 DeclareBit('build_x86', 'Building binaries for the x86 architecture')
 
+# SGX or not
+DeclareBit('sgx', 'Building binaries for the x86 SGX architecture')
+DeclareBit('usgx', 'Building binaries for the x86 Untrusted SGX architecture')
 
 
 def MakeArchSpecificEnv(platform=None):
