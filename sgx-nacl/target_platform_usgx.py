@@ -30,7 +30,7 @@ def ComponentPlatformSetup(env, builder_name):
 def generate(env):
   # NOTE: SCons requires the use of this name, which fails gpylint.
   """SCons entry point for this tool."""
-  print('target_platform_linux')
+  print('target_platform_usgx')
 
   # Preserve some variables that get blown away by the tools.
   saved = dict()
