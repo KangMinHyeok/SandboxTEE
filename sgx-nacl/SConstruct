@@ -2351,7 +2351,6 @@ def MakeSGXEnv():
   ## MakeUnixLikeEnv start
   
 
-
   # --------------------------------------
   # --- compile and link flag settings ---
   # --------------------------------------
@@ -2475,6 +2474,61 @@ def MakeSGXEnv():
                     ],
       LIBS = ['rt'],
       )
+
+
+  # _FORTIFY_SOURCE: general paranoia "hardening" option for library functions
+  # -fPIE/-pie: create a position-independent executable
+  # relro/now: "hardening" options for linking
+  # noexecstack: ensure that the executable does not get a PT_GNU_STACK
+  #              header that causes the kernel to set the READ_IMPLIES_EXEC
+  #              personality flag, which disables NX page protection.
+  sgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  # By default SHLINKFLAGS uses $LINKFLAGS, but we do not want -pie
+  # in $SHLINKFLAGS, only in $LINKFLAGS.  So move LINKFLAGS over to
+  # COMMON_LINKFLAGS, and add the "hardening" options there.  Then
+  # make both LINKFLAGS and SHLINKFLAGS refer to that, and add -pie
+  # only to LINKFLAGS.
+  sgx_env.Replace(COMMON_LINKFLAGS=sgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  sgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  sgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  #sgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
+  #                                    '-Wl,-z,now',
+  #                                    '-Wl,-z,noexecstack'])
+  
+  # We always want to use the same flags for .S as for .c because
+  # code-generation flags affect the predefines we might test there.
+  sgx_env.Replace(ASFLAGS=['${CCFLAGS}'])
+
+  '''
+  if subarch == '32':
+    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
+    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_sign']
+    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_edger8r']
+  else:
+    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
+    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_sign']
+    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_edger8r']
+
+  sgx_env.Replace(SGX_LIBRARY_PATH=sgx_library_path)
+  sgx_env.Replace(SGX_ENCLAVE_SIGNER=sgx_enclave_signer)
+  sgx_env.Replace(SGX_EDGER=sgx_edger)
+  sgx_env.Replace(SGX_MODE='HW')
+  '''
+
+  # TODO GenerateOptimizationLevels
+  # sgx_env = env.Clone(tools = ['target_optimized'])
+  # sgx_env['OPTIMIZATION_LEVEL'] = 'opt'
+  # sgx_env['BUILD_DESCRIPTION'] = sgx_env.subst('$BUILD_DESCRIPTION')
+
+  ## syseok
+  AddDualLibrary(sgx_env)
+
+  # Add to the list of fully described environments.
+  environment_list.append(sgx_env)
+
+  
+  return sgx_env
 
 
 
