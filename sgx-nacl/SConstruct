@@ -2297,6 +2297,39 @@ def MakeTrustedLinuxEnv(platform=None):
     SetUpAndroidEnv(linux_env)
   return linux_env
 
+    # These are desireable options for every Linux platform:
+  # _FORTIFY_SOURCE: general paranoia "hardening" option for library functions
+  # -fPIE/-pie: create a position-independent executable
+  # relro/now: "hardening" options for linking
+  # noexecstack: ensure that the executable does not get a PT_GNU_STACK
+  #              header that causes the kernel to set the READ_IMPLIES_EXEC
+  #              personality flag, which disables NX page protection.
+  usgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  
+  # $CC     -o $TARGET -c $CFLAGS   $CCFLAGS $_CCCOMCOM $SOURCES
+  # $CXX    -o $TARGET -c $CXXFLAGS $CCFLAGS $_CCCOMCOM $SOURCES
+  # $LINK   -o $TARGET   $LINKFLAGS $SOURCES $_LIBDIRFLAGS $_LIBFLAGS
+  # $SHLINK -o $TARGET $SHLINKFLAGS $SOURCES $_LIBDIRFLAGS $_LIBFLAGS
+
+  # By default SHLINKFLAGS uses $LINKFLAGS, but we do not want -pie
+  # in $SHLINKFLAGS, only in $LINKFLAGS.  So move LINKFLAGS over to
+  # COMMON_LINKFLAGS, and add the "hardening" options there.  Then
+  # make both LINKFLAGS and SHLINKFLAGS refer to that, and add -pie
+  # only to LINKFLAGS.
+  usgx_env.Replace(COMMON_LINKFLAGS=usgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  usgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
+                                      '-Wl,-z,now',
+                                      '-Wl,-z,noexecstack'])
+  # mkpark: -pie check
+  usgx_env.Prepend(LINKFLAGS=['-pie'])
+  # The ARM toolchain has a linker that doesn't handle the code its
+  # compiler generates under -fPIE.
+  usgx_env.Prepend(CCFLAGS=['-fPIE'])
+
+
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
