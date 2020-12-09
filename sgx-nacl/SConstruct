@@ -3338,36 +3338,6 @@ nacl_irt_test_env.AddMethod(IrtTestAddNodeToTestSuite, 'AddNodeToTestSuite')
 environment_list.append(nacl_irt_test_env)
 
 
-windows_coverage_env = windows_debug_env.Clone(
-    tools = ['code_coverage'],
-    BUILD_TYPE = 'coverage-win',
-    BUILD_TYPE_DESCRIPTION = 'Windows code coverage build',
-    # TODO(bradnelson): switch nacl to common testing process so this won't be
-    #    needed.
-    MANIFEST_FILE = None,
-    COVERAGE_ANALYZER_DIR=r'..\third_party\coverage_analyzer\bin',
-    COVERAGE_ANALYZER='$COVERAGE_ANALYZER_DIR\coverage_analyzer.exe',
-)
-# TODO(bradnelson): Switch nacl to common testing process so this won't be
-#                   needed. Ignoring instrumentation failure as that's easier
-#                   than trying to gate out the ones with asm we can't handle.
-windows_coverage_env['LINKCOM'] = windows_coverage_env.Action([
-    windows_coverage_env.get('LINKCOM', []),
-    '-$COVERAGE_VSINSTR /COVERAGE ${TARGET}'])
-windows_coverage_env.Append(LINKFLAGS = ['/NODEFAULTLIB:msvcrt'])
-AddDualLibrary(windows_coverage_env)
-environment_list.append(windows_coverage_env)
-
-mac_coverage_env = mac_debug_env.Clone(
-    tools = ['code_coverage'],
-    BUILD_TYPE = 'coverage-mac',
-    BUILD_TYPE_DESCRIPTION = 'MacOS code coverage build',
-    # Strict doesnt't currently work for coverage because the path to gcov is
-    # magically baked into the compiler.
-    LIBS_STRICT = False,
-    )
-AddDualLibrary(mac_coverage_env)
-environment_list.append(mac_coverage_env)
 
 linux_coverage_env = linux_debug_env.Clone(
     tools = ['code_coverage'],
@@ -3469,11 +3439,11 @@ def MakeBuildEnv():
 
   # Build Platform Base Function
   platform_func_map = {
-      'win32' : MakeWindowsEnv,
-      'cygwin': MakeWindowsEnv,
+      #'win32' : MakeWindowsEnv,
+      #'cygwin': MakeWindowsEnv,
       'linux' : MakeGenericLinuxEnv,
       'linux2': MakeGenericLinuxEnv,
-      'darwin': MakeMacEnv,
+      #'darwin': MakeMacEnv,
       }
   if sys.platform not in platform_func_map:
     raise UserError('Unrecognized host platform: %s', sys.platform)
@@ -3497,6 +3467,7 @@ def MakeBuildEnv():
   # override the alias function and essentially stub it out.
   build_env.Alias = lambda env, target, source=[], actions=None, **kw : []
 
+  print("Make Build Env Done")
   return build_env
 
 def LinkBuildEnv(selected_envs):
