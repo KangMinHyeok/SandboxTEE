@@ -2265,6 +2265,33 @@ def MakeSGXEnv():
   sgx_env.SetBits('build_x86')
   sgx_env.SetBits('sgx')
 
+  sgx_env.Replace(BUILD_ISA_NAME=platform)
+
+  # Determine where the object files go
+  sgx_env.Replace(BUILD_TARGET_NAME=platform)
+  # This may be changed later; see target_variant_map, below.
+  sgx_env.Replace(TARGET_VARIANT='SGX')
+  sgx_env.Replace(TARGET_ROOT=
+      '${DESTINATION_ROOT}/${BUILD_TYPE}-${BUILD_TARGET_NAME}')
+
+  
+  # MakeArchSpecificEnv end
+
+  # MakeBaseTrustedEnv start
+  
+  sgx_env.Append(
+    IS_BUILD_ENV = False,
+    BUILD_SUBTYPE = '',
+    CPPPATH = [
+      '${SOURCE_ROOT}',
+    ],
+    EXTRA_CFLAGS = [],
+    EXTRA_CXXFLAGS = [],
+    EXTRA_LIBS = [],
+    CFLAGS = ['${EXTRA_CFLAGS}'],
+    CXXFLAGS = ['${EXTRA_CXXFLAGS}'],
+  )
+  
 
 
 def BiasedBitcodeFlags(env):
