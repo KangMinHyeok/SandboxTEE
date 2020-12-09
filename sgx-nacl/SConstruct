@@ -2256,6 +2256,37 @@ def MakeUntrustedSGXEnv(platform=None):
       LIBS = ['rt'],
       )
 
+  if usgx_env.Bit('build_x86_32'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m32'],
+        LINKFLAGS = ['-m32'],
+        )
+  elif usgx_env.Bit('build_x86_64'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m64'],
+        LINKFLAGS = ['-m64'],
+        )
+  else:
+    Banner('Strange platform: %s' % GetTargetPlatform())
+  
+  usgx_env.Append(BUILD_SCONSCRIPTS = [
+      'src/trusted/sgxlib/build.scons'])
+
+  # usgx_env.Append(LIBPATH = [
+  #     'src/trusted/sgxlib/libwolfssl.sgx.static.lib.a'])
+
+
+
+  # usgx_env.Append(LIBPATH = [
+  #     'src/trusted/sgxlib/libwolfssl.sgx.static.lib.a'])
+
+  # mkpark
+  usgx_env.Replace(
+      NACL_BUILD_FAMILY = 'USGX',
+  )
+
+  usgx_env.SetBits('usgx')
+
 
 
 # Specializes a generic Linux development environment to be a trusted
