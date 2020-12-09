@@ -2,3 +2,4 @@
 *.png
 *.pdf
 *.csv
+.DS_Store
