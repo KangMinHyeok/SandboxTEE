@@ -2869,6 +2869,7 @@ if not nacl_env.Bit('nacl_glibc'):
         ####  ALPHABETICALLY SORTED ####
         'src/untrusted/elf_loader/nacl.scons',
         'src/untrusted/pthread/nacl.scons',
+        'src/untrusted/ifc/nacl.scons',
         'src/untrusted/stubs/nacl.scons',
         'src/untrusted/nosys/nacl.scons',
         ####  ALPHABETICALLY SORTED ####
