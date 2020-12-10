@@ -88,7 +88,6 @@ int main(int argc, char *argv[]) {
 		memcpy(&len, buffer_in, sizeof(len));
 		memcpy(buffer_out, buffer_in+sizeof(len), len+1);
 		
-		printf("Profile: %s", buffer_out);
 		*/
 
 		// send profile to an ad exchange
@@ -109,7 +108,6 @@ int main(int argc, char *argv[]) {
 		memcpy(&bid, buffer_in, sizeof(bid));
 		memcpy(&len, buffer_in+sizeof(bid), sizeof(len));
 		memcpy(buffer_out, buffer_in+sizeof(len)+sizeof(bid), len+1);
-		printf("Bid id: %s\n", buffer_out);
 		*/
 
 		// send result to the user
