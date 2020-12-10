@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 		printf("%d\n", len);
 		ad_id = (char *)malloc(len * sizeof(char)+1);
 		memcpy(ad_id, buffer_in+sizeof(bid)+sizeof(len), len+1);
-
+		/*
 		n = read(sockfd, &len, sizeof(len));
 		if (n < 0) {
 			printf("Read error\n");
@@ -116,6 +116,7 @@ int main(int argc, char *argv[]) {
 			printf("Read error\n");
 			goto exit;
 		}
+		*/
 		printf("Accepted Bid %.9f - AD id: %s\n\n", bid, ad_id);
 
 		count++;
