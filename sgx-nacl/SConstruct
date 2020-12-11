@@ -2478,8 +2478,6 @@ def MakeSGXEnv():
           '-DPAVE',
           '-DCRYPTO_USE_MBEDTLS', '-DDEBUG',
           '-DIN_ENCLAVE',
-          # '-I/home/syseok/wolfssl',
-          # '-I/home/syseok/wolfssl/wolfcrypt',
           # '-malign-double',
           #'-pedantic', # TODO check
           # '-fpermissive',
