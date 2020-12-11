@@ -14,26 +14,6 @@
 
 #include <ifc.h>
 
-//#define BUFF_LEN 30
-
-//char buffer_in[BUFF_LEN];
-//char buffer_out[BUFF_LEN];
-
-/*
-int send_profile(int sockfd) {
-	int n;
-
-	int len = strlen(buffer_in);
-	memcpy(buffer_out, &len, sizeof(len));
-	memcpy(buffer_out+sizeof(len), buffer_in, len+1);
-
-	n = write(sockfd, buffer_out, sizeof(len) + len + 1);
-	if (n < 0)
-		return n;
-
-	return n;
-}
-*/
 
 int main(int argc, char *argv[]) {
 	
@@ -49,33 +29,6 @@ int main(int argc, char *argv[]) {
 
 	double bid;
 	char *ad_id;
-
-	/*
-	if (argc != 3) {
-		printf("Usage: ./client [SSP ip] [SSP port]\n ex) ./client 147.46.215.133 8888\n");
-		exit(-1);
-	} else {
-		ip = argv[1];
-		port = atoi(argv[2]);
-	}
-	
-
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("Socket creation error\n");
-		exit(-1);
-	}
-
-	memset(&serv_addr, '0', sizeof(serv_addr));
-
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(port);
-	serv_addr.sin_addr.s_addr = inet_addr(ip);
-
-	if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-		printf("Connection failed\n");
-		exit(-1);
-	}
-	*/
 
 	memset(&serv_addr, '0', sizeof(serv_addr));
 
@@ -99,14 +52,7 @@ int main(int argc, char *argv[]) {
 	int BUFF_LEN = 1024;
 	char buffer_in[BUFF_LEN];
 	memset(buffer_in, '0', sizeof(buffer_in));
-	//char *test = "Hello From Client!!!!!!";
-
-	//memcpy(buffer, test, strlen(test)+1);
 	
-	//char sendBuff[10] = {'h', 'e', 'l', 'l', 'o', '\0'};
-
-	//propagate_adt(sockfd, buffer, strlen(test)+1);
-
 	count = 0;
 	while (fgets(buffer_in, sizeof(buffer_in), input_fp) != NULL) {
 		if (count > profile_num-1)
@@ -115,13 +61,11 @@ int main(int argc, char *argv[]) {
 		printf("profile: %s", buffer_in);
 		break;
 		// send profile one by one
-		//n = send_profile(sockfd);
 		if (n < 0) {
 			printf("Write error\n");
 			goto exit;
 		}
 
-		//n = read(sockfd, buffer_in, BUFF_LEN);
 		if (n < 0) {
 			printf("Read error\n");
 			goto exit;
@@ -156,6 +100,5 @@ int main(int argc, char *argv[]) {
 
 exit:
 	fclose(input_fp);
-	//close(sockfd);
 	return 0;
 }
