@@ -2165,7 +2165,7 @@ def MakeUnixLikeEnv(platform=None):
 # Linux development environments are used in two different ways.
 # 1) To produce trusted tools (e.g., sel_ldr), called TRUSTED_ENV
 # 2) To produce build tools (e.g., tls_edit), called BUILD_ENV
-def MakeGenericLinuxEnv(platform=None):
+def MakeTrustedLinuxEnv(platform=None):
   linux_env = MakeUnixLikeEnv(platform).Clone(
       BUILD_TYPE = '${OPTIMIZATION_LEVEL}-linux',
       BUILD_TYPE_DESCRIPTION = 'Linux ${OPTIMIZATION_LEVEL} build',
@@ -3554,8 +3554,8 @@ def MakeBuildEnv():
   platform_func_map = {
       #'win32' : MakeWindowsEnv,
       #'cygwin': MakeWindowsEnv,
-      'linux' : MakeGenericLinuxEnv,
-      'linux2': MakeGenericLinuxEnv,
+      'linux' : MakeTrustedLinuxEnv,
+      'linux2': MakeTrustedLinuxEnv,
       #'darwin': MakeMacEnv,
       }
   if sys.platform not in platform_func_map:
