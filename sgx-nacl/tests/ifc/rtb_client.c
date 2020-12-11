@@ -34,11 +34,13 @@ int main(int argc, char *argv[]) {
 	serv_addr.sin_addr.s_addr = inet_addr(ip);
 
 
+	// create socket
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Socket creation error\n");
 		exit(-1);
 	}
 
+	// connect to server
 	gettimeofday(&before , NULL);
 	if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
 		printf("Connection failed\n");
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
 	
 	printf("profile: %s", buffer);
 
+	// send and read data
 	send_data(sockfd, buffer, strlen(buffer) + 1);
 
 	read_data(sockfd, buffer);
