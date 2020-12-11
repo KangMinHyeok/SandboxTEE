@@ -45,7 +45,6 @@ int main(int argc, char *argv[]) {
     close(serv_sockfd);
     exit(2);
   }
-//	len = read_data(client_sockfd, buffer);
 	len = unpack_recv_data(adt1, buffer);
 
 	send_data(client_sockfd, buffer, len);
