@@ -2467,8 +2467,6 @@ def MakeSGXEnv():
           '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
           '-Werror-implicit-function-declaration', '-Wstrict-prototypes',
           # the below line is reuiqred for the error
-          #'-pedantic', '-Wno-variadic-macros',
-          # '-Werror', 
           '-ffunction-sections',
           '-fdata-sections',
           '-g',
@@ -2480,8 +2478,6 @@ def MakeSGXEnv():
           '-DPAVE',
           '-DCRYPTO_USE_MBEDTLS', '-DDEBUG',
           '-DIN_ENCLAVE',
-          # '-I/home/syseok/wolfssl',
-          # '-I/home/syseok/wolfssl/wolfcrypt',
           # '-malign-double',
           #'-pedantic', # TODO check
           # '-fpermissive',
@@ -2513,12 +2509,10 @@ def MakeSGXEnv():
         # "foo()" because, in C (but not C++), the latter defines a
         # function with unspecified arguments rather than no
         # arguments.
-        #'-nostdinc', 
         '-std=c11',
         ] + sgx_include,
     CXXFLAGS = [
         '-std=c++11',
-        #'-nostdinc++',
         ]
     )
 
@@ -2540,26 +2534,13 @@ def MakeSGXEnv():
           '-Wl,--gc-sections',
           ]
 
-  #sgx_common_flags += ['-Wall','-Wextra','-Winit-self',
-  #      '-Wpointer-arith', '-Wreturn-type', '-Waddress', '-Wsequence-point',
-  #      '-Wformat-security', '-Wmissing-include-dirs', '-Wfloat-equal', '-Wundef',
-  #      '-Wshadow','-Wcast-align', '-Wconversion', '-Wredundant-decls']
-
   sgx_env.Prepend(
     LINKFLAGS=[
         sgx_link_flags]
     # NOTE: pthread is only neeeded for libppNaClPlugin.so and on arm
     # It may occur error
-    #LIBS = ['pthread'],
-    #CPPDEFINES = [['__STDC_LIMIT_MACROS', '1'],
-    #              ['__STDC_FORMAT_MACROS', '1'],
-    #              ],
   )
   # This breaks basically all C++ code that uses stlport.
-  # sgx_env.Prepend(CXXFLAGS=['-std=c++98'])
-  #sgx_env.Append(LIBPATH='-L/opt/intel/sgxsdk/lib64/')
-  # sgx_env.Append(_LIBFLAGS = [
-  #     '-Lsrc/trusted/sgxlib/', '-lwolfssl.sgx.static.lib',])
 
   if sgx_env.Bit('build_x86_32'):
     sgx_env.Prepend(
@@ -2597,9 +2578,6 @@ def MakeSGXEnv():
                     LINKFLAGS=['$COMMON_LINKFLAGS'])
   sgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
   sgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
-  #sgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
-  #                                    '-Wl,-z,now',
-  #                                    '-Wl,-z,noexecstack'])
   
   # We always want to use the same flags for .S as for .c because
   # code-generation flags affect the predefines we might test there.
@@ -2607,9 +2585,6 @@ def MakeSGXEnv():
 
   '''
   if subarch == '32':
-    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
-    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_sign']
-    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_edger8r']
   else:
     sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
     sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_sign']
