@@ -25,15 +25,18 @@ int main(int argc, char* argv[]) {
   serv_addr.sin_addr.s_addr = 0;
   serv_addr.sin_port = 5000; 
 
+  // open socket
   int sock = ifc_socket();
   int csock;
 
+  // bind address
   ifc_bind  (sock, (uint32_t) &serv_addr, sizeof(serv_addr));
   csock = ifc_accept(sock);
 
   char sendBuff[1025];
   memset(sendBuff, '0', sizeof(sendBuff)); 
 
+  // receive data
   receive_adt(csock, sendBuff, 12);
 
   printf("%s\n", sendBuff);
