@@ -151,13 +151,7 @@ int main(int argc, char *argv[]) {
 				fflush(stdout);
 				goto exit1;
 			}
-//			memcpy(&profile_len, profile, sizeof(profile_len));
-//			printf("profile length: %d\n", profile_len); fflush(stdout);
-//			memcpy(buffer, profile+sizeof(profile_len), profile_len+1);
-//			fflush(stdout);
-			
-			//printf("buff: %s", buffer);
-		
+
 			memcpy(&bid_list[i], buffer, sizeof(&bid_list[i]));
 
 			memcpy(&len, buffer+sizeof(&bid_list[i]), sizeof(len));
