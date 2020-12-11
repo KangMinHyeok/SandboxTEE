@@ -2275,11 +2275,6 @@ def MakeUntrustedSGXEnv(platform=None):
   # usgx_env.Append(LIBPATH = [
   #     'src/trusted/sgxlib/libwolfssl.sgx.static.lib.a'])
 
-
-
-  # usgx_env.Append(LIBPATH = [
-  #     'src/trusted/sgxlib/libwolfssl.sgx.static.lib.a'])
-
   # mkpark
   usgx_env.Replace(
       NACL_BUILD_FAMILY = 'USGX',
@@ -2345,6 +2340,17 @@ def MakeTrustedLinuxEnv(platform=None):
            #'-DPAVE'
           #'-I/home/mkpark/pave/depot_tools'
           ]
+
+  usgx_env.Replace(
+          CCFLAGS=common_cflags,
+          ASFLAGS=common_cflags,
+          )
+  usgx_env.Append(
+    _LIBFLAGS = [ 
+    # '-Lsrc/trusted/sgxlib/', '-lwolfssl.sgx.static.lib',
+       '-L/opt/intel/sgxsdk/lib64/', '-lsgx_urts', '-lpthread', '-lsgx_uae_service'
+        ])
+
 
 
 (linux_debug_env, linux_optimized_env) = \
