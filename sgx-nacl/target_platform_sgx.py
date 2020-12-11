@@ -48,6 +48,10 @@ def generate(env):
   # Set target platform bits
   env.SetBits('linux', 'posix')
 
+  sgx_env.SetBits('build_%s' % platform.replace('-', '_'))
+  sgx_env.SetBits('build_x86')
+  sgx_env.SetBits('sgx')
+
   env.Replace(
       TARGET_PLATFORM='LINUX',
       COMPONENT_PLATFORM_SETUP=ComponentPlatformSetup,

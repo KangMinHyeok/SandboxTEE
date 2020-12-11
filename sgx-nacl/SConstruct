@@ -2467,8 +2467,6 @@ def MakeSGXEnv():
           '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
           '-Werror-implicit-function-declaration', '-Wstrict-prototypes',
           # the below line is reuiqred for the error
-          #'-pedantic', '-Wno-variadic-macros',
-          # '-Werror', 
           '-ffunction-sections',
           '-fdata-sections',
           '-g',
