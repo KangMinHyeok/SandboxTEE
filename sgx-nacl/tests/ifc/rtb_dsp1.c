@@ -30,7 +30,6 @@ double ortb1(double pctr, double lambda, double c) {
 	bid = sqrt(bid);
 	bid -= c;
 
-	// printf("Bid(ortb1): %10.9f\n", bid);
 	return bid;
 }
 
@@ -48,7 +47,6 @@ double ortb2(double pctr, double lambda, double c) {
 
 	bid = c*(bid - tmp);
 
-	// printf("Bid(ortb2): %10.9f\n", bid);
 	return bid;
 }
 
@@ -161,7 +159,7 @@ int read_weights(double *weights[]) {
 
 int main(int argc, char *argv[]) {
 
-  custom_print(111);
+	custom_print(111);
 	int FEAT_NUM = 10001;
 	int WEIGHT_NUM = 5;
 	int ALGO = 0;
@@ -174,12 +172,12 @@ int main(int argc, char *argv[]) {
 	int len, i;
 	int selected_ad;
 	double pctr, lambda, c, bid;
-  int ret = 0;
+	int ret = 0;
 
 	double *weights[WEIGHT_NUM];
 	char *ad_ids[5] = {"ad_1458", "ad_3358", "ad_3386", "ad_3427", "ad_3476"};
-	
-	
+
+
 	for (i = 0; i < WEIGHT_NUM; i++) {
 		weights[i] = (double *)malloc(sizeof(double)*(FEAT_NUM));
 		memset(weights[i], 0, FEAT_NUM);
@@ -198,40 +196,34 @@ int main(int argc, char *argv[]) {
 	serv_sockfd = ifc_socket();
 
 	ret = ifc_bind  (serv_sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  if (ret < 0) {
-    printf("bind error\n");
-    exit(3);
-  }
+	if (ret < 0) {
+		printf("bind error\n");
+		exit(3);
+	}
 
-  ADTFD adt1 = create_adt(ADT_SIZE);
-  custom_print(77);
+	ADTFD adt1 = create_adt(ADT_SIZE);
+	custom_print(77);
 	client_sockfd = ifc_accept(serv_sockfd, adt1);
-  if (client_sockfd < 0){
-    close(serv_sockfd);
-    exit(2);
-  }
+	if (client_sockfd < 0){
+		close(serv_sockfd);
+		exit(2);
+	}
 
 	lambda = 5.2 * pow(10, -7);
 	c = 50;
 
 	memset(buffer, 0, sizeof(buffer));
 	memset(buffer2, 0, sizeof(buffer2));
-	
-	// len = read_data(client_sockfd, buffer);
+
 	len = unpack_recv_data(adt1, buffer);
-	// printf("profile: %s", buffer);
-  
-  // analyzer
-  
-  ADTFD adt = pack_send_data(buffer, len); 
-  analyzer_sockfd = connect_remote(9000, adt);
-  // send_data(analyzer_sockfd, buffer, len);  
 
-  read_data(analyzer_sockfd, buffer2);
-	
+	// analyzer
+	ADTFD adt = pack_send_data(buffer, len); 
+	analyzer_sockfd = connect_remote(9000, adt);
+
+	read_data(analyzer_sockfd, buffer2);
+
 	selected_ad = find_ad(buffer, weights, len, &pctr);
-
-	// printf("Selected ad campaign: %s, ", ad_ids[selected_ad]);
 
 	if (ALGO == 0)
 		bid = ortb1(pctr, lambda, c);
@@ -243,18 +235,18 @@ int main(int argc, char *argv[]) {
 	memcpy(buffer+sizeof(bid), &len, sizeof(len));
 	memcpy(buffer+sizeof(bid)+sizeof(len), ad_ids[selected_ad], len);
 	send_data(client_sockfd, buffer, sizeof(bid)+sizeof(len)+len);
-  custom_print(200);
+	custom_print(200);
 
-  // receive result
+	// receive result
 	int send_size;
-  send_size = read_data(client_sockfd, buffer);
-  send_data(analyzer_sockfd, buffer, send_size);
+	send_size = read_data(client_sockfd, buffer);
+	send_data(analyzer_sockfd, buffer, send_size);
 
 	for (i = 0; i < WEIGHT_NUM; i++)
 		free(weights[i]);
 
-  close(serv_sockfd);
-  custom_print(112);
+	close(serv_sockfd);
+	custom_print(112);
 	return 0;
 
 }
