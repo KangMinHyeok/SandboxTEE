@@ -12,12 +12,10 @@
 #include <string.h>
 #include <signal.h>
 
-
 #define BUFF_LEN 8192 
 
 #define NUMF 24 // 24 good, 32 bad
 
-// char buffer[BUFF_LEN], profile[BUFF_LEN];
 
 int main(int argc, char *argv[]) {
 
@@ -105,13 +103,8 @@ int main(int argc, char *argv[]) {
 		index = 0;
 
 		write(pipefds[1], &bytes, 1); // first proc
-			printf("watchout\n");
-		/*
-			 while (read(pipefds[index*4+2], &bytes, 1)){
-			 index = (index+1) % NUMF;
+		printf("watchout\n");
 
-			 write(pipefds[index*4+1], &bytes, 1);
-			 } */
 		while(1) {
 			pid = waitpid( -1, &status, 0 );
 			if ( pid < 0 ) {
@@ -154,7 +147,6 @@ restart:
 	write(pipefds[(index+1)%NUMF*2+1], &index, 1);
 
 	n = read_user_data(client_sockfd, buffer, BUFF_LEN);
-	//	n = read(client_sockfd, buffer, BUFF_LEN);
 	if (n < 0) {
 		printf("Read error\n");
 		goto exit1;
@@ -178,21 +170,16 @@ restart:
 
 	// 1bit + 3bit + 4bit + 8bit
 	// ad id : (gender+age+location+interests)
-	// printf("%d %d %d %d\n", gender, age, location, interests);
 	product_id = 0;
 	product_id += (gender<<15);
 	product_id += (age-2) << 12;
 	product_id += (location-10) << 8;
 	product_id += interests;
 
-	// printf("product_id : %x\n", product_id);
-	// printf("Ad ID: %d\n", product_id);
-	// fflush(stdout);
 
 	len = sizeof(product_id);
 	memcpy(buffer, &len, sizeof(len));
 	memcpy(buffer + sizeof(len), &product_id, len);
-	// n = write(client_sockfd, buffer, 2048);
 	n = send_response(client_sockfd, buffer, 2048);
 	if (n < 0) 
 		printf("Write error\n");
