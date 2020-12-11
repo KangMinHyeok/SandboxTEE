@@ -2585,9 +2585,6 @@ def MakeSGXEnv():
 
   '''
   if subarch == '32':
-    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
-    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_sign']
-    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_edger8r']
   else:
     sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
     sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_sign']
