@@ -517,13 +517,6 @@ else:
 # Allow variadic macros
 werror_flags = werror_flags + ['-Wno-variadic-macros']
 
-if pre_base_env.Bit('clang'):
-  # Allow 'default' label in switch even when all enumeration cases
-  # have been covered.
-  werror_flags += ['-Wno-covered-switch-default']
-  # Allow C++11 extensions (for "override")
-  werror_flags += ['-Wno-c++11-extensions']
-
 
 # Method to make sure -pedantic, etc, are not stripped from the
 # default env, since occasionally an engineer will be tempted down the
@@ -856,12 +849,27 @@ else:
   Alias('tsan_bot_tests', [])
 
 
+# mkpark sgx : read as an input
+if pre_base_env.Bit('sgx_debug'):
+  sgx_debug = ['-O0','-g']
+else:
+  sgx_debug = ['-O2']
+
 def Banner(text):
   print '=' * 70
   print text
   print '=' * 70
 
 pre_base_env.AddMethod(Banner)
+
+
+
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
+# ----------------------------------------------------------
 
 
 # PLATFORM LOGIC
@@ -880,13 +888,19 @@ DeclareBit('build_x86_64', 'Building binaries for the x86-64 architecture',
            exclusive_groups='build_arch')
 DeclareBit('build_mips32', 'Building binaries for the MIPS architecture',
            exclusive_groups='build_arch')
+DeclareBit('build_arm', 'Building binaries for the ARM architecture',
+           exclusive_groups='build_arch')
 
 # Shorthand for either the 32 or 64 bit version of x86.
 DeclareBit('build_x86', 'Building binaries for the x86 architecture')
 
+# SGX or not
+DeclareBit('sgx', 'Building binaries for the x86 SGX architecture')
+DeclareBit('usgx', 'Building binaries for the x86 Untrusted SGX architecture')
 
 
 def MakeArchSpecificEnv(platform=None):
+  
   env = pre_base_env.Clone()
   if platform is None:
     platform = GetTargetPlatform()
@@ -896,6 +910,7 @@ def MakeArchSpecificEnv(platform=None):
     subarch = '64'
   else:
     subarch = '32'
+  
 
   env.Replace(BUILD_FULLARCH=platform)
   env.Replace(BUILD_ARCHITECTURE=arch)
@@ -903,6 +918,7 @@ def MakeArchSpecificEnv(platform=None):
   env.Replace(TARGET_FULLARCH=platform)
   env.Replace(TARGET_ARCHITECTURE=arch)
   env.Replace(TARGET_SUBARCH=subarch)
+
 
   env.SetBits('build_%s' % platform.replace('-', '_'))
 
@@ -925,6 +941,7 @@ pre_base_env.AddMethod(lambda self: ARGUMENTS.get('running_on_valgrind'),
                        'IsRunningUnderValgrind')
 
 DeclareBit('with_leakcheck', 'Running under Valgrind leak checker')
+
 
 def RunningUnderLeakCheck():
   run_under = ARGUMENTS.get('run_under')
@@ -2148,7 +2165,7 @@ def MakeUnixLikeEnv(platform=None):
 # Linux development environments are used in two different ways.
 # 1) To produce trusted tools (e.g., sel_ldr), called TRUSTED_ENV
 # 2) To produce build tools (e.g., tls_edit), called BUILD_ENV
-def MakeGenericLinuxEnv(platform=None):
+def MakeTrustedLinuxEnv(platform=None):
   linux_env = MakeUnixLikeEnv(platform).Clone(
       BUILD_TYPE = '${OPTIMIZATION_LEVEL}-linux',
       BUILD_TYPE_DESCRIPTION = 'Linux ${OPTIMIZATION_LEVEL} build',
@@ -2205,28 +2222,134 @@ def MakeGenericLinuxEnv(platform=None):
   linux_env.Prepend(LINKFLAGS=['-pie'])
   # The ARM toolchain has a linker that doesn't handle the code its
   # compiler generates under -fPIE.
-  if linux_env.Bit('build_arm') or linux_env.Bit('build_mips32'):
-    linux_env.Prepend(CCFLAGS=['-fPIC'])
-    # TODO(mcgrathr): Temporarily punt _FORTIFY_SOURCE for ARM because
-    # it causes a libc dependency newer than the old bots have installed.
-    linux_env.FilterOut(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
-  else:
-    linux_env.Prepend(CCFLAGS=['-fPIE'])
-
+  linux_env.Prepend(CCFLAGS=['-fPIE'])
+  
   # We always want to use the same flags for .S as for .c because
   # code-generation flags affect the predefines we might test there.
   linux_env.Replace(ASFLAGS=['${CCFLAGS}'])
 
   return linux_env
 
-# Specializes a generic Linux development environment to be a trusted
-# environment.
-def MakeTrustedLinuxEnv(platform=None):
-  linux_env = MakeGenericLinuxEnv(platform)
-  if linux_env.Bit('android'):
-    SetUpAndroidEnv(linux_env)
-  return linux_env
+# Makes a generic Linux development environment.
+# Linux development environments are used in two different ways.
+# 1) To produce trusted tools (e.g., sel_ldr), called TRUSTED_ENV
+# 2) To produce build tools (e.g., tls_edit), called BUILD_ENV
+def MakeUntrustedSGXEnv(platform=None):
+  usgx_env = MakeUnixLikeEnv(platform).Clone(
+      BUILD_TYPE = 'usgx-linux',
+      BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
+      tools = ['target_platform_usgx'],
+      # TODO(bradnelson): this should really be able to live in unix_like_env
+      #                   but can't due to what the target_platform_x module is
+      #                   doing.
+      LINK = '$CXX',
+  )
 
+  # Prepend so we can disable warnings via Append
+  usgx_env.Prepend(
+      CPPDEFINES = [['_POSIX_C_SOURCE', '199506'],
+                    ['_XOPEN_SOURCE', '600'],
+                    ['_GNU_SOURCE', '1'],
+                    ['_LARGEFILE64_SOURCE', '1'],
+                    ],
+      LIBS = ['rt'],
+      )
+
+  if usgx_env.Bit('build_x86_32'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m32'],
+        LINKFLAGS = ['-m32'],
+        )
+  elif usgx_env.Bit('build_x86_64'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m64'],
+        LINKFLAGS = ['-m64'],
+        )
+  else:
+    Banner('Strange platform: %s' % GetTargetPlatform())
+  
+  usgx_env.Append(BUILD_SCONSCRIPTS = [
+      'src/trusted/sgxlib/build.scons'])
+
+  # usgx_env.Append(LIBPATH = [
+  #     'src/trusted/sgxlib/libwolfssl.sgx.static.lib.a'])
+
+  # mkpark
+  usgx_env.Replace(
+      NACL_BUILD_FAMILY = 'USGX',
+  )
+
+  usgx_env.SetBits('usgx')
+
+  # These are desireable options for every Linux platform:
+  # _FORTIFY_SOURCE: general paranoia "hardening" option for library functions
+  # -fPIE/-pie: create a position-independent executable
+  # relro/now: "hardening" options for linking
+  # noexecstack: ensure that the executable does not get a PT_GNU_STACK
+  #              header that causes the kernel to set the READ_IMPLIES_EXEC
+  #              personality flag, which disables NX page protection.
+  usgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  
+  # $CC     -o $TARGET -c $CFLAGS   $CCFLAGS $_CCCOMCOM $SOURCES
+  # $CXX    -o $TARGET -c $CXXFLAGS $CCFLAGS $_CCCOMCOM $SOURCES
+  # $LINK   -o $TARGET   $LINKFLAGS $SOURCES $_LIBDIRFLAGS $_LIBFLAGS
+  # $SHLINK -o $TARGET $SHLINKFLAGS $SOURCES $_LIBDIRFLAGS $_LIBFLAGS
+
+  # By default SHLINKFLAGS uses $LINKFLAGS, but we do not want -pie
+  # in $SHLINKFLAGS, only in $LINKFLAGS.  So move LINKFLAGS over to
+  # COMMON_LINKFLAGS, and add the "hardening" options there.  Then
+  # make both LINKFLAGS and SHLINKFLAGS refer to that, and add -pie
+  # only to LINKFLAGS.
+  usgx_env.Replace(COMMON_LINKFLAGS=usgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  usgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
+                                      '-Wl,-z,now',
+                                      '-Wl,-z,noexecstack'])
+  # mkpark: -pie check
+  usgx_env.Prepend(LINKFLAGS=['-pie'])
+  # The ARM toolchain has a linker that doesn't handle the code its
+  # compiler generates under -fPIE.
+  usgx_env.Prepend(CCFLAGS=['-fPIE'])
+
+  # -c -std=gnu99 -Wdeclaration-after-statement -Wstrict-prototypes -I/opt/intel/sgxsdk/include -fPIE -m64 -Wall -Wextra -Wno-long-long -Wswitch-enum -Wsign-compare -Wundef -fdiagnostics-show-option -fvisibility=hidden -fstack-protector -Werror -Wno-variadic-macros --param ssp-buffer-size=4 -I/opt/intel/sgxsdk/include -D_FORTIFY_SOURCE=2 -D_POSIX_C_SOURCE=199506 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE=1 -D_LARGEFILE64_SOURCE=1 -D__STDC_LIMIT_MACROS=1 -D__STDC_FORMAT_MACROS=1
+  common_cflags = [
+          # '-Werror', #'-Wno-variadic-macros', 
+          '-DUSGX',
+          '-g',
+          '-fPIC','-Wall', '-Wextra', '-Wpointer-arith', '-Wreturn-type', '-Waddress', '-Wsequence-point',
+          #'-Wformat-security', '-Wmissing-include-dirs', '-Wfloat-equal', '-Wundef', '-Wshadow', '-Wcast-align',
+          #'-Wcast-qual', '-Wconversion', '-Wredundant-decls', '-fPIC', 
+          #'-Wno-attributes', 
+          '-I/opt/intel/sgxsdk/include',
+          # '-fpermissive',
+          # '-I/home/syseok/wolfssl',
+          # '-I/home/syseok/wolfssl/wolfcrypt',
+           #'-DPAVE'
+          #'-I/home/mkpark/pave/depot_tools'
+          ]
+
+  usgx_env.Replace(
+          CCFLAGS=common_cflags,
+          ASFLAGS=common_cflags,
+          )
+  usgx_env.Append(
+    _LIBFLAGS = [ 
+    # '-Lsrc/trusted/sgxlib/', '-lwolfssl.sgx.static.lib',
+       '-L/opt/intel/sgxsdk/lib64/', '-lsgx_urts', '-lpthread', '-lsgx_uae_service'
+        ])
+
+  # We always want to use the same flags for .S as for .c because
+  # code-generation flags affect the predefines we might test there.
+  usgx_env.AddMethod(SDKInstallBin)
+  AddDualLibrary(usgx_env)
+  environment_list.append(usgx_env)
+
+  return usgx_env
+
+
+# TODO (mkpark) 
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
@@ -2253,7 +2376,7 @@ def MakeSGXEnv():
     subarch = '64'
   else:
     subarch = '32'
-   
+  
   sgx_env.Replace(BUILD_FULLARCH=platform)
   sgx_env.Replace(BUILD_ARCHITECTURE=arch)
   sgx_env.Replace(BUILD_SUBARCH=subarch)
@@ -2291,7 +2414,7 @@ def MakeSGXEnv():
     CFLAGS = ['${EXTRA_CFLAGS}'],
     CXXFLAGS = ['${EXTRA_CXXFLAGS}'],
   )
-
+  
   sgx_env.Append(BUILD_SCONSCRIPTS = [
       # KEEP THIS SORTED PLEASE
       #'build/package_version/build.scons',
@@ -2332,7 +2455,6 @@ def MakeSGXEnv():
  
   ## MakeUnixLikeEnv start
   
-
 
   # --------------------------------------
   # --- compile and link flag settings ---
@@ -2459,6 +2581,65 @@ def MakeSGXEnv():
       )
 
 
+  # _FORTIFY_SOURCE: general paranoia "hardening" option for library functions
+  # -fPIE/-pie: create a position-independent executable
+  # relro/now: "hardening" options for linking
+  # noexecstack: ensure that the executable does not get a PT_GNU_STACK
+  #              header that causes the kernel to set the READ_IMPLIES_EXEC
+  #              personality flag, which disables NX page protection.
+  sgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  # By default SHLINKFLAGS uses $LINKFLAGS, but we do not want -pie
+  # in $SHLINKFLAGS, only in $LINKFLAGS.  So move LINKFLAGS over to
+  # COMMON_LINKFLAGS, and add the "hardening" options there.  Then
+  # make both LINKFLAGS and SHLINKFLAGS refer to that, and add -pie
+  # only to LINKFLAGS.
+  sgx_env.Replace(COMMON_LINKFLAGS=sgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  sgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  sgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  #sgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
+  #                                    '-Wl,-z,now',
+  #                                    '-Wl,-z,noexecstack'])
+  
+  # We always want to use the same flags for .S as for .c because
+  # code-generation flags affect the predefines we might test there.
+  sgx_env.Replace(ASFLAGS=['${CCFLAGS}'])
+
+  '''
+  if subarch == '32':
+    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
+    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_sign']
+    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x86/sgx_edger8r']
+  else:
+    sgx_library_path = [sgx_env.subst('$SGX_SDK')+'/lib']
+    sgx_enclave_signer = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_sign']
+    sgx_edger = [sgx_env.subst('$SGX_SDK')+'/bin/x64/sgx_edger8r']
+
+  sgx_env.Replace(SGX_LIBRARY_PATH=sgx_library_path)
+  sgx_env.Replace(SGX_ENCLAVE_SIGNER=sgx_enclave_signer)
+  sgx_env.Replace(SGX_EDGER=sgx_edger)
+  sgx_env.Replace(SGX_MODE='HW')
+  '''
+
+  # TODO GenerateOptimizationLevels
+  # sgx_env = env.Clone(tools = ['target_optimized'])
+  # sgx_env['OPTIMIZATION_LEVEL'] = 'opt'
+  # sgx_env['BUILD_DESCRIPTION'] = sgx_env.subst('$BUILD_DESCRIPTION')
+
+  ## syseok
+  AddDualLibrary(sgx_env)
+
+  # Add to the list of fully described environments.
+  environment_list.append(sgx_env)
+
+  
+  return sgx_env
+
+# TODO(mkpark) + syseok
+sgx_env = MakeSGXEnv()
+usgx_env = MakeUntrustedSGXEnv()
+
+#sgx_env.AddMethod(EnsureRequiredBuildWarnings)
 
 
 def BiasedBitcodeFlags(env):
@@ -2469,10 +2650,6 @@ def BiasedBitcodeFlags(env):
     return ['--target=i686-unknown-nacl']
   if env.Bit('build_x86_64'):
     return ['--target=x86_64-unknown-nacl']
-  if env.Bit('build_arm'):
-    return ['--target=armv7-unknown-nacl-gnueabihf', '-mfloat-abi=hard']
-  if env.Bit('build_mips32'):
-    return []
   raise UserError('No known target bits set')
 
 pre_base_env.AddMethod(BiasedBitcodeFlags)
@@ -2482,13 +2659,15 @@ pre_base_env.Append(
     PNACL_BCLDFLAGS = ARGUMENTS.get('pnacl_bcldflags', '').split(':'))
 
 
+# TODO(mkpark) nacl_env
 # The nacl_env is used to build native_client modules
 # using a special tool chain which produces platform
 # independent binaries
 # NOTE: this loads stuff from: site_scons/site_tools/naclsdk.py
 nacl_env = MakeArchSpecificEnv()
+
 # See comment below about libc++ and libpthread in NONIRT_LIBS.
-using_nacl_libcxx = nacl_env.Bit('bitcode') or nacl_env.Bit('nacl_clang')
+using_nacl_libcxx = nacl_env.Bit('bitcode') or nacl_env.Bit('nacl_clang') or sgx_env.Bit('sgx')
 nacl_env = nacl_env.Clone(
     tools = ['naclsdk'],
     NACL_BUILD_FAMILY = 'UNTRUSTED',
@@ -2554,6 +2733,7 @@ nacl_env = nacl_env.Clone(
     # TODO(dschuff): Also remove the hack in pnacl-ld and use this for pnacl.
     NONIRT_LIBS = (['nacl_sys_private'] +
                    (['c++','pthread_private'] if using_nacl_libcxx else [])),
+    IFC_LIBS = ['ifc'],
     PTHREAD_LIBS = ['pthread_private'],
     DYNCODE_LIBS = ['nacl_dyncode_private'],
     EXCEPTION_LIBS = ['nacl_exception_private'],
@@ -2564,17 +2744,10 @@ nacl_env = nacl_env.Clone(
 def UsesAbiNote(env):
   """Return True if using a new-style GCC with .note.NaCl.ABI.* notes.
 This means there will always be an RODATA segment, even if just for the note."""
-  return env.Bit('build_arm') and not env.Bit('bitcode')
+  return (False) and not env.Bit('bitcode')
 
 nacl_env.AddMethod(UsesAbiNote)
 
-def UnderWindowsCoverage(env):
-  """Return True if using running on coverage under windows."""
-  if 'TRUSTED_ENV' not in env:
-    return False
-  return env['TRUSTED_ENV'].Bit('coverage_enabled') and env.Bit('host_windows')
-
-nacl_env.AddMethod(UnderWindowsCoverage)
 
 def SetNonStableBitcodeIfAllowed(env, allow_sb_translator=False):
   """ This modifies the environment to allow features that aren't part
@@ -2627,9 +2800,6 @@ def AllowInlineAssembly(env):
       env.AppendUnique(CCFLAGS=['--target=i686-unknown-nacl'])
     elif env.Bit('build_x86_64'):
       env.AppendUnique(CCFLAGS=['--target=x86_64-unknown-nacl'])
-    elif env.Bit('build_arm'):
-      env.AppendUnique(CCFLAGS=['--target=armv7a-unknown-nacl-gnueabihf',
-                                '-mfloat-abi=hard'])
     # Enable the use of inline assembly.
     env.Append(CCFLAGS=['-fgnu-inline-asm'])
   return True
@@ -2709,14 +2879,6 @@ nacl_env.Append(
         ],
     )
 
-def FixWindowsAssembler(env):
-  if env.Bit('host_windows'):
-    # ASCOM is the rule used by .s files and ASPPCOM is the rule used by .S
-    # files; the latter uses the C preprocessor.  This is needed because Windows
-    # builds are case-insensitive, so they all appear as .s files.
-    env.Replace(ASCOM='${ASPPCOM}')
-
-FixWindowsAssembler(nacl_env)
 
 # Look in the local include and lib directories before the toolchain's.
 nacl_env['INCLUDE_DIR'] = '${TARGET_ROOT}/include'
@@ -2728,30 +2890,6 @@ nacl_env.PrependUnique(
     LIBPATH = ['${LIB_DIR}'],
     )
 
-if nacl_env.Bit('bitcode'):
-  # passing -O when linking requests LTO, which does additional global
-  # optimizations at link time
-  nacl_env.Append(LINKFLAGS=['-O3'])
-  if not nacl_env.Bit('nacl_glibc'):
-    nacl_env.Append(LINKFLAGS=['-static'])
-
-  if nacl_env.Bit('translate_fast'):
-    nacl_env.Append(LINKFLAGS=['-Xlinker', '-translate-fast'])
-    nacl_env.Append(TRANSLATEFLAGS=['-translate-fast'])
-  if nacl_env.Bit('use_sz'):
-    nacl_env.Append(TRANSLATEFLAGS=['--use-sz'])
-
-  # With pnacl's clang base/ code uses the "override" keyword.
-  nacl_env.Append(CXXFLAGS=['-Wno-c++11-extensions'])
-  # Allow extraneous semicolons.  (Until these are removed.)
-  # http://code.google.com/p/nativeclient/issues/detail?id=2861
-  nacl_env.Append(CCFLAGS=['-Wno-extra-semi'])
-  # Allow unused private fields.  (Until these are removed.)
-  # http://code.google.com/p/nativeclient/issues/detail?id=2861
-  nacl_env.Append(CCFLAGS=['-Wno-unused-private-field'])
-  # native_client/src/nonsfi/linux/linux_syscall_structs.h uses designated
-  # initializers, which causes a warning when included from c++98 code.
-  nacl_env.Append(CXXFLAGS=['-Wno-c99-extensions'])
 
 if nacl_env.Bit('nacl_clang'):
   # third_party/valgrind/nacl_valgrind.h uses asm instead of __asm__
@@ -2759,6 +2897,7 @@ if nacl_env.Bit('nacl_clang'):
   # TODO(dschuff): change it to __asm__ and remove this suppression.
   nacl_env.Append(CCFLAGS=['-Wno-language-extension-token'])
 
+## mkpark nacl_irt_env
 # We use a special environment for building the IRT image because it must
 # always use the newlib toolchain, regardless of --nacl_glibc.  We clone
 # it from nacl_env here, before too much other cruft has been added.
@@ -2792,9 +2931,6 @@ target_variant_map = [
 for variant_bit, variant_suffix in target_variant_map:
   if nacl_env.Bit(variant_bit):
     nacl_env['TARGET_VARIANT'] += '-' + variant_suffix
-
-if nacl_env.Bit('bitcode'):
-  nacl_env['TARGET_VARIANT'] += '-clang'
 
 nacl_env.Replace(TESTRUNNER_LIBS=['testrunner'])
 
@@ -2840,6 +2976,7 @@ if not nacl_env.Bit('nacl_glibc'):
         ####  ALPHABETICALLY SORTED ####
         'src/untrusted/elf_loader/nacl.scons',
         'src/untrusted/pthread/nacl.scons',
+        'src/untrusted/ifc/nacl.scons',
         'src/untrusted/stubs/nacl.scons',
         'src/untrusted/nosys/nacl.scons',
         ####  ALPHABETICALLY SORTED ####
@@ -2853,6 +2990,7 @@ nacl_env.Append(
     'src/shared/gio/nacl.scons',
     'src/shared/imc/nacl.scons',
     'src/shared/platform/nacl.scons',
+    #'src/shared/sgxplatform/nacl.scons',
     'src/trusted/service_runtime/nacl.scons',
     'src/trusted/validator/nacl.scons',
     'src/untrusted/irt/nacl_headers.scons',
@@ -2882,6 +3020,7 @@ irt_only_tests = [
 # The nacl_irt_test mode runs them in the IRT variants.
 irt_variant_tests = [
     #### ALPHABETICALLY SORTED ####
+    'tests/ifc/nacl.scons',
     'tests/app_lib/nacl.scons',
     'tests/benchmark/nacl.scons',
     'tests/bigalloc/nacl.scons',
@@ -2944,7 +3083,7 @@ irt_variant_tests = [
     'tests/rodata_not_writable/nacl.scons',
     'tests/run_py/nacl.scons',
     'tests/sel_ldr/nacl.scons',
-    'tests/sel_ldr_seccomp/nacl.scons',
+    #'tests/sel_ldr_seccomp/nacl.scons',
     'tests/sel_main_chrome/nacl.scons',
     'tests/signal_handler/nacl.scons',
     'tests/simd/nacl.scons',
@@ -3091,7 +3230,6 @@ nacl_irt_env.Replace(EXTRA_CFLAGS=nacl_env['EXTRA_CFLAGS'],
                      CCFLAGS=nacl_env['CCFLAGS'],
                      CFLAGS=nacl_env['CFLAGS'],
                      CXXFLAGS=nacl_env['CXXFLAGS'])
-FixWindowsAssedmbler(nacl_irt_env)
 # Make it find the libraries it builds, rather than the SDK ones.
 nacl_irt_env.Replace(LIBPATH='${LIB_DIR}')
 
@@ -3185,7 +3323,7 @@ def AddImplicitLibs(env):
   # Require the pnacl_irt_shim for pnacl x86-64 and arm.
   # Use -B to have the compiler look for the fresh libpnacl_irt_shim.a.
   if ( env.Bit('bitcode') and
-       (env.Bit('build_x86_64') or env.Bit('build_arm'))
+       (env.Bit('build_x86_64'))
        and env['NACL_BUILD_FAMILY'] != 'UNTRUSTED_IRT'):
     # Note: without this hack ibpnacl_irt_shim.a will be deleted
     #       when "built_elsewhere=1"
@@ -3281,7 +3419,7 @@ if nacl_env.Bit('nonsfi_nacl'):
 
 # If a tests/.../nacl.scons file builds a library, we will just use
 # the one already built in nacl_env instead.
-def IrtTestDummyLibrary(*args, **kwargs)d:
+def IrtTestDummyLibrary(*args, **kwargs):
   pass
 nacl_irt_test_env.AddMethod(IrtTestDummyLibrary, 'ComponentLibrary')
 
@@ -3307,36 +3445,6 @@ nacl_irt_test_env.AddMethod(IrtTestAddNodeToTestSuite, 'AddNodeToTestSuite')
 environment_list.append(nacl_irt_test_env)
 
 
-windows_coverage_env = windows_debug_env.Clone(
-    tools = ['code_coverage'],
-    BUILD_TYPE = 'coverage-win',
-    BUILD_TYPE_DESCRIPTION = 'Windows code coverage build',
-    # TODO(bradnelson): switch nacl to common testing process so this won't be
-    #    needed.
-    MANIFEST_FILE = None,
-    COVERAGE_ANALYZER_DIR=r'..\third_party\coverage_analyzer\bin',
-    COVERAGE_ANALYZER='$COVERAGE_ANALYZER_DIR\coverage_analyzer.exe',
-)
-# TODO(bradnelson): Switch nacl to common testing process so this won't be
-#                   needed. Ignoring instrumentation failure as that's easier
-#                   than trying to gate out the ones with asm we can't handle.
-windows_coverage_env['LINKCOM'] = windows_coverage_env.Action([
-    windows_coverage_env.get('LINKCOM', []),
-    '-$COVERAGE_VSINSTR /COVERAGE ${TARGET}'])
-windows_coverage_env.Append(LINKFLAGS = ['/NODEFAULTLIB:msvcrt'])
-AddDualLibrary(windows_coverage_env)
-environment_list.append(windows_coverage_env)
-
-mac_coverage_env = mac_debug_env.Clone(
-    tools = ['code_coverage'],
-    BUILD_TYPE = 'coverage-mac',
-    BUILD_TYPE_DESCRIPTION = 'MacOS code coverage build',
-    # Strict doesnt't currently work for coverage because the path to gcov is
-    # magically baked into the compiler.
-    LIBS_STRICT = False,
-    )
-AddDualLibrary(mac_coverage_env)
-environment_list.append(mac_coverage_env)
 
 linux_coverage_env = linux_debug_env.Clone(
     tools = ['code_coverage'],
@@ -3438,11 +3546,11 @@ def MakeBuildEnv():
 
   # Build Platform Base Function
   platform_func_map = {
-      'win32' : MakeWindowsEnv,
-      'cygwin': MakeWindowsEnv,
-      'linux' : MakeGenericLinuxEnv,
-      'linux2': MakeGenericLinuxEnv,
-      'darwin': MakeMacEnv,
+      #'win32' : MakeWindowsEnv,
+      #'cygwin': MakeWindowsEnv,
+      'linux' : MakeTrustedLinuxEnv,
+      'linux2': MakeTrustedLinuxEnv,
+      #'darwin': MakeMacEnv,
       }
   if sys.platform not in platform_func_map:
     raise UserError('Unrecognized host platform: %s', sys.platform)
@@ -3466,6 +3574,7 @@ def MakeBuildEnv():
   # override the alias function and essentially stub it out.
   build_env.Alias = lambda env, target, source=[], actions=None, **kw : []
 
+  print("Make Build Env Done")
   return build_env
 
 def LinkBuildEnv(selected_envs):
@@ -3497,6 +3606,8 @@ def LinkBuildEnv(selected_envs):
     # Did not find a matching environment, append the build environment now.
     selected_envs.append(build_env)
 
+  print("Link Build Env Done")
+
 def DumpEnvironmentInfo(selected_envs):
   if VerboseConfigInfo(pre_base_env):
     Banner("The following environments have been configured")
@@ -3518,27 +3629,13 @@ def DumpEnvironmentInfo(selected_envs):
         if "Revision:" in line:
           print "PNACL : %s" % line
 
-def PnaclSetEmulatorForSandboxedTranslator(selected_envs):
-  # Slip in emulator flags if necessary, for the sandboxed pnacl translator
-  # on ARM, once emulator is actually known (vs in naclsdk.py, where it
-  # is not yet known).
-  for env in selected_envs:
-    if (env['NACL_BUILD_FAMILY'] != 'TRUSTED'
-        and env.Bit('bitcode')
-        and env.Bit('use_sandboxed_translator')
-        and env.UsingEmulator()):
-      # This must modify the LINK command itself, since LINKFLAGS may
-      # be filtered (e.g., in barebones tests).
-      env.Append(LINK=' --pnacl-use-emulator')
-      env.Append(TRANSLATE=' --pnacl-use-emulator')
-
 
 # Blank out defaults.
 Default(None)
 
 # Apply optional supplement if present in the directory tree.
-if os.path.exists(pre_base_env.subst('$MAIN_DIR/supplement/supplement.scons')):
-  SConscript('supplement/supplement.scons', exports=['environment_list'])
+#if os.path.exists(pre_base_env.subst('$MAIN_DIR/supplement/supplement.scons')):
+#  SConscript('supplement/supplement.scons', exports=['environment_list'])
 
 # print sytem info (optionally)
 if VerboseConfigInfo(pre_base_env):
@@ -3547,6 +3644,11 @@ if VerboseConfigInfo(pre_base_env):
 
 CheckArguments()
 
+# nacl_env (archspecific, untrusted)
+# nacl_irt_env (clone, untrusted_irt)
+# nacl_irt_test_env (clone, untrusted_irt_tests)
+# linux_coverage_env (clone, ???)
+# debug_env, opt_env (clone, ???)  
 SanityCheckEnvironments(environment_list)
 selected_envs = FilterEnvironments(environment_list)
 
@@ -3562,7 +3664,7 @@ if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
 selected_envs.append(sgx_env)
-
+selected_envs.append(usgx_env)
 
 DumpEnvironmentInfo(selected_envs)
 LinkTrustedEnv(selected_envs)
@@ -3595,3 +3697,4 @@ if BROKEN_TEST_COUNT > 0:
 
 # separate warnings from actual build output
 Banner('B U I L D - O U T P U T:')
+
