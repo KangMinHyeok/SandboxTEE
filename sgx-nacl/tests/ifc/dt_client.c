@@ -12,7 +12,6 @@
 #include <time.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-
 #include "client_common.h"
 
 

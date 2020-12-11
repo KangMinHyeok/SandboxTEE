@@ -57,10 +57,8 @@ int main(int argc, char *argv[]) {
 
   printf("init done\n");
 
-  // custom();
 
   adt1 = create_adt(ADT_SIZE);
-  // adt2 = create_adt();
 
   custom_print(77);
 	client_sockfd = ifc_accept(serv_sockfd, adt1);
@@ -73,13 +71,10 @@ int main(int argc, char *argv[]) {
 	memset(buffer2, 0, sizeof(buffer2));
 
 	// receive user data
-	// read_data(client_sockfd, buffer);
-  // get_adt_entry(adt1, buffer, ADT_ENTRY_SIZE);
 	len = unpack_recv_data(adt1, buffer);
 
   ADTFD adt = pack_send_data(buffer, len); 
   analyzer_sockfd = connect_remote  (9001, adt);
-  // send_data(analyzer_sockfd, buffer, len);  
 
   read_data(analyzer_sockfd, buffer2);
 	
@@ -97,7 +92,6 @@ int main(int argc, char *argv[]) {
 	memcpy(&location, p, sizeof(int)); p += sizeof(int);
 	memcpy(&interests, p, sizeof(int)); p += sizeof(int);
 
-	// printf("gender: %d, age: %d, locaiont: %d, interests: %d\n", gender, age, location, interests);
 
   product_id = rand() % MAX_AD;
   int ad_index = 0;
@@ -148,16 +142,6 @@ int main(int argc, char *argv[]) {
       age_classify(age, location, interests, 8*6*6);
   }
 
-
-  /*
-	product_id = 0;
-
-	product_id += (gender<<15);
-	product_id += (age-2) << 12;
-	product_id += (location-10) << 8;
-	product_id += interests;
-  */
-
   product_id = ad_bucket[ad_index][product_id];
 
 	
@@ -168,15 +152,11 @@ int main(int argc, char *argv[]) {
 	send_data(client_sockfd, buffer, len);
   custom_print(200);
   
-  // add_adt_entry(adt2, buffer, len+1);
-  // len = ifc_enqueue(QUEUE_ENTRY_SEND, client_sockfd, adt2);
-
   send_data(analyzer_sockfd, buffer, len);
 
   close(analyzer_sockfd);
   close(client_sockfd);
 
-  // custom();
   custom_print(102);
 	printf("product_id: %x\n", product_id);
 	return 0;

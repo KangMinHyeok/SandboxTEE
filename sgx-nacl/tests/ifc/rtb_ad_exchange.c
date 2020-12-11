@@ -12,11 +12,6 @@
 #include <ifc.h>
 
 #include "util.h"
-//#define BUFF_LEN 2048 
-
-//char buffer[BUFF_LEN];
-//char profile[BUFF_LEN];
-
 
 int cmp_bids(double *bid_list, int dsp_num) {
 
@@ -48,7 +43,6 @@ int main(int argc, char *argv[]) {
 	int profile_len, len, i, winner;
 	double *bid_list;
 	char **ad_id_list;
-	//double highest_bid;
 	int fd_list[dsp_num];
   int ret = 0;	
 	
@@ -72,13 +66,7 @@ int main(int argc, char *argv[]) {
     exit(2);
   }
 
-	// profile_len = read_data(ssp_client_sockfd, profile);
 	profile_len = unpack_recv_data(adt1, profile);
-	// printf("Profile: %s\n", profile);
-	
-
-	// printf("SSP connected!!\n");
-
 	memset(buffer, '0', sizeof(buffer));
 
   ADTFD adt[2];
@@ -87,9 +75,7 @@ int main(int argc, char *argv[]) {
     adt[i] = pack_send_data(profile, profile_len);
 		dsp_sockfd = connect_remote(dsp_port + i, adt[i]);
 		fd_list[i] = dsp_sockfd; 
-		// send_data(dsp_sockfd, profile, profile_len);
 	}
-	// printf("DSPs connected!!\n");
 
 	bid_list = (double *)malloc(sizeof(double)*(dsp_num));
 	ad_id_list = (char **)malloc(dsp_num * sizeof(char *));
@@ -103,13 +89,10 @@ int main(int argc, char *argv[]) {
 		memcpy(&len, buffer+sizeof(bid_list[i]), sizeof(len));
 		ad_id_list[i] = (char *)malloc(len * sizeof(char));
 		memcpy(ad_id_list[i], buffer+sizeof(bid_list[i])+sizeof(len), len);
-
-		// printf("Id: %d, bid: %.10f, ad id: %s\n", i, bid_list[i], ad_id_list[i]);
 	}
 
 
 	winner = cmp_bids(bid_list, dsp_num);
-	// printf("Winner: %d, bid: %.9f, ad id: %s\n\n", winner, bid_list[winner], ad_id_list[winner]);
 
 	memcpy(buffer, &bid_list[winner], sizeof(bid_list[winner]));
 	len = strlen(ad_id_list[winner]) + 1;

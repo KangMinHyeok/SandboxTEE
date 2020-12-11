@@ -71,16 +71,13 @@ int main(int argc, char *argv[]) {
 	adex_serv_addr.sin_port = htons(adex_port);
 	adex_serv_addr.sin_addr.s_addr = inet_addr(adex_ip);
 
-//	printf("%s %d\n", __FUNCTION__, __LINE__); fflush(stdout);
 	if (connect(adex_sockfd, (struct sockaddr *)&adex_serv_addr, sizeof(adex_serv_addr)) < 0) {
 		printf("Ad exchange - Connection failed\n");
 		goto exit3;
 	}
 
-//	printf("%s %d\n", __FUNCTION__, __LINE__); fflush(stdout);
 	while (count < 1) {
 		// read profile from a user
-//	printf("%s %d\n", __FUNCTION__, __LINE__); fflush(stdout);
 		n = read_nonuser_data(user_client_sockfd, buffer_in, BUFF_LEN);
 		if (n < 0) {
 			printf("User - Read error\n");
@@ -88,13 +85,7 @@ int main(int argc, char *argv[]) {
 		}
 		printf("%d bytes read\n", n);
 		fflush(stdout);
-		/*
-		memcpy(&len, buffer_in, sizeof(len));
-		memcpy(buffer_out, buffer_in+sizeof(len), len+1);
 		
-		printf("Profile: %s", buffer_out);
-		*/
-
 		// send profile to an ad exchange
 		n = extend_request(adex_sockfd, buffer_in, BUFF_LEN);
 		if (n < 0) {
@@ -108,13 +99,6 @@ int main(int argc, char *argv[]) {
 			printf("Ad exchange - Read error\n");
 			goto exit1;
 		}
-
-		/*
-		memcpy(&bid, buffer_in, sizeof(bid));
-		memcpy(&len, buffer_in+sizeof(bid), sizeof(len));
-		memcpy(buffer_out, buffer_in+sizeof(len)+sizeof(bid), len+1);
-		printf("Bid id: %s\n", buffer_out);
-		*/
 
 		// send result to the user
 		n = send_response(user_client_sockfd, buffer_in, BUFF_LEN);

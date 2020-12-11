@@ -4,7 +4,6 @@
  * found in the LICENSE file.
 */
 
-
 #include <ifc.h>
 
 int main(int argc, char* argv[]) {

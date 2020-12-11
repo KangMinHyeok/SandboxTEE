@@ -25,14 +25,6 @@ int main(int argc, char* argv[]) {
   serv_addr.sin_port = 5000; 
   serv_addr.sin_addr.s_addr = 16777343;
 
-  /*
-  if(inet_pton(AF_INET, "127.0.0.1", 9, &serv_addr.sin_addr)<=0)
-  {
-    printf("\n inet_pton error occured\n");
-    return 1;
-  } 
- */ 
-
   int sock = ifc_socket();
 
 

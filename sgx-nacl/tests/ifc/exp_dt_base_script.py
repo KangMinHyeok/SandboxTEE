@@ -2,13 +2,13 @@
 # Use of this source code is governed by a GPLv2 license that can be
 # found in the LICENSE file.
 
-import subprocess
 import os
-from multiprocessing import Process
-from multiprocessing import Manager
+import sys
 import time
 import threading
-import sys
+import subprocess
+from multiprocessing import Process
+from multiprocessing import Manager
 
 
 def timer_set(wait, string):

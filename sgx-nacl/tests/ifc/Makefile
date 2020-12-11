@@ -5,7 +5,6 @@
 # $^ : dependency list
 # # $@ : target
 
-
 CC = gcc
 
 CFLAGS=-I./
@@ -20,8 +19,6 @@ OBJECTS=dt_ad_network.o cf_ad_network.o network_analyzer.o rtb_ssp.o rtb_ad_exch
 TARGET=dt_ad_network.out cf_ad_network.out network_analyzer.out rtb_ssp.out rtb_ad_exchange.out rtb_dsp1.out rtb_dsp2.out rtb_analyzer1.out rtb_analyzer2.out
 
 all:  $(TARGET)
-
-
 
 $(TARGET): $(OBJECTS) 
 	$(CC) -o $@ $(@:.out=.o) util.o ifc.o $(LDFLAGS) $(LDLIBS)

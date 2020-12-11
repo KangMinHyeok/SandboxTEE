@@ -54,8 +54,6 @@ void run_read(int size, char *filename, int buff_len, int lognum){
     buff_len = size;
   }
 
-//  printf("filename: %s\n", filename);
-
   int fd = open(filename, O_RDWR);
 
   custom_print(lognum);
@@ -74,8 +72,6 @@ void run_read(int size, char *filename, int buff_len, int lognum){
 
 int main(int argc, char *argv[]) {
 
-//  char total_buff[10*1024*1024];
-  
   int buff_len = 1000;
 
   run_write(4096<<8,     "/home/mkpark/pave/depot_tools/native_client/write_1000", buff_len, 11);

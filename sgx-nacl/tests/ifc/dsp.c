@@ -244,7 +244,6 @@ int main(int argc, char *argv[]) {
 
 		printf("Selected ad campaign: %s, ", ad_ids[selected_ad]);
 
-		//pctr = calc_pctr(delim, buffer_out, weights[0]);
 		if (algorithm == 0)
 			bid = ortb1(pctr, lambda, c);
 		else

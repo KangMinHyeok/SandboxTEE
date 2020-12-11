@@ -10,9 +10,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
 #include <ifc.h>
-
 #include "util.h"
 
 int main(int argc, char *argv[]) {
@@ -57,7 +55,6 @@ int main(int argc, char *argv[]) {
 	i = 0;
 	// data format sim0 sim1 sim2 sim3
 	while (fgets(buffer, BUFF_LEN, fp) != NULL) {
-		//printf("profile: %s\n", buffer);
 		j = 0;
 
 		line = strtok(buffer, " ");
@@ -95,13 +92,10 @@ int main(int argc, char *argv[]) {
   }
 
 
-	// read_data(client_sockfd, buffer);
-  // get_adt_entry(adt1, buffer, 1024);
 	len = unpack_recv_data(adt1, buffer);
 
   ADTFD adt = pack_send_data(buffer, len); 
   analyzer_sockfd = connect_remote  (9001, adt);
-  // send_data(analyzer_sockfd, buffer, len);  
 
   read_data(analyzer_sockfd, buffer2);
 	
@@ -144,16 +138,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	// printf("Max score: %f, Ad ID: %d\n", max_score, product_id);
-
 	len = sizeof(product_id);
 	memcpy(buffer, &product_id, len);
 
 	send_data(client_sockfd, buffer, len);
   custom_print(200);
 
-  // printf("after send %d\n", len);
-  
   send_data(analyzer_sockfd, buffer, len);
 
   close(client_sockfd);

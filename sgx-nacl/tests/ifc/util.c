@@ -58,8 +58,6 @@ void send_data(int sockfd, char *buffer, int len) {
   add_adt_entry(adt, adt_buffer, len+sizeof(int));
   len = ifc_enqueue(QUEUE_ENTRY_SEND, sockfd, adt);
 
-	// propagate_adt(sockfd, &len, sizeof(len));
-	// propagate_adt(sockfd, buffer, len);
   close(adt);
 }
 
@@ -79,12 +77,6 @@ int read_data(int sockfd, char *buffer) {
   close(adt);
 
   return len;
-/*
-	receive_adt(sockfd, &len, sizeof(int));
-	while (n < len) 
-		n += receive_adt(sockfd, buffer + n, sizeof(buffer));
-	return len;
-  */
 }
 
 

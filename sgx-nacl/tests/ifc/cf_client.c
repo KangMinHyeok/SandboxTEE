@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-
 #include "client_common.h"
 
 
@@ -71,7 +70,7 @@ int main(int argc, char *argv[]) {
 	close(sockfd);
 	fclose(input_fp);
 	
-  gettimeofday(&after , NULL);
+	gettimeofday(&after , NULL);
 
 	printf("Total time elapsed (us), %.0lf\n" , time_diff(before , after) ); 
 

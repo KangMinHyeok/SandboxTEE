@@ -5,7 +5,6 @@
 */
 
 #include <sys/types.h>
-
 #include <errno.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -42,4 +41,3 @@ int get_adt_entry(ADTFD adtfd, void *buf, size_t len);
 int get_adt_security_entry(ADTFD adtfd, void *buf, size_t len) ;
 int add_adt_entry(ADTFD adtfd, void *buf, size_t len);
 int custom_print(int prv);
-
