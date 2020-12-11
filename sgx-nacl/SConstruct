@@ -2578,9 +2578,6 @@ def MakeSGXEnv():
                     LINKFLAGS=['$COMMON_LINKFLAGS'])
   sgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
   sgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
-  #sgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
-  #                                    '-Wl,-z,now',
-  #                                    '-Wl,-z,noexecstack'])
   
   # We always want to use the same flags for .S as for .c because
   # code-generation flags affect the predefines we might test there.
