@@ -6,7 +6,6 @@
 
 #include <time.h>
 
-
 #define BUFF_LEN 2048
 struct timeval before, middle , after;
 
