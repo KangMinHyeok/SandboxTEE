@@ -70,20 +70,6 @@ dt_ad_network_nexe = env.ComponentProgram('dt_ad_network',
                                  EXTRA_LIBS=['${IFC_LIBS}',
                                              '${NONIRT_LIBS}'],
                                  )
-'''
-server_nexe = env.ComponentProgram('server',
-                                 'server.c',
-                                 EXTRA_LIBS=['${IFC_LIBS}',
-                                             '${NONIRT_LIBS}'],
-                                 )
-
-
-client_nexe = env.ComponentProgram('client',
-                                 'client.c',
-                                 EXTRA_LIBS=['${IFC_LIBS}',
-                                             '${NONIRT_LIBS}'],
-                                 )
-'''
 
 custom_nexe = env.ComponentProgram('custom',
                                  'custom.c',
