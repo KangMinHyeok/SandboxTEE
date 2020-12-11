@@ -9,9 +9,7 @@
 
 
 WOLFSSL_CTX* ctx[100];
-
 WOLFSSL*     ssl[100];
-   
 
 #define CA_CERT "/home/mkpark/cacert.pem"
 #define CERT_FILE "/home/mkpark/cert.pem"
@@ -28,7 +26,6 @@ int ifc_socket(){
     return -1;
 
   wolfSSL_Init();
-//  wolfSSL_Debugging_ON();
 
   return sock;
 }
@@ -126,8 +123,6 @@ int ifc_accept(int s, ADTFD adtfd){
     }
 
 
-//  int len = read(client_sockfd, adtfd, ADT_SIZE);
-  // printf("accept: %d\n", len);
   return client_sockfd;
 }
 
@@ -188,10 +183,6 @@ int ifc_connect(int s, struct sockaddr *addr, unsigned int len, ADTFD adtfd){
       return len;
     count-=len;
   }
-
-//  len = write(s, adtfd, ADT_SIZE);
-  // printf("connect %d\n", len);
-
 }
 
 
@@ -206,7 +197,6 @@ int ifc_enqueue(int type, int sockfd, ADTFD adtfd){
         return len;
       count-=len;
     }
-    // write(sockfd, adtfd, ADT_SIZE);
   }
   else{
 
@@ -219,7 +209,6 @@ int ifc_enqueue(int type, int sockfd, ADTFD adtfd){
       count -= len;
 
     }
-    // read(sockfd, adtfd, ADT_SIZE);
   }
 }
 
