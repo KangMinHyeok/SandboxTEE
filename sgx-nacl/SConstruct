@@ -2281,16 +2281,6 @@ def MakeUntrustedSGXEnv(platform=None):
 
   usgx_env.SetBits('usgx')
 
-
-
-# Specializes a generic Linux development environment to be a trusted
-# environment.
-def MakeTrustedLinuxEnv(platform=None):
-  linux_env = MakeGenericLinuxEnv(platform)
-  if linux_env.Bit('android'):
-    SetUpAndroidEnv(linux_env)
-  return linux_env
-
   # These are desireable options for every Linux platform:
   # _FORTIFY_SOURCE: general paranoia "hardening" option for library functions
   # -fPIE/-pie: create a position-independent executable
@@ -2358,6 +2348,8 @@ def MakeTrustedLinuxEnv(platform=None):
 
   return usgx_env
 
+
+# TODO (mkpark) 
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
@@ -2667,11 +2659,13 @@ pre_base_env.Append(
     PNACL_BCLDFLAGS = ARGUMENTS.get('pnacl_bcldflags', '').split(':'))
 
 
+# TODO(mkpark) nacl_env
 # The nacl_env is used to build native_client modules
 # using a special tool chain which produces platform
 # independent binaries
 # NOTE: this loads stuff from: site_scons/site_tools/naclsdk.py
 nacl_env = MakeArchSpecificEnv()
+
 # See comment below about libc++ and libpthread in NONIRT_LIBS.
 using_nacl_libcxx = nacl_env.Bit('bitcode') or nacl_env.Bit('nacl_clang') or sgx_env.Bit('sgx')
 nacl_env = nacl_env.Clone(
@@ -3650,6 +3644,11 @@ if VerboseConfigInfo(pre_base_env):
 
 CheckArguments()
 
+# nacl_env (archspecific, untrusted)
+# nacl_irt_env (clone, untrusted_irt)
+# nacl_irt_test_env (clone, untrusted_irt_tests)
+# linux_coverage_env (clone, ???)
+# debug_env, opt_env (clone, ???)  
 SanityCheckEnvironments(environment_list)
 selected_envs = FilterEnvironments(environment_list)
 
