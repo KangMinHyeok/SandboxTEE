@@ -2351,7 +2351,13 @@ def MakeTrustedLinuxEnv(platform=None):
        '-L/opt/intel/sgxsdk/lib64/', '-lsgx_urts', '-lpthread', '-lsgx_uae_service'
         ])
 
+  # We always want to use the same flags for .S as for .c because
+  # code-generation flags affect the predefines we might test there.
+  usgx_env.AddMethod(SDKInstallBin)
+  AddDualLibrary(usgx_env)
+  environment_list.append(usgx_env)
 
+  return usgx_env
 
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
