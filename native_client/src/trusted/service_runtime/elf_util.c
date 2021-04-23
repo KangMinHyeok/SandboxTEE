@@ -822,6 +822,8 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
     paddr = NaClUserToSysAddr(nap, vaddr);
     CHECK(kNaClBadAddress != paddr);
 
+	add_pages_to_enclave();
+
     /*
      * Check NaClDescIsSafeForMmap(ndp) to see if it might be okay to
      * mmap.

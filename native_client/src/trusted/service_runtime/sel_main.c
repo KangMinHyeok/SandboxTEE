@@ -52,6 +52,7 @@
 #include "native_client/src/trusted/service_runtime/win/exception_patch/ntdll_patch.h"
 #include "native_client/src/trusted/service_runtime/win/debug_exception_handler.h"
 
+#include "native_client/src/trusted/service_runtime/sel_sgx_loader.h"
 
 static void (*g_enable_outer_sandbox_func)(void) = NULL;
 
@@ -649,6 +650,7 @@ int NaClSelLdrMain(int argc, char **argv) {
   NaClAppInitialDescriptorHookup(nap); // untrusted + trusted
 
   NaClLog(2, "Loading nacl file %s (non-RPC)\n", options->nacl_file);
+
   errcode = NaClAppLoadFileFromFilename(nap, options->nacl_file); // need modification (LOAD enclave)
   if (LOAD_OK != errcode) {
     if (!options->quiet) {
