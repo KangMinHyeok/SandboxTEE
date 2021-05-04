@@ -39,6 +39,8 @@
 #include "native_client/src/trusted/service_runtime/sys_memory.h"
 #include "native_client/src/trusted/validator/validation_metadata.h"
 
+#include "native_client/src/trusted/service_runtime/sgx_interface.h"
+
 /* private */
 struct NaClElfImage {
   Elf_Ehdr  ehdr;
@@ -554,6 +556,7 @@ struct NaClElfImage *NaClElfImageNew(struct NaClDesc *ndp,
  * mmap syscall where PROT_EXEC allows shared libraries to be mapped
  * into dynamic code space.
  */
+/*
 static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                                            struct NaClDesc *ndp,
                                            Elf_Word p_flags,
@@ -561,7 +564,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                                            Elf_Off segment_size,
                                            uintptr_t vaddr,
                                            uintptr_t paddr) {
-  size_t rounded_filesz;       /* 64k rounded */
+  size_t rounded_filesz;       // 64k rounded 
   int mmap_prot = 0;
   uintptr_t image_sys_addr;
   NaClValidationStatus validator_status = NaClValidationFailed;
@@ -577,25 +580,25 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
           "NaClElfFileMapSegment: checking segment flags 0x%x"
           " to determine map checks\n",
           p_flags);
-  /*
-   * Is this the text segment?  If so, map into scratch memory and
-   * run validation (possibly cached result) with !stubout_mode,
-   * readonly_text.  If validator says it's okay, map directly into
-   * target location with NACL_ABI_PROT_READ|_EXEC.  If anything
-   * failed, fall back to PRead.  NB: the assumption is that there
-   * is only one PT_LOAD with PF_R|PF_X segment; this assumption is
-   * enforced by phdr seen_seg checks above in
-   * NaClElfImageValidateProgramHeaders.
-   *
-   * After this function returns, we will be setting memory protection
-   * in NaClMemoryProtection, so the actual memory protection used is
-   * immaterial.
-   *
-   * For rodata and data/bss, we mmap with NACL_ABI_PROT_READ or
-   * NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE as appropriate,
-   * without doing validation.  There is no fallback to PRead, since
-   * we don't validate the contents.
-   */
+  
+   // Is this the text segment?  If so, map into scratch memory and
+   // run validation (possibly cached result) with !stubout_mode,
+   // readonly_text.  If validator says it's okay, map directly into
+   // target location with NACL_ABI_PROT_READ|_EXEC.  If anything
+   // failed, fall back to PRead.  NB: the assumption is that there
+   // is only one PT_LOAD with PF_R|PF_X segment; this assumption is
+   // enforced by phdr seen_seg checks above in
+   // NaClElfImageValidateProgramHeaders.
+   //
+   // After this function returns, we will be setting memory protection
+   // in NaClMemoryProtection, so the actual memory protection used is
+   // immaterial.
+   //
+   // For rodata and data/bss, we mmap with NACL_ABI_PROT_READ or
+   // NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE as appropriate,
+   // without doing validation.  There is no fallback to PRead, since
+   // we don't validate the contents.
+   
   switch (p_flags) {
     case PF_R | PF_X:
       NaClLog(4,
@@ -606,16 +609,16 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                 NACL_VTBL(NaClDesc, ndp)->typeTag);
         return LOAD_STATUS_UNKNOWN;
       }
-      /*
-       * Unlike the mmap case, we do not re-run validation to
-       * allow patching here; instead, we handle validation
-       * failure by going to the pread_fallback case.  In the
-       * future, we should consider doing an in-place mapping and
-       * allowing HLT patch validation, which should be cheaper
-       * since those pages that do not require patching (hopefully
-       * majority) will remain file-backed and not require swap
-       * space, even if we had to fault in every page.
-       */
+      
+       // Unlike the mmap case, we do not re-run validation to
+       // allow patching here; instead, we handle validation
+       // failure by going to the pread_fallback case.  In the
+       // future, we should consider doing an in-place mapping and
+       // allowing HLT patch validation, which should be cheaper
+       // since those pages that do not require patching (hopefully
+       // majority) will remain file-backed and not require swap
+       // space, even if we had to fault in every page.
+       
       NaClLog(1, "NaClElfFileMapSegment: mapping for validation\n");
       NaClPerfCounterMark(&time_mmap_segment, "PreMap");
       NaClPerfCounterIntervalLast(&time_mmap_segment);
@@ -635,7 +638,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                 " falling back to reading\n");
         return LOAD_STATUS_UNKNOWN;
       }
-      /* ask validator / validation cache */
+      // ask validator / validation cache 
       NaClMetadataFromNaClDescCtor(&metadata, ndp);
       CHECK(segment_size == nap->static_text_end - NACL_TRAMPOLINE_END);
       validator_status = NACL_FI_VAL(
@@ -644,10 +647,10 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
           (*nap->validator->
            Validate)(vaddr,
                      (uint8_t *) image_sys_addr,
-                     segment_size,  /* actual size */
-                     0,  /* stubout_mode: no */
+                     segment_size,  // actual size 
+                     0,  // stubout_mode: no 
                      nap->pnacl_mode ? NACL_DISABLE_NONTEMPORALS_X86 : 0,
-                     1,  /* readonly_text: yes */
+                     1,  // readonly_text: yes 
                      nap->cpu_features,
                      &metadata,
                      nap->validation_cache));
@@ -656,10 +659,10 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
       NaClLog(3, "NaClElfFileMapSegment: validator_status %d\n",
               validator_status);
       NaClMetadataDtor(&metadata);
-      /*
-       * Remove scratch mapping, then map directly into untrusted
-       * address space or pread.
-       */
+      
+       // Remove scratch mapping, then map directly into untrusted
+       // address space or pread.
+       
       NaClHostDescUnmapUnsafe((void *) image_sys_addr, rounded_filesz);
       NACL_MAKE_MEM_UNDEFINED((void *) paddr, rounded_filesz);
 
@@ -672,48 +675,48 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
       }
 
       NaClLog(1, "NaClElfFileMapSegment: mapping into code space\n");
-      /*
-       * Windows appears to not allow RWX mappings.  This interferes
-       * with HALT_SLED and having to HALT pad the last page.  We
-       * allow partial code pages, so
-       * read_last_page_if_partial_allocation_page will ensure that
-       * the last page is writable, so we will be able to write HALT
-       * instructions as needed.
-       */
+      
+       // Windows appears to not allow RWX mappings.  This interferes
+       // with HALT_SLED and having to HALT pad the last page.  We
+       // allow partial code pages, so
+       // read_last_page_if_partial_allocation_page will ensure that
+       // the last page is writable, so we will be able to write HALT
+       // instructions as needed.
+       
       mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_EXEC;
-      /*
-       * NB: the log string is used by tests/mmap_main_nexe/nacl.scons
-       * and must be logged at a level that is less than or equal to
-       * the requested verbosity level there.
-       */
+      
+       // NB: the log string is used by tests/mmap_main_nexe/nacl.scons
+       // and must be logged at a level that is less than or equal to
+       // the requested verbosity level there.
+       
       NaClLog(1, "NaClElfFileMapSegment: EXERCISING MMAP LOAD PATH\n");
       nap->main_exe_prevalidated = 1;
       break;
 
     case PF_R | PF_W:
-      /* read-write (initialized data) */
+      // read-write (initialized data) 
       mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE;
-      /*
-       * NB: the partial page processing will result in zeros
-       * following the initialized data, so that the BSS will be zero.
-       * On a typical system, this page is mapped in and the BSS
-       * region is memset to zero, which means that this partial page
-       * is faulted in.  Rather than saving a syscall (pread) and
-       * faulting it in, we just use the same code path as for code,
-       * which is (slightly) simpler.
-       */
+      
+       // NB: the partial page processing will result in zeros
+       // following the initialized data, so that the BSS will be zero.
+       // On a typical system, this page is mapped in and the BSS
+       // region is memset to zero, which means that this partial page
+       // is faulted in.  Rather than saving a syscall (pread) and
+       // faulting it in, we just use the same code path as for code,
+       // which is (slightly) simpler.
+       
       break;
 
     case PF_R:
-      /* read-only */
+      // read-only 
       mmap_prot = NACL_ABI_PROT_READ;
-      /*
-       * For rodata, we allow mapping in "garbage" past a partial
-       * page; this potentially eliminates a disk I/O operation
-       * (if data section has no partial page), possibly delaying
-       * disk spin-up if the code was in the validation cache.
-       * And it saves another 64kB of swap.
-       */
+      
+       // For rodata, we allow mapping in "garbage" past a partial
+       // page; this potentially eliminates a disk I/O operation
+       // (if data section has no partial page), possibly delaying
+       // disk spin-up if the code was in the validation cache.
+       // And it saves another 64kB of swap.
+       
       read_last_page_if_partial_allocation_page = 0;
       break;
 
@@ -740,7 +743,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
     }
     rounded_filesz -= NACL_MAP_PAGESIZE;
   }
-  /* mmap in */
+  // mmap in 
   if (rounded_filesz == 0) {
     NaClLog(4,
             "NaClElfFileMapSegment: no pages to map, probably because"
@@ -771,11 +774,12 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                "failed: got 0x%"NACL_PRIxPTR"\n"),
               paddr, mmap_prot, image_sys_addr);
     }
-    /* Tell Valgrind that we've mapped a segment of nacl_file. */
+    // Tell Valgrind that we've mapped a segment of nacl_file. 
     NaClFileMappingForValgrind(paddr, rounded_filesz, file_offset);
   }
   return LOAD_OK;
 }
+*/
 
 NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
                                struct NaClDesc *ndp,
@@ -784,8 +788,8 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
   uintptr_t vaddr;
   uintptr_t paddr;
   uintptr_t end_vaddr;
-  ssize_t read_ret;
-  int safe_for_mmap;
+  int ret = 0;
+  int mmap_prot = ndp->flags;
 
   for (segnum = 0; segnum < image->ehdr.e_phnum; ++segnum) {
     const Elf_Phdr *php = &image->phdrs[segnum];
@@ -822,66 +826,25 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
     paddr = NaClUserToSysAddr(nap, vaddr);
     CHECK(kNaClBadAddress != paddr);
 
-    /*
-     * Check NaClDescIsSafeForMmap(ndp) to see if it might be okay to
-     * mmap.
-     */
-    NaClLog(4, "NaClElfImageLoad: checking descriptor mmap safety\n");
-    safe_for_mmap = NaClDescIsSafeForMmap(ndp);
-    if (safe_for_mmap) {
-      NaClLog(4, "NaClElfImageLoad: safe-for-mmap\n");
-    }
+	mmap_prot = 0;
+	switch (php->p_flags) {
+		case PF_R | PF_X:
+			mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_EXEC;
+			break;
+		case PF_R | PF_W:
+			mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE;
+			break;
+		case PF_R:
+			mmap_prot = NACL_ABI_PROT_READ;
+			break;
+		default:
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: unexpected p_flags %d\n", php->p_flags);
+			return -1;
+	}
 
-    if (!safe_for_mmap &&
-        NACL_FI("ELF_LOAD_BYPASS_DESCRIPTOR_SAFETY_CHECK", 0, 1)) {
-      NaClLog(LOG_WARNING, "WARNING: BYPASSING DESCRIPTOR SAFETY CHECK\n");
-      safe_for_mmap = 1;
-    }
-    if (safe_for_mmap) {
-      NaClErrorCode map_status;
-      NaClLog(4, "NaClElfImageLoad: safe-for-mmap\n");
-      map_status = NaClElfFileMapSegment(nap, ndp, php->p_flags,
-                                         offset, filesz, vaddr, paddr);
-      /*
-       * NB: -Werror=switch-enum forces us to not use a switch.
-       */
-      if (LOAD_OK == map_status) {
-        /* Segment has been handled -- proceed to next segment */
-        continue;
-      } else if (LOAD_STATUS_UNKNOWN != map_status) {
-        /*
-         * A real error!  Return it so that this can be reported to
-         * the embedding code (via start_module status).
-         */
-        return map_status;
-      }
-      /* Fall through: pread-based fallback requested */
-    }
-    NaClLog(4,
-            "PReading %"NACL_PRIdElf_Xword" (0x%"NACL_PRIxElf_Xword") bytes to"
-            " address 0x%"NACL_PRIxPTR", position %"
-            NACL_PRIdElf_Off" (0x%"NACL_PRIxElf_Off")\n",
-            filesz, filesz,
-            paddr,
-            offset, offset);
-
-    /*
-     * Tell valgrind that this memory is accessible and undefined. For more
-     * details see
-     * http://code.google.com/p/nativeclient/wiki/ValgrindMemcheck#Implementation_details
-     */
-    NACL_MAKE_MEM_UNDEFINED((void *) paddr, filesz);
-
-    read_ret = (*NACL_VTBL(NaClDesc, ndp)->
-                PRead)(ndp, (void *) paddr, filesz, (nacl_off64_t) offset);
-    if (NaClSSizeIsNegErrno(&read_ret) || (size_t) read_ret != filesz) {
-      NaClLog(LOG_ERROR, "load failure segment %d", segnum);
-      return LOAD_SEGMENT_BAD_PARAM;
-    }
-    /* region from p_filesz to p_memsz should already be zero filled */
-
-    /* Tell Valgrind that we've mapped a segment of nacl_file. */
-    NaClFileMappingForValgrind(paddr, filesz, offset);
+	ret = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) &offset, (void *) paddr, filesz, SGX_PAGE_REG, mmap_prot, true, "segment");
+	if (ret < 0)
+		return ret;
   }
 
   return LOAD_OK;

@@ -40,8 +40,9 @@
 #include "native_client/src/trusted/service_runtime/sel_memory.h"
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
 #include "native_client/src/trusted/service_runtime/sel_util.h"
-#include "native_client/src/trusted/service_runtime/sel_addrspace_sgx.h"
+#include "native_client/src/trusted/service_runtime/sel_addrspace.h"
 
+#include "native_client/src/trusted/service_runtime/sgx_interface.h"
 
 /*
  * Fill from static_text_end to end of that page with halt
@@ -340,6 +341,10 @@ NaClErrorCode NaClAppLoadFileAslr(struct NaClDesc *ndp,
             "Error code 0x%x\n",
             ret);
   }
+
+  // hmlee
+  init_enclave(nap);
+
   subret = NaClElfImageLoad(image, ndp, nap);
   NaClPerfCounterMark(&time_load_file,
                       NACL_PERF_IMPORTANT_PREFIX "NaClElfImageLoad");
