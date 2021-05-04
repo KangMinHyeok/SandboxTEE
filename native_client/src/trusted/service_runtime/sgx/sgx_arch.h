@@ -20,11 +20,9 @@
 #ifndef SGX_ARCH_H
 #define SGX_ARCH_H
 
-#include "pal_linux_defs.h"
-
-#ifndef __ASSEMBLER__
-
 #include <stdint.h>
+
+#define SGX_HAS_FSGSBASE (1)
 
 typedef uint8_t sgx_arch_key_t [384];
 typedef uint8_t sgx_arch_hash_t[32];
@@ -32,23 +30,10 @@ typedef uint8_t sgx_arch_mac_t [16];
 // This if for passing a mac to hex2str
 #define MACBUF_SIZE ((sizeof(sgx_arch_mac_t)*2)+1) 
 
+
 typedef struct {
     uint64_t flags, xfrm;
 } sgx_arch_attributes_t;
-
-/*
-   // in sgx_attributes.h from sgx_report.h
-#define SGX_FLAGS_INITIALIZED    0x01ULL
-#define SGX_FLAGS_DEBUG          0x02ULL
-#define SGX_FLAGS_MODE64BIT      0x04ULL
-#define SGX_FLAGS_PROVISION_KEY  0x10ULL
-#define SGX_FLAGS_LICENSE_KEY    0x20ULL
-
-#define SGX_XFRM_LEGACY          0x03ULL
-#define SGX_XFRM_AVX             0x06ULL
-
-#define SGX_MISCSELECT_EXINFO    0x01UL
-*/
 
 typedef struct {
     uint64_t size, baseaddr;
@@ -78,8 +63,6 @@ typedef struct {
     uint32_t gslimit;
     uint8_t  reserved3[4024];
 } sgx_arch_tcs_t;
-
-#define TCS_FLAGS_DBGOPTIN   (01ULL)
 
 typedef struct {
     uint64_t rax;
@@ -250,14 +233,6 @@ typedef struct {
 
 typedef uint8_t sgx_arch_key128_t[16] __attribute__((aligned(16)));
 
-#else /* !__ASSEMBLER__ */
-
-/* microcode to call ENCLU */
-.macro ENCLU
-    .byte 0x0f, 0x01, 0xd7
-.endm
-
-#endif
 
 #define EENTER      2
 #define ERESUME     3
@@ -297,14 +272,5 @@ typedef uint8_t sgx_arch_key128_t[16] __attribute__((aligned(16)));
 #define SGX_GPR_RIP             0x88
 #define SGX_GPR_EXITINFO        0xa0
 
-#define TCS_SIZE    4096
-#define TCS_SHIFT   12
-
-#define XSAVE_SIZE  512
-
-#define STACK_ALIGN 0xfffffffffffffff0
-#define XSAVE_ALIGN 0xffffffffffffffc0
-
-#define RETURN_FROM_OCALL 0xffffffffffffffff
 
 #endif /* SGX_ARCH_H */

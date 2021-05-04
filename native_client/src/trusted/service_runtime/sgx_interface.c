@@ -4,7 +4,7 @@
 #define GSGX_FILE "/dev/gsgx"
 #define ISGX_FILE "/dev/isgx"
 
-long pagesize  = PRESET_PAGESIZE;
+unsigned long pagesize  = PRESET_PAGESIZE;
 unsigned long pageshift = PRESET_PAGESIZE - 1;
 unsigned long pagemask  = ~(PRESET_PAGESIZE - 1);
 
@@ -17,17 +17,17 @@ void * zero_page;
 int open_gsgx(void) {
 
 	gsgx_device = open(GSGX_FILE, O_RDWR, 0); // /dev/gsgx
-	if (IS_ERR(gsgx_device)) {
+	if (gsgx_device < 0) {
 		printf("Cannot open device " GSGX_FILE ". Please make sure the"
 				" \'graphene_sgx\' kernel module is loaded.\n");
-		return -ERRNO(gsgx_device);
+		return gsgx_device;
 	}
 
 	isgx_device = open(ISGX_FILE, O_RDWR, 0); // /dev/isgx
-	if (IS_ERR(isgx_device)) {
+	if (isgx_device < 0) {
 		printf("Cannot open device " ISGX_FILE ". Please make sure the"
 				" Intel SGX kernel module is loaded.\n");
-		return -ERRNO(isgx_device);
+		return isgx_device;
 	}
 	return 0;
 }
@@ -68,8 +68,8 @@ int read_enclave_sigstruct(int sigfile, sgx_arch_sigstruct_t* sig) {
 	struct stat stat;
 	int ret, bytes;
 	ret = fstat(sigfile, &stat);
-	if (IS_ERR(ret))
-		return -ERRNO(ret);
+	if (ret < 0)
+		return ret;
 
 	if (stat.st_size < (long int)sizeof(sgx_arch_sigstruct_t)) {
 		printf("size of sigstruct size does not match\n");
@@ -77,8 +77,8 @@ int read_enclave_sigstruct(int sigfile, sgx_arch_sigstruct_t* sig) {
 	}
 
 	bytes = read(sigfile, sig, sizeof(sgx_arch_sigstruct_t));
-	if (IS_ERR(bytes))
-		return -ERRNO(bytes);
+	if (bytes < 0)
+		return bytes;
 
 	return 0;
 }
@@ -88,8 +88,8 @@ int read_enclave_token(int token_file, sgx_arch_token_t* token) {
 	struct stat stat;
 	int ret, bytes;
 	ret = fstat(token_file, &stat);
-	if (IS_ERR(ret))
-		return -ERRNO(ret);
+	if (ret < 0)
+		return ret;
 
 	if (stat.st_size != sizeof(sgx_arch_token_t)) {
 		printf("size of token size does not match\n");
@@ -97,8 +97,8 @@ int read_enclave_token(int token_file, sgx_arch_token_t* token) {
 	}
 
 	bytes = read(token_file, token, sizeof(sgx_arch_token_t));
-	if (IS_ERR(bytes))
-		return -ERRNO(bytes);
+	if (bytes < 0)
+		return bytes;
 
 	return 0;
 }
@@ -114,7 +114,7 @@ int create_enclave(sgx_arch_secs_t* secs, unsigned long baseaddr, unsigned long 
 
     if (!zero_page) {
         zero_page = (void *) mmap(NULL, pagesize, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS|MAP_POPULATE, -1, 0);
-        if (IS_ERR_P(zero_page)) {
+        if ((signed long)zero_page == -1) {
             return -ENOMEM;
 		}
     }
@@ -126,7 +126,6 @@ int create_enclave(sgx_arch_secs_t* secs, unsigned long baseaddr, unsigned long 
     secs->ssaframesize = get_ssaframesize(token->attributes.xfrm) / pagesize;
     secs->miscselect = token->miscselect_mask;
     memcpy(secs->mrenclave, token->mrenclave, sizeof(sgx_arch_hash_t));
-    // mkpark added
     memcpy(&secs->attributes, &token->attributes,
            sizeof(sgx_arch_attributes_t));
     /* Do not initialize secs->mrsigner and secs->mrenclave here as they are
@@ -146,14 +145,13 @@ int create_enclave(sgx_arch_secs_t* secs, unsigned long baseaddr, unsigned long 
     // isgx_device -> baseaddr
     addr = (uint64_t) mmap((void*)(secs->baseaddr), secs->size, PROT_READ|PROT_WRITE|PROT_EXEC, flags|MAP_FIXED|MAP_POPULATE, isgx_device, 0);
 
-    if (IS_ERR_P(addr)) {
-        if (ERRNO_P(addr) == 1 && (flags | MAP_FIXED))
+    if ((unsigned long)(addr) >= (unsigned long)-4095L) {
+        if ((long)addr == -1 && (flags | MAP_FIXED))
             printf("Permission denied on mapping enclave. "
                        "You may need to set sysctl vm.mmap_min_addr to zero\n");
 
-        printf("enclave ECREATE failed in allocating EPC memory "
-                "(errno = %ld)\n", ERRNO_P(addr));
-        return -ENOMEM;
+        perror("enclave ECREATE failed in allocating EPC memory");
+        return -errno;
     }
 
     secs->baseaddr = addr;
@@ -165,9 +163,9 @@ int create_enclave(sgx_arch_secs_t* secs, unsigned long baseaddr, unsigned long 
     param.src = (uint64_t) secs;
     ret = ioctl(isgx_device, SGX_IOC_ENCLAVE_CREATE, &param);
 
-    if (IS_ERR(ret)) {
-        printf("enclave ECREATE failed in enclave creation ioctl - %d\n", ERRNO(ret));
-        return -ERRNO(ret);
+    if (ret < 0) {
+        perror("enclave ECREATE failed in enclave creation ioctl");
+        return ret;
     }
 
     if (ret) {
@@ -262,9 +260,9 @@ int add_pages_to_enclave(sgx_arch_secs_t * secs,
     added_size = 0;
     while (added_size < size) {
         ret = ioctl(isgx_device, SGX_IOC_ENCLAVE_ADD_PAGE, &param);
-        if (IS_ERR(ret)) {
+        if (ret < 0) {
             printf( "Enclave add page returned %d\n", ret);
-            return -ERRNO(ret);
+            return ret;
         }
 
         param.addr += pagesize;
@@ -341,9 +339,9 @@ int destroy_enclave(void * base_addr, size_t length)
 
     ret = munmap(base_addr, length);
 
-    if (IS_ERR(ret)) {
+    if (ret < 0) {
         printf( "enclave EDESTROY failed\n");
-        return -ERRNO(ret);
+        return ret;
     }
 
     return 0;

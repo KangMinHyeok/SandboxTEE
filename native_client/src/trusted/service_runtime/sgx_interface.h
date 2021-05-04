@@ -1,7 +1,8 @@
 #ifndef _SGX_INTERFACE_
 #define _SGX_INTERFACE_
-#include "sgx/sgx_arch.h"
-#include "sel_ldr.h"
+#include "native_client/src/trusted/service_runtime/sgx/sgx_arch.h"
+#include "native_client/src/trusted/service_runtime/sel_ldr.h"
+#include "native_client/src/trusted/service_runtime/sgx/sgx_common.h"
 
 #include <string.h>
 #include <errno.h>
@@ -13,7 +14,6 @@
 
 #define SE_LEAF 0x12
 
-#define PRESET_PAGESIZE (1 << 12)
 
 #define SGX_FLAGS_INITTED        0x0000000000000001ULL 
 
@@ -24,10 +24,8 @@
 #define SGX_IOC_ENCLAVE_ADD_PAGE \
 	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
 
-#undef ALLOC_ALIGNUP
-#define ALLOC_ALIGNUP(addr) \
-	(pagesize ? (((unsigned long) (addr)) + pageshift) & pagemask : (unsigned long) (addr))
 
+/*
 #undef INTERNAL_SYSCALL_ERROR
 #define INTERNAL_SYSCALL_ERROR(val) ((val) < 0)
 
@@ -45,7 +43,7 @@
 
 #define ERRNO_P INTERNAL_SYSCALL_ERRNO_P
 #define ERRNO INTERNAL_SYSCALL_ERRNO
-
+*/
 
 enum sgx_page_type { SGX_PAGE_SECS, SGX_PAGE_TCS, SGX_PAGE_REG };
 
