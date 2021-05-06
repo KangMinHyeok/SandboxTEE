@@ -52,8 +52,6 @@
 #include "native_client/src/trusted/service_runtime/win/exception_patch/ntdll_patch.h"
 #include "native_client/src/trusted/service_runtime/win/debug_exception_handler.h"
 
-#include "native_client/src/trusted/service_runtime/sel_sgx_loader.h"
-
 static void (*g_enable_outer_sandbox_func)(void) = NULL;
 
 void NaClSetEnableOuterSandboxFunc(void (*func)(void)) {
@@ -654,7 +652,7 @@ int NaClSelLdrMain(int argc, char **argv) {
   errcode = NaClAppLoadFileFromFilename(nap, options->nacl_file); // need modification (LOAD enclave)
   if (LOAD_OK != errcode) {
     if (!options->quiet) {
-      NaClLog(LOG_ERROR, "Error while loading \"%s\": %s\n"`
+      NaClLog(LOG_ERROR, "Error while loading \"%s\": %s\n"
               "Using the wrong type of nexe (nacl-x86-32"
               " on an x86-64 or vice versa)\n"
               "or a corrupt nexe file may be"
