@@ -97,7 +97,7 @@ struct NaClSpringboardInfo {
 };
 
 // hmlee
-#ifdef SGX
+#if NACL_SGX == 1 || NACL_USGX == 1
 struct NaClSGX {
 	char *nacl_file;
 	char *enclave_img;
@@ -412,7 +412,7 @@ struct NaClApp {
 #endif
 
   // hmlee
-#ifdef SGX
+#if NACL_SGX == 1 || NACL_USGX == 1
   struct NaClSGX		sgx;
 #endif
 

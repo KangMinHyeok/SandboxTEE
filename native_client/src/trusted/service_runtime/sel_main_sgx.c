@@ -513,12 +513,10 @@ int NaClSelLdrMain(int argc, char **argv) {
   }
   NaClSelLdrParseArgs(argc, argv, options, &env_vars, nap); // untrusted copy (options, env_vars, nap)
 
-#ifdef SGX
   (nap->sgx).nacl_file = options->nacl_file;
   (nap->sgx).enclave_img = "tmp.so";
-  (nap->sgx).sig_file = "tmp.sig";
-  (nap->sgx).token_file = "tmp.token";
-#endif
+  (nap->sgx).sig_file = "signer/tmp.sig";
+  (nap->sgx).token_file = "signer/tmp.token";
 
   /*
    * Define the environment variables for untrusted code.

@@ -556,7 +556,7 @@ struct NaClElfImage *NaClElfImageNew(struct NaClDesc *ndp,
  * mmap syscall where PROT_EXEC allows shared libraries to be mapped
  * into dynamic code space.
  */
-/*
+
 static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                                            struct NaClDesc *ndp,
                                            Elf_Word p_flags,
@@ -571,8 +571,6 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
   struct NaClValidationMetadata metadata;
   int read_last_page_if_partial_allocation_page = 1;
   ssize_t read_ret;
-  struct NaClPerfCounter time_mmap_segment;
-  NaClPerfCounterCtor(&time_mmap_segment, "NaClElfFileMapSegment");
 
   rounded_filesz = NaClRoundAllocPage(segment_size);
 
@@ -620,8 +618,6 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
        // space, even if we had to fault in every page.
        
       NaClLog(1, "NaClElfFileMapSegment: mapping for validation\n");
-      NaClPerfCounterMark(&time_mmap_segment, "PreMap");
-      NaClPerfCounterIntervalLast(&time_mmap_segment);
       image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
                         Map)(ndp,
                              NaClDescEffectorTrustedMem(),
@@ -630,8 +626,6 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                              NACL_ABI_PROT_READ,
                              NACL_ABI_MAP_PRIVATE,
                              file_offset);
-      NaClPerfCounterMark(&time_mmap_segment, "MapForValidate");
-      NaClPerfCounterIntervalLast(&time_mmap_segment);
       if (NaClPtrIsNegErrno(&image_sys_addr)) {
         NaClLog(LOG_INFO,
                 "NaClElfFileMapSegment: Could not make scratch mapping,"
@@ -654,8 +648,6 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                      nap->cpu_features,
                      &metadata,
                      nap->validation_cache));
-      NaClPerfCounterMark(&time_mmap_segment, "ValidateMapped");
-      NaClPerfCounterIntervalLast(&time_mmap_segment);
       NaClLog(3, "NaClElfFileMapSegment: validator_status %d\n",
               validator_status);
       NaClMetadataDtor(&metadata);
@@ -724,18 +716,32 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
       NaClLog(LOG_FATAL, "NaClElfFileMapSegment: unexpected p_flags %d\n",
               p_flags);
   }
+
+	int prot = 0;
+	if (mmap_prot & NACL_ABI_PROT_READ)
+		prot |= PROT_READ;
+	if (mmap_prot & NACL_ABI_PROT_WRITE)
+		prot |= PROT_WRITE;
+	if (mmap_prot & NACL_ABI_PROT_EXEC)
+		prot |= PROT_EXEC;
+
   if (rounded_filesz != segment_size &&
       read_last_page_if_partial_allocation_page) {
     uintptr_t tail_offset = rounded_filesz - NACL_MAP_PAGESIZE;
     size_t tail_size = segment_size - tail_offset;
     NaClLog(4, "NaClElfFileMapSegment: pread tail\n");
+    /*
     read_ret = (*NACL_VTBL(NaClDesc, ndp)->
                 PRead)(ndp,
                        (void *) (paddr + tail_offset),
                        tail_size,
                        (nacl_off64_t) (file_offset + tail_offset));
-    NaClPerfCounterMark(&time_mmap_segment, "PRead tail");
-    NaClPerfCounterIntervalLast(&time_mmap_segment);
+		*/
+
+		
+	
+		read_ret = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) tail_offset, (void *) paddr, tail_size, SGX_PAGE_REG, prot, true, "segment");
+
     if (NaClSSizeIsNegErrno(&read_ret) || (size_t) read_ret != tail_size) {
       NaClLog(LOG_ERROR,
               "NaClElfFileMapSegment: pread load of page tail failed\n");
@@ -758,7 +764,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
             rounded_filesz, rounded_filesz,
             paddr,
             file_offset, file_offset);
-    image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
+    /*image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
                       Map)(ndp,
                            nap->effp,
                            (void *) paddr,
@@ -766,20 +772,24 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                            mmap_prot,
                            NACL_ABI_MAP_PRIVATE | NACL_ABI_MAP_FIXED,
                            file_offset);
-    NaClPerfCounterMark(&time_mmap_segment, "MapFinal");
-    NaClPerfCounterIntervalLast(&time_mmap_segment);
+                           */
+    uint64_t offset64 = file_offset;
+    printf("offset64: %ld\n", offset64);
+		image_sys_addr = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) offset64, (void *) paddr, rounded_filesz, SGX_PAGE_REG, prot, true, "segment");
+    /*
     if (image_sys_addr != paddr) {
       NaClLog(LOG_FATAL,
               ("NaClElfFileMapSegment: map to 0x%"NACL_PRIxPTR" (prot %x) "
                "failed: got 0x%"NACL_PRIxPTR"\n"),
               paddr, mmap_prot, image_sys_addr);
     }
-    // Tell Valgrind that we've mapped a segment of nacl_file. 
-    NaClFileMappingForValgrind(paddr, rounded_filesz, file_offset);
+    */
   }
   return LOAD_OK;
 }
-*/
+
+
+
 
 NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
                                struct NaClDesc *ndp,
@@ -788,8 +798,8 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
   uintptr_t vaddr;
   uintptr_t paddr;
   uintptr_t end_vaddr;
-  int ret = 0;
-  int mmap_prot = ndp->flags;
+//  ssize_t read_ret;
+//  int safe_for_mmap;
 
   for (segnum = 0; segnum < image->ehdr.e_phnum; ++segnum) {
     const Elf_Phdr *php = &image->phdrs[segnum];
@@ -826,25 +836,23 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
     paddr = NaClUserToSysAddr(nap, vaddr);
     CHECK(kNaClBadAddress != paddr);
 
-	mmap_prot = 0;
-	switch (php->p_flags) {
-		case PF_R | PF_X:
-			mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_EXEC;
-			break;
-		case PF_R | PF_W:
-			mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE;
-			break;
-		case PF_R:
-			mmap_prot = NACL_ABI_PROT_READ;
-			break;
-		default:
-			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: unexpected p_flags %d\n", php->p_flags);
-			return -1;
-	}
-
-	ret = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) &offset, (void *) paddr, filesz, SGX_PAGE_REG, mmap_prot, true, "segment");
-	if (ret < 0)
-		return ret;
+		int map_status;
+		map_status = NaClElfFileMapSegment(nap, ndp, php->p_flags,
+																			 offset, filesz, vaddr, paddr);
+		/*
+		 * NB: -Werror=switch-enum forces us to not use a switch.
+		 */
+		if (LOAD_OK == map_status) {
+			/* Segment has been handled -- proceed to next segment */
+			continue;
+		} else if (LOAD_STATUS_UNKNOWN != map_status) {
+			/*
+			 * A real error!  Return it so that this can be reported to
+			 * the embedding code (via start_module status).
+			 */
+			return map_status;
+		}
+      /* Fall through: pread-based fallback requested */
   }
 
   return LOAD_OK;

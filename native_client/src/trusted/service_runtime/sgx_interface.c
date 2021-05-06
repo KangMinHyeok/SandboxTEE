@@ -16,12 +16,14 @@ void * zero_page;
 
 int open_gsgx(void) {
 
+	/*
 	gsgx_device = open(GSGX_FILE, O_RDWR, 0); // /dev/gsgx
 	if (gsgx_device < 0) {
 		printf("Cannot open device " GSGX_FILE ". Please make sure the"
 				" \'graphene_sgx\' kernel module is loaded.\n");
 		return gsgx_device;
 	}
+	*/
 
 	isgx_device = open(ISGX_FILE, O_RDWR, 0); // /dev/isgx
 	if (isgx_device < 0) {
@@ -289,11 +291,13 @@ int init_enclave(struct NaClApp *nap) {
 		return -1;
 
 	//enclave_image = open((nap->sgx).enclave_img, O_RDONLY);
-    sigfile = open((nap->sgx).sig_file, O_RDONLY);
+	
+  sigfile = open((nap->sgx).sig_file, O_RDONLY);
+	printf("sig: %s\n", (nap->sgx).sig_file);
 
-    if (sigfile < 0) {
-    	printf("error while reading sigfile\n");
-    	return -1;
+  if (sigfile < 0) {
+  	perror("error while reading sigfile: ");
+   	return -1;
 	}
 
     tokenfile = open((nap->sgx).token_file, O_RDONLY);
