@@ -2739,13 +2739,15 @@ def MakeGenericLinuxEnv(platform=None):
   return linux_env
 
 def MakeUntrustedSgxEnv(platform=None):
-  usgx_env = MakeUnixLikeEnv(platform).Clone(
+  usgx_env = MakeGenericLinuxEnv(platform).Clone(
       BUILD_TYPE = 'usgx-linux',
       BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
-      tools = ['target_platform_usgx'],
+      tools = ['target_platform_linux'],
+      #tools = ['target_platform_usgx'],
       LINK = '$CXX',
   )
-
+ 
+  '''
   usgx_env.Prepend(
       CPPDEFINES = [['_POSIX_C_SOURCE', '199506'],
                     ['_XOPEN_SOURCE', '600'],
@@ -2767,16 +2769,42 @@ def MakeUntrustedSgxEnv(platform=None):
         )
   else:
     Banner('Strange platform: %s' % GetTargetPlatform())
-  
-  usgx_env.Append(BUILD_SCONSCRIPTS = [
-      'src/trusted/service_runtime/build.scons'])
+  '''
+  usgx_env.Replace(BUILD_SCONSCRIPTS = [
+      'build/package_version/build.scons',
+      'pynacl/build.scons',
+      'src/nonsfi/irt/build.scons',
+      'src/nonsfi/loader/build.scons',
+      'src/shared/gio/build.scons',
+      'src/shared/imc/build.scons',
+      'src/shared/platform/build.scons',
+      'src/third_party/gtest/build.scons',
+      'src/trusted/cpu_features/build.scons',
+      'src/trusted/debug_stub/build.scons',
+      'src/trusted/desc/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/platform_qualify/build.scons',
+      'src/trusted/seccomp_bpf/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      'src/trusted/validator/build.scons',
+      'src/trusted/validator/driver/build.scons',
+      'src/trusted/validator_arm/build.scons',
+      'src/trusted/validator_ragel/build.scons',
+      'src/trusted/validator_x86/build.scons',
+
+  ])
 
   usgx_env.Replace(
       NACL_BUILD_FAMILY = 'USGX',
   )
 
   usgx_env.SetBits('usgx')
-
+  usgx_env.Append(
+          CCFLAGS=['-DUSGX'])
+  '''
   usgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
   
   usgx_env.Replace(COMMON_LINKFLAGS=usgx_env['LINKFLAGS'],
@@ -2815,11 +2843,12 @@ def MakeUntrustedSgxEnv(platform=None):
           '-fno-stack-protector',
           '-fdiagnostics-show-option',
           '-fvisibility=hidden',
-
-          ] + ['--param', 'ssp-buffer-size=4']
+          ] + ['--param', 'ssp-buffer-size=4', 
+          ] + ['-Werror', '-pedantic', '-Wno-variadic-macros']
+          # TODO(hmlee): To avoid required build flags missing error during compilation
 
   usgx_env.Replace(
-          CCFLAGS=common_cflags,
+          CCFLAGS=common_cflags+ ['-Wno-covered-switch-default', '-Wno-c++11-extensions'],
           ASFLAGS=common_cflags,
           )
   usgx_env.Append(
@@ -2829,9 +2858,9 @@ def MakeUntrustedSgxEnv(platform=None):
         '-lrt', 'lnacl_error_code', '-lsel', '-lenv_cleanser', '-lnrd_xfer',
         '-lnacl_perf_counter', '-lnacl_base', '-lnacl_fault_inject', 
         '-lnacl_interval', '-lvalidation_cache', '-lvalidators', '-ldfa_validate_caller_x86_64',
-        '-lnccopy_x86_64', '-lplatform', '-ldebug_stub', '-lsgxlib', '-lwolflib', '-lgen', 
+        '-lnccopy_x86_64', '-lplatform', '-ldebug_stub', '-lgen', #'-lsgxlib', '-lwolflib', 
         ])
-
+  '''
   usgx_env.AddMethod(SDKInstallBin)
   AddDualLibrary(usgx_env)
   environment_list.append(usgx_env)
@@ -2897,8 +2926,8 @@ def MakeSgxEnv():
       'src/trusted/validator_ragel/build.scons',
       'src/trusted/validator_x86/build.scons',
       'src/trusted/service_runtime/build.scons',
-      'src/trusted/wolfssl/build.scons',
-      'src/trusted/stdlib/build.scons',
+      #'src/trusted/wolfssl/build.scons',
+      #'src/trusted/stdlib/build.scons',
   ])
 
   sgx_env.AddMethod(SDKInstallBin)
@@ -2991,10 +3020,6 @@ def MakeSgxEnv():
   return sgx_env
   
 
-sgx_env = MakeSgxEnv()
-usgx_env = MakeUntrustedSgxEnv()
-
-
 # Specializes a generic Linux development environment to be a trusted
 # environment.
 def MakeTrustedLinuxEnv(platform=None):
@@ -3006,6 +3031,54 @@ def MakeTrustedLinuxEnv(platform=None):
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
+#sgx_env = MakeSgxEnv()
+'''
+usgx_env = MakeUntrustedSgxEnv()
+SetUpClang(usgx_env)
+usgx_env.Replace(LINK = '$CXX')
+'''
+usgx_env = linux_optimized_env.Clone(
+      BUILD_TYPE = 'usgx-linux',
+      BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
+      )
+usgx_env.Replace(BUILD_SCONSCRIPTS = [
+      'build/package_version/build.scons',
+      'pynacl/build.scons',
+      'src/nonsfi/irt/build.scons',
+      'src/nonsfi/loader/build.scons',
+      'src/shared/gio/build.scons',
+      'src/shared/imc/build.scons',
+      'src/shared/platform/build.scons',
+      'src/third_party/gtest/build.scons',
+      'src/trusted/cpu_features/build.scons',
+      'src/trusted/debug_stub/build.scons',
+      'src/trusted/desc/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/platform_qualify/build.scons',
+      'src/trusted/seccomp_bpf/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      'src/trusted/validator/build.scons',
+      'src/trusted/validator/driver/build.scons',
+      'src/trusted/validator_arm/build.scons',
+      'src/trusted/validator_ragel/build.scons',
+      'src/trusted/validator_x86/build.scons',
+
+  ])
+
+usgx_env.Replace(
+  NACL_BUILD_FAMILY = 'USGX',
+)
+
+usgx_env.SetBits('usgx')
+usgx_env.Append(
+      CCFLAGS=['-DUSGX'])
+
+usgx_env.AddMethod(SDKInstallBin)
+AddDualLibrary(usgx_env)
+environment_list.append(usgx_env)
 
 def BiasedBitcodeFlags(env):
   """ Return clang flags to use biased bitcode and generate native-ABI-compliant
@@ -4108,7 +4181,8 @@ if nacl_env in selected_envs:
 if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
-selected_envs.append(sgx_env)
+#TODO(hmlee)
+#selected_envs.append(sgx_env)
 selected_envs.append(usgx_env)
 
 DumpEnvironmentInfo(selected_envs)
