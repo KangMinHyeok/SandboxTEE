@@ -42,6 +42,18 @@
 # define NACL_ANDROID 0
 #endif
 
+#if defined(USGX)
+# define NACL_USGX 1
+#else
+# define NACL_USGX 0
+#endif
+
+#if defined(SGX)
+# define NACL_SGX 1
+#else
+# define NACL_SGX 0
+#endif
+
 #endif
 
 /* TODO(teravest): Remove this guard when builds stop defining these. */
