@@ -754,7 +754,8 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 
     memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_MAP_PAGESIZE - tail_size);
 		
-		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) tail_offset, (void *) image_sys_addr, NACL_MAP_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+		void *sgx_addr = (void *) (((unsigned long) tail_offset & 0xFFFFFFFF) + 0x100000000);
+		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_MAP_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
 
     if (NaClSSizeIsNegErrno(&read_ret)) {
       NaClLog(LOG_ERROR,
@@ -796,7 +797,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
         return LOAD_STATUS_UNKNOWN;
     }
 
-		// TODO(mkpakr): below sgx_addr check! 
+		// TODO(mkpark): below sgx_addr check! 
 		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
     // rounded_filesz is already paged
 		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
