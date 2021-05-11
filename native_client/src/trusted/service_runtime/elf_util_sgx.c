@@ -725,6 +725,9 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 	if (mmap_prot & NACL_ABI_PROT_EXEC)
 		prot |= PROT_EXEC;
 
+	// TODO(mkpark)
+	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
+
   if (rounded_filesz != segment_size &&
       read_last_page_if_partial_allocation_page) {
     uintptr_t tail_offset = rounded_filesz - NACL_MAP_PAGESIZE;
@@ -737,17 +740,29 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                        tail_size,
                        (nacl_off64_t) (file_offset + tail_offset));
 		*/
-
+		image_sys_addr = (uintptr_t) malloc(NACL_MAP_PAGESIZE);
+		if (NaClPtrIsNegErrno(&image_sys_addr)) 
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
 		
-	
-		read_ret = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) tail_offset, (void *) paddr, tail_size, SGX_PAGE_REG, prot, true, "segment");
+		read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       (void *) image_sys_addr,
+                       tail_size,
+                       (nacl_off64_t) (file_offset + tail_offset));
+    if (read_ret <= 0)
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed2\n"); 
 
-    if (NaClSSizeIsNegErrno(&read_ret) || (size_t) read_ret != tail_size) {
+    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_MAP_PAGESIZE - tail_size);
+		
+		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) tail_offset, (void *) image_sys_addr, NACL_MAP_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+
+    if (NaClSSizeIsNegErrno(&read_ret)) {
       NaClLog(LOG_ERROR,
               "NaClElfFileMapSegment: pread load of page tail failed\n");
       return LOAD_SEGMENT_BAD_PARAM;
     }
     rounded_filesz -= NACL_MAP_PAGESIZE;
+    free((void *) image_sys_addr);
   }
   // mmap in 
   if (rounded_filesz == 0) {
@@ -764,26 +779,36 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
             rounded_filesz, rounded_filesz,
             paddr,
             file_offset, file_offset);
-    /*image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
-                      Map)(ndp,
-                           nap->effp,
-                           (void *) paddr,
-                           rounded_filesz,
-                           mmap_prot,
-                           NACL_ABI_MAP_PRIVATE | NACL_ABI_MAP_FIXED,
-                           file_offset);
-                           */
-    uint64_t offset64 = file_offset;
-    printf("offset64: %ld\n", offset64);
-		image_sys_addr = add_pages_to_enclave(&((nap->sgx).enclave_secs), (void *) offset64, (void *) paddr, rounded_filesz, SGX_PAGE_REG, prot, true, "segment");
-    /*
-    if (image_sys_addr != paddr) {
-      NaClLog(LOG_FATAL,
-              ("NaClElfFileMapSegment: map to 0x%"NACL_PRIxPTR" (prot %x) "
+                        
+    // mkpark: map first, load to the enclave, then unmap
+    image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
+											Map)(ndp,
+													 NaClDescEffectorTrustedMem(),
+													 (void *) NULL,
+													 rounded_filesz,
+													 NACL_ABI_PROT_READ,
+													 NACL_ABI_MAP_PRIVATE,
+													 file_offset);
+		if (NaClPtrIsNegErrno(&image_sys_addr)) {
+        NaClLog(LOG_INFO,
+                "NaClElfFileMapSegment: Could not make scratch mapping,"
+                " falling back to reading\n");
+        return LOAD_STATUS_UNKNOWN;
+    }
+
+		// TODO(mkpakr): below sgx_addr check! 
+		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
+    // rounded_filesz is already paged
+		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
+				SGX_PAGE_REG, prot, true, "segment");
+		if (ret < 0) {
+			NaClLog(LOG_FATAL, 
+					("NaClElfFileMapSegment: add_pages_to_enclave to 0x%"NACL_PRIxPTR" (prot %x) "
                "failed: got 0x%"NACL_PRIxPTR"\n"),
               paddr, mmap_prot, image_sys_addr);
-    }
-    */
+		}
+      
+    NaClHostDescUnmapUnsafe((void *) image_sys_addr, rounded_filesz);
   }
   return LOAD_OK;
 }

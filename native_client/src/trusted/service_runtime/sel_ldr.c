@@ -316,6 +316,17 @@ struct NaClApp *NaClAppCreate(void) {
     NaClLog(LOG_FATAL, "Failed to allocate NaClApp\n");
   if (!NaClAppCtor(nap))
     NaClLog(LOG_FATAL, "NaClAppCtor() failed\n");
+
+#if NACL_SGX == 1 || NACL_USGX == 1
+	nap->sgx = malloc(sizeof(struct NaClSGX));
+	if (nap->sgx == NULL)
+		NaClLog(LOG_FATAL, "Failed to allocated NaClSGX\n");
+	nap->sgx->enclave_secs = malloc(sizeof(sgx_arch_secs_t));
+	if (nap->sgx->enclave_secs == NULL)
+		NaClLog(LOG_FATAL, "Failed to allocated NaClSGX\n");
+#endif
+
+
   return nap;
 }
 

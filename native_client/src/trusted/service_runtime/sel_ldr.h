@@ -57,7 +57,11 @@
 
 #include "native_client/src/trusted/validator/ncvalidate.h"
 
-#include "sgx/sgx_arch.h"
+#if NACL_SGX == 1 || NACL_USGX == 1
+// driver path
+#include "native_client/src/trusted/service_runtime/sgx/sgx_arch.h"
+#endif
+
 
 EXTERN_C_BEGIN
 
@@ -103,7 +107,7 @@ struct NaClSGX {
 	char *enclave_img;
 	char *sig_file;
 	char *token_file;
-	sgx_arch_secs_t enclave_secs;
+	sgx_arch_secs_t *enclave_secs;
 };
 #endif
 
@@ -413,7 +417,7 @@ struct NaClApp {
 
   // hmlee
 #if NACL_SGX == 1 || NACL_USGX == 1
-  struct NaClSGX		sgx;
+  struct NaClSGX		*sgx;
 #endif
 
 };

@@ -4,6 +4,9 @@
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
 #include "native_client/src/trusted/service_runtime/sgx/sgx_common.h"
 
+// driver path
+#include "sgx_user.h"
+
 #include <string.h>
 #include <errno.h>
 #include <sys/mman.h>
@@ -17,47 +20,9 @@
 
 #define SGX_FLAGS_INITTED        0x0000000000000001ULL 
 
-#define SGX_MAGIC 0xA4
 
-#define SGX_IOC_ENCLAVE_CREATE \
-	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-#define SGX_IOC_ENCLAVE_ADD_PAGE \
-	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
-
-
-/*
-#undef INTERNAL_SYSCALL_ERROR
-#define INTERNAL_SYSCALL_ERROR(val) ((val) < 0)
-
-#undef INTERNAL_SYSCALL_ERROR_P
-#define INTERNAL_SYSCALL_ERROR_P(val) ((unsigned long) (val) >= (unsigned long)-4095L)
-
-#define IS_ERR INTERNAL_SYSCALL_ERROR
-#define IS_ERR_P INTERNAL_SYSCALL_ERROR_P
-
-#undef INTERNAL_SYSCALL_ERRNO
-#define INTERNAL_SYSCALL_ERRNO(val) (-(val))
-
-#undef INTERNAL_SYSCALL_ERRNO_P
-#define INTERNAL_SYSCALL_ERRNO_P(val) (-((long) val))
-
-#define ERRNO_P INTERNAL_SYSCALL_ERRNO_P
-#define ERRNO INTERNAL_SYSCALL_ERRNO
-*/
 
 enum sgx_page_type { SGX_PAGE_SECS, SGX_PAGE_TCS, SGX_PAGE_REG };
-
-struct sgx_enclave_create {
-	uint64_t src;
-};
-
-struct sgx_enclave_add_page {
-	uint64_t addr;
-	uint64_t src;
-	uint64_t secinfo;
-	uint16_t mrmask;
-};
-
 
 int add_pages_to_enclave(sgx_arch_secs_t * secs,
 						 void * addr, void * user_addr,

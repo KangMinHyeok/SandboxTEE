@@ -3075,6 +3075,8 @@ usgx_env.Replace(
 usgx_env.SetBits('usgx')
 usgx_env.Append(
       CCFLAGS=['-DUSGX'])
+usgx_env.Append(
+      CCFLAGS=['-I/home/hmlee/linux-sgx-driver/'])
 
 usgx_env.AddMethod(SDKInstallBin)
 AddDualLibrary(usgx_env)
