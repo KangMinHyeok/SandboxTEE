@@ -561,12 +561,12 @@ else:
 # Allow variadic macros
 werror_flags = werror_flags + ['-Wno-variadic-macros']
 
-if pre_base_env.Bit('clang'):
+#if pre_base_env.Bit('clang'):
   # Allow 'default' label in switch even when all enumeration cases
   # have been covered.
-  werror_flags += ['-Wno-covered-switch-default']
+#  werror_flags += ['-Wno-covered-switch-default']
   # Allow C++11 extensions (for "override")
-  werror_flags += ['-Wno-c++11-extensions']
+#  werror_flags += ['-Wno-c++11-extensions']
 
 
 # Method to make sure -pedantic, etc, are not stripped from the
@@ -2826,9 +2826,10 @@ def MakeUntrustedSgxEnv(platform=None):
   common_cflags = [
           '-DUSGX',
           '-g',
-          '-fPIC','-Wall', '-Wextra', '-Wpointer-arith', '-Wreturn-type', '-Waddress', '-Wsequence-point',
-          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', '-Werror-implicit-function-declaration',
-          '-Wstrict-prototypes', '-Wstrict-prototypes', '-ffunction-sections', '-fdata-sections',  
+          '-fPIC',
+          '-Wall', '-Wextra', '-Wpointer-arith', '-Wreturn-type', '-Waddress', '-Wsequence-point',
+          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', #'-Werror-implicit-function-declaration',
+          #'-Wstrict-prototypes', '-Wstrict-prototypes', '-ffunction-sections', '-fdata-sections',  
           '-I/opt/intel/sgxsdk/include',
           '-D__linux__',
           '-DCRYPTO_USE_MBEDTLS',
@@ -2873,8 +2874,9 @@ def MakeSgxEnv():
   sgx_env = pre_base_env.Clone(
         BUILD_TYPE = 'sgx-linux',
         BUILD_TYPE_DESCRIPTION = 'Linux SGX build',
-        tools = ['target_platform_sgx'] ,
+        tools = ['target_platform_sgx'],
   )
+
   platform = GetTargetPlatform()
   arch = pynacl.platform.GetArch(platform)
   if pynacl.platform.IsArch64Bit(platform):
@@ -2900,21 +2902,10 @@ def MakeSgxEnv():
   sgx_env.Replace(TARGET_ROOT=
       '${DESTINATION_ROOT}/${BUILD_TYPE}-${BUILD_TARGET_NAME}')
   
-  sgx_env.Append(
-    IS_BUILD_ENV = False,
-    BUILD_SUBTYPE = '',
-    CPPPATH = [
-      '${SOURCE_ROOT}',
-    ],
-    EXTRA_CFLAGS = [],
-    EXTRA_CXXFLAGS = [],
-    EXTRA_LIBS = [],
-    CFLAGS = ['${EXTRA_CFLAGS}'],
-    CXXFLAGS = ['${EXTRA_CXXFLAGS}'],
-  )
-  
-  sgx_env.Append(BUILD_SCONSCRIPTS = [
+  sgx_env.Replace(BUILD_SCONSCRIPTS = [
       'src/shared/platform/build.scons',
+      'src/shared/gio/build.scons',
+      'src/third_party/gtest/build.scons',
       'src/trusted/debug_stub/build.scons',
       'src/trusted/desc/build.scons',
       'src/trusted/fault_injection/build.scons',
@@ -2929,7 +2920,7 @@ def MakeSgxEnv():
       #'src/trusted/wolfssl/build.scons',
       #'src/trusted/stdlib/build.scons',
   ])
-
+  
   sgx_env.AddMethod(SDKInstallBin)
   sgx_env.Replace(
       NACL_BUILD_FAMILY = 'SGX',
@@ -2939,19 +2930,27 @@ def MakeSgxEnv():
     sgx_env.Append(BUILD_SCONSCRIPTS=['${MAIN_DIR}/supplement/build.scons'])
 
   sgx_env.Replace(SGX_SDK='/opt/intel/sgxsdk')
+  
+
   common_flags = [
-          '-Wall', '-Wextra', 
-          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
-          '-Werror-implicit-function-declaration', '-Wstrict-prototypes',
+          '-fPIC',
+          '-Werror',
+          '-pedantic', 
+          '-Wno-variadic-macros',
+          '-Wall',
           '-ffunction-sections',
           '-fdata-sections',
           '-g',
-          '-fPIE', 
           '-D__linux__',
-          '-DCRYPTO_USE_MBEDTLS', '-DDEBUG',
-          '-DIN_ENCLAVE',
-          '-DWOLFSSL_SGX_ATTESTATION', '-DWOLFSSL_ALWAYS_VERIFY_CB',
-          '-DKEEP_PEER_CERT','-DNO_INLINE',
+          '-DSGX',
+	  '-DCRYPTO_USE_MBEDTLS', 
+	  '-DDEBUG',
+          '-DIN_PAL',
+	  '-DIN_ENCLAVE',
+          '-DWOLFSSL_SGX_ATTESTATION', 
+	  '-DWOLFSSL_ALWAYS_VERIFY_CB',
+          '-DKEEP_PEER_CERT',
+ 	  '-DNO_INLINE',
           '-fno-builtin',
           '-fno-stack-protector', # show options to hide warning
           '-fdiagnostics-show-option', # show options to hide warning
@@ -2959,9 +2958,12 @@ def MakeSgxEnv():
   ] + ['--param', 'ssp-buffer-size=4']
 
   sgx_include = [
-          '-I${SGX_SDK}/include/', 
-          '-Wextra', '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
-          '-Werror-implicit-function-declaration',
+          '-I${SGX_SDK}/include/',
+          '-I/home/crhamm/nacl',
+          '-Wno-long-long', 
+          '-Wswitch-enum', 
+          '-Wsign-compare', 
+          '-Wundef', 
   ]
 
   sgx_env.Prepend(
@@ -2972,7 +2974,7 @@ def MakeSgxEnv():
         ] + sgx_include,
     CXXFLAGS = [
         '-std=c++11',
-        ]
+        ],
     )
 
   sgx_env['LINKCOM'] = sgx_env.get('LINKCOM') + ' $_LIBGROUP' 
@@ -2983,6 +2985,12 @@ def MakeSgxEnv():
           '-Wl,--export-dynamic', 
           '-Wl,--defsym,__ImageBase=0', 
           '-Wl,--gc-sections',
+	  '-Lscons-out/sgx-linux-x86-64/lib',
+	  '-Wl,--whole-archive',
+	  '-Wl,--no-whole-archive',
+	  '-eenclave_entry',
+	  '-zcombreloc',
+	  '-zdefs',
           ]
 
   sgx_env.Prepend(
@@ -3017,8 +3025,7 @@ def MakeSgxEnv():
   AddDualLibrary(sgx_env)
   environment_list.append(sgx_env)
   
-  return sgx_env
-  
+  return sgx_env 
 
 # Specializes a generic Linux development environment to be a trusted
 # environment.
@@ -3031,7 +3038,7 @@ def MakeTrustedLinuxEnv(platform=None):
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
-#sgx_env = MakeSgxEnv()
+sgx_env = MakeSgxEnv()
 '''
 usgx_env = MakeUntrustedSgxEnv()
 SetUpClang(usgx_env)
@@ -3075,8 +3082,6 @@ usgx_env.Replace(
 usgx_env.SetBits('usgx')
 usgx_env.Append(
       CCFLAGS=['-DUSGX'])
-usgx_env.Append(
-      CCFLAGS=['-I/home/hmlee/linux-sgx-driver/'])
 
 usgx_env.AddMethod(SDKInstallBin)
 AddDualLibrary(usgx_env)
@@ -4184,7 +4189,7 @@ if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
 #TODO(hmlee)
-#selected_envs.append(sgx_env)
+selected_envs.append(sgx_env)
 selected_envs.append(usgx_env)
 
 DumpEnvironmentInfo(selected_envs)
