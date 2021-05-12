@@ -801,7 +801,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
     // rounded_filesz is already paged
 		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
-				SGX_PAGE_REG, prot, true, "segment");
+				SGX_PAGE_REG, prot, true, "nexe");
 		if (ret < 0) {
 			NaClLog(LOG_FATAL, 
 					("NaClElfFileMapSegment: add_pages_to_enclave to 0x%"NACL_PRIxPTR" (prot %x) "
