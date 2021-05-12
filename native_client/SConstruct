@@ -88,6 +88,8 @@ def PrintFinalReport():
     print "%s failed: %s\n" % (test_name, failure['errstr'])
 
 
+
+
 def VerboseConfigInfo(env):
   "Should we print verbose config information useful for bug reports"
   if '--help' in sys.argv: return False
@@ -559,12 +561,12 @@ else:
 # Allow variadic macros
 werror_flags = werror_flags + ['-Wno-variadic-macros']
 
-if pre_base_env.Bit('clang'):
+#if pre_base_env.Bit('clang'):
   # Allow 'default' label in switch even when all enumeration cases
   # have been covered.
-  werror_flags += ['-Wno-covered-switch-default']
+ # werror_flags += ['-Wno-covered-switch-default']
   # Allow C++11 extensions (for "override")
-  werror_flags += ['-Wno-c++11-extensions']
+ # werror_flags += ['-Wno-c++11-extensions']
 
 
 # Method to make sure -pedantic, etc, are not stripped from the
@@ -974,6 +976,8 @@ DeclareBit('build_x86', 'Building binaries for the x86 architecture')
 
 DeclareBit('build_arm', 'Building binaries for the arm architecture')
 
+DeclareBit('sgx', 'Building binaries for the x86 SGX architecture')
+DeclareBit('usgx', 'Building binaries for the x86 Untrusted SGX architecture')
 
 def MakeArchSpecificEnv(platform=None):
   env = pre_base_env.Clone()
@@ -2734,6 +2738,317 @@ def MakeGenericLinuxEnv(platform=None):
 
   return linux_env
 
+def MakeUntrustedSgxEnv(platform=None):
+  usgx_env = MakeGenericLinuxEnv(platform).Clone(
+      BUILD_TYPE = 'usgx-linux',
+      BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
+      tools = ['target_platform_linux'],
+      #tools = ['target_platform_usgx'],
+      LINK = '$CXX',
+  )
+ 
+  '''
+  usgx_env.Prepend(
+      CPPDEFINES = [['_POSIX_C_SOURCE', '199506'],
+                    ['_XOPEN_SOURCE', '600'],
+                    ['_GNU_SOURCE', '1'],
+                    ['_LARGEFILE64_SOURCE', '1'],
+                    ],
+      LIBS = ['rt'],
+      )
+
+  if usgx_env.Bit('build_x86_32'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m32'],
+        LINKFLAGS = ['-m32'],
+        )
+  elif usgx_env.Bit('build_x86_64'):
+    usgx_env.Prepend(
+        CCFLAGS = ['-m64'],
+        LINKFLAGS = ['-m64'],
+        )
+  else:
+    Banner('Strange platform: %s' % GetTargetPlatform())
+  '''
+  usgx_env.Replace(BUILD_SCONSCRIPTS = [
+      'build/package_version/build.scons',
+      'pynacl/build.scons',
+      'src/nonsfi/irt/build.scons',
+      'src/nonsfi/loader/build.scons',
+      'src/shared/gio/build.scons',
+      'src/shared/imc/build.scons',
+      'src/shared/platform/build.scons',
+      'src/third_party/gtest/build.scons',
+      'src/trusted/cpu_features/build.scons',
+      'src/trusted/debug_stub/build.scons',
+      'src/trusted/desc/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/platform_qualify/build.scons',
+      'src/trusted/seccomp_bpf/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      'src/trusted/validator/build.scons',
+      'src/trusted/validator/driver/build.scons',
+      'src/trusted/validator_arm/build.scons',
+      'src/trusted/validator_ragel/build.scons',
+      'src/trusted/validator_x86/build.scons',
+
+  ])
+
+  usgx_env.Replace(
+      NACL_BUILD_FAMILY = 'USGX',
+  )
+
+  usgx_env.SetBits('usgx')
+  usgx_env.Append(
+          CCFLAGS=['-DUSGX'])
+  '''
+  usgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  
+  usgx_env.Replace(COMMON_LINKFLAGS=usgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  usgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  usgx_env.Prepend(COMMON_LINKFLAGS=['-Wl,-z,relro',
+                                      '-Wl,-z,now',
+                                      '-Wl,-z,noexecstack',
+                                      '-Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles',
+                                    '-Wl,-Bsymbolic',
+                                    '-Wl,--export-dynamic',
+                                    '-Wl,--defsym,__ImageBase=0', 
+                                    '-Wl,--gc-sections', 
+])
+  usgx_env.Prepend(LINKFLAGS=['-pie'])
+  usgx_env.Prepend(CCFLAGS=['-fPIE'])
+
+  common_cflags = [
+          '-DUSGX',
+          '-g',
+          '-fPIC',
+          '-Wall', '-Wextra', '-Wpointer-arith', '-Wreturn-type', '-Waddress', '-Wsequence-point',
+          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', #'-Werror-implicit-function-declaration',
+          #'-Wstrict-prototypes', '-Wstrict-prototypes', '-ffunction-sections', '-fdata-sections',  
+          '-I/opt/intel/sgxsdk/include',
+          '-D__linux__',
+          '-DCRYPTO_USE_MBEDTLS',
+          '-DDEBUG',
+          '-DIN_PAL',
+          '-DIN_ENCLAVE',
+          '-DWOLFSSL_SGX_ATTESTATION',
+          '-DWOLFSSL_ALWAYS_VERIFY_CB',
+          '-DKEEP_PEER_CERT',
+          '-DNO_INLINE', 
+          '-fno-builtin',
+          '-fno-stack-protector',
+          '-fdiagnostics-show-option',
+          '-fvisibility=hidden',
+          ] + ['--param', 'ssp-buffer-size=4', 
+          ] + ['-Werror', '-pedantic', '-Wno-variadic-macros']
+          # TODO(hmlee): To avoid required build flags missing error during compilation
+
+  usgx_env.Replace(
+          CCFLAGS=common_cflags+ ['-Wno-covered-switch-default', '-Wno-c++11-extensions'],
+          ASFLAGS=common_cflags,
+          )
+  usgx_env.Append(
+    _LIBFLAGS = [ 
+       '-Lscons-out/sgx-linux-x86-64/lib',
+        '-L/opt/intel/sgxsdk/lib64/', '-lsgx_urts', '-lpthread', '-lsgx_uae_service'
+        '-lrt', 'lnacl_error_code', '-lsel', '-lenv_cleanser', '-lnrd_xfer',
+        '-lnacl_perf_counter', '-lnacl_base', '-lnacl_fault_inject', 
+        '-lnacl_interval', '-lvalidation_cache', '-lvalidators', '-ldfa_validate_caller_x86_64',
+        '-lnccopy_x86_64', '-lplatform', '-ldebug_stub', '-lgen', #'-lsgxlib', '-lwolflib', 
+        ])
+  '''
+  usgx_env.AddMethod(SDKInstallBin)
+  AddDualLibrary(usgx_env)
+  environment_list.append(usgx_env)
+
+  return usgx_env
+
+
+def MakeSgxEnv():
+  
+  sgx_env = pre_base_env.Clone(
+        BUILD_TYPE = 'sgx-linux',
+        BUILD_TYPE_DESCRIPTION = 'Linux SGX build',
+        tools = ['target_platform_sgx'],
+  )
+
+  platform = GetTargetPlatform()
+  arch = pynacl.platform.GetArch(platform)
+  if pynacl.platform.IsArch64Bit(platform):
+    subarch = '64'
+  else:
+    subarch = '32'
+  
+  sgx_env.Replace(BUILD_FULLARCH=platform)
+  sgx_env.Replace(BUILD_ARCHITECTURE=arch)
+  sgx_env.Replace(BUILD_SUBARCH=subarch)
+  sgx_env.Replace(TARGET_FULLARCH=platform)
+  sgx_env.Replace(TARGET_ARCHITECTURE=arch)
+  sgx_env.Replace(TARGET_SUBARCH=subarch)
+
+  sgx_env.SetBits('build_%s' % platform.replace('-', '_'))
+  sgx_env.SetBits('build_x86')
+  sgx_env.SetBits('sgx')
+
+  sgx_env.Replace(BUILD_ISA_NAME=platform)
+
+  sgx_env.Replace(BUILD_TARGET_NAME=platform)
+  sgx_env.Replace(TARGET_VARIANT='SGX')
+  sgx_env.Replace(TARGET_ROOT=
+      '${DESTINATION_ROOT}/${BUILD_TYPE}-${BUILD_TARGET_NAME}')
+  
+  sgx_env.Replace(BUILD_SCONSCRIPTS = [
+      'src/shared/platform/build.scons',
+      'src/trusted/debug_stub/build.scons',
+      'src/trusted/desc/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/validator/build.scons', 
+      'src/trusted/validator/driver/build.scons',
+      'src/trusted/validator_ragel/build.scons',
+      'src/trusted/validator_x86/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      #'src/trusted/wolfssl/build.scons',
+      #'src/trusted/stdlib/build.scons',
+  ])
+  
+  sgx_env.AddMethod(SDKInstallBin)
+  sgx_env.Replace(
+      NACL_BUILD_FAMILY = 'SGX',
+  )
+
+  if os.path.exists(pre_base_env.subst('${MAIN_DIR}/supplement/build.scons')):
+    sgx_env.Append(BUILD_SCONSCRIPTS=['${MAIN_DIR}/supplement/build.scons'])
+
+  sgx_env.Replace(SGX_SDK='/opt/intel/sgxsdk')
+  
+
+  common_flags = [
+          '-fPIC',
+	  #'-Werror-implicit-function-declaration',
+	  #'-Wstrict-prototypes',
+          #'-Wno-c++11-extensions',
+          '-Werror',
+          '-pedantic', 
+          '-Wno-variadic-macros',
+          '-Wall',
+          #'-Wno-covered-switch-default',
+          '-ffunction-sections',
+          '-fdata-sections',
+          '-g',
+          '-D__linux__',
+          '-DSGX',
+	  '-DCRYPTO_USE_MBEDTLS', 
+	  '-DDEBUG',
+          '-DIN_PAL',
+	  '-DIN_ENCLAVE',
+          '-DWOLFSSL_SGX_ATTESTATION', 
+	  '-DWOLFSSL_ALWAYS_VERIFY_CB',
+          '-DKEEP_PEER_CERT',
+ 	  '-DNO_INLINE',
+          '-fno-builtin',
+          '-fno-stack-protector', # show options to hide warning
+          '-fdiagnostics-show-option', # show options to hide warning
+          '-fvisibility=hidden' # hide symbol for so see https://stackoverflow.com/questions/2222162/how-to-apply-fvisibility-option-to-symbols-in-static-libraries
+  ] + ['--param', 'ssp-buffer-size=4']
+
+  sgx_include = [
+	  #'-std=c11',
+          '-I${SGX_SDK}/include/',
+          '-I/home/crhamm/nacl/native_client/src/include/',
+          '-I/home/crhamm/nacl',
+          #'-Wextra', 
+          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
+          #'-Wcast-function-type',
+          #'-Wno-c++11-extensions',
+          #'-Werror-implicit-function-declaration',
+  ]
+
+  sgx_env.Prepend(
+    CCFLAGS = common_flags + [] + sgx_include, 
+    CFLAGS = [
+        '-std=c11',
+        ] + sgx_include,
+    CXXFLAGS = [
+        '-std=c++11',
+        ] 
+    )
+
+  sgx_env['LINKCOM'] = sgx_env.get('LINKCOM') + ' $_LIBGROUP' 
+  sgx_env['SHLINKCOM'] = sgx_env.get('SHLINKCOM') + ' $_LIBGROUP'
+
+  sgx_link_flags = ['-Wl,--no-undefined', '-nostdlib', '-nodefaultlibs', '-nostartfiles', 
+          '-Wl,-Bsymbolic', 
+          '-Wl,--export-dynamic', 
+          '-Wl,--defsym,__ImageBase=0', 
+          '-Wl,--gc-sections',
+	  #'-Wl,-rpath=${SGX_SDK}/include',
+	  '-Lscons-out/sgx-linux-x86-64/lib',
+	  #'-lrt',
+	  '-Wl,--whole-archive',
+	  '-lsel',
+	  '-lnacl_error_code',
+	  '-lenv_cleanser',
+	  '-lnrd_xfer',
+	  '-lnacl_perf_counter',
+	  '-lnacl_base',
+	  '-lnacl_fault_inject',
+	  '-lnacl_interval',
+	  '-lvalidation_cache',
+	  '-lvalidators',
+	  '-ldfa_validate_caller_x86_64',
+	  '-lplatform',
+	  '-ldebug_stub',
+	  '-lsgxlib',
+	  '-lworflib',
+	  '-lgen',
+	  '-Wl,--no-whole-archive',
+	  '-eenclave_entry',
+	  '-zcombreloc',
+	  '-zdefs',
+          ]
+
+  sgx_env.Prepend(
+    LINKFLAGS=[
+        sgx_link_flags]
+  )
+
+  if sgx_env.Bit('build_x86_32'):
+    sgx_env.Prepend(
+        CCFLAGS = ['-m32'],
+        LINKFLAGS = ['-m32'],
+        )
+
+  sgx_env.Prepend(
+      CPPDEFINES = [['_POSIX_C_SOURCE', '199506'],
+                    ['_XOPEN_SOURCE', '600'],
+                    ['_GNU_SOURCE', '1'],
+                    ['_LARGEFILE64_SOURCE', '1'],
+                    ],
+      LIBS = ['rt'],
+      )
+
+
+  sgx_env.Prepend(CPPDEFINES=[['-D_FORTIFY_SOURCE', '2']])
+  sgx_env.Replace(COMMON_LINKFLAGS=sgx_env['LINKFLAGS'],
+                    LINKFLAGS=['$COMMON_LINKFLAGS'])
+  sgx_env.FilterOut(SHLINKFLAGS=['$LINKFLAGS'])
+  sgx_env.Prepend(SHLINKFLAGS=['$COMMON_LINKFLAGS'])
+  
+  sgx_env.Replace(ASFLAGS=['${CCFLAGS}'])
+
+  AddDualLibrary(sgx_env)
+  environment_list.append(sgx_env)
+  
+  return sgx_env 
+
 # Specializes a generic Linux development environment to be a trusted
 # environment.
 def MakeTrustedLinuxEnv(platform=None):
@@ -2745,6 +3060,54 @@ def MakeTrustedLinuxEnv(platform=None):
 (linux_debug_env, linux_optimized_env) = \
     GenerateOptimizationLevels(MakeTrustedLinuxEnv())
 
+sgx_env = MakeSgxEnv()
+'''
+usgx_env = MakeUntrustedSgxEnv()
+SetUpClang(usgx_env)
+usgx_env.Replace(LINK = '$CXX')
+'''
+usgx_env = linux_optimized_env.Clone(
+      BUILD_TYPE = 'usgx-linux',
+      BUILD_TYPE_DESCRIPTION = 'Linux Untrusted SGX build',
+      )
+usgx_env.Replace(BUILD_SCONSCRIPTS = [
+      'build/package_version/build.scons',
+      'pynacl/build.scons',
+      'src/nonsfi/irt/build.scons',
+      'src/nonsfi/loader/build.scons',
+      'src/shared/gio/build.scons',
+      'src/shared/imc/build.scons',
+      'src/shared/platform/build.scons',
+      'src/third_party/gtest/build.scons',
+      'src/trusted/cpu_features/build.scons',
+      'src/trusted/debug_stub/build.scons',
+      'src/trusted/desc/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/platform_qualify/build.scons',
+      'src/trusted/seccomp_bpf/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      'src/trusted/validator/build.scons',
+      'src/trusted/validator/driver/build.scons',
+      'src/trusted/validator_arm/build.scons',
+      'src/trusted/validator_ragel/build.scons',
+      'src/trusted/validator_x86/build.scons',
+
+  ])
+
+usgx_env.Replace(
+  NACL_BUILD_FAMILY = 'USGX',
+)
+
+usgx_env.SetBits('usgx')
+usgx_env.Append(
+      CCFLAGS=['-DUSGX'])
+
+usgx_env.AddMethod(SDKInstallBin)
+AddDualLibrary(usgx_env)
+environment_list.append(usgx_env)
 
 def BiasedBitcodeFlags(env):
   """ Return clang flags to use biased bitcode and generate native-ABI-compliant
@@ -3846,6 +4209,10 @@ if nacl_env in selected_envs:
 # The nacl_irt_test_env requires nacl_env to build things correctly.
 if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
+
+#TODO(hmlee)
+selected_envs.append(sgx_env)
+selected_envs.append(usgx_env)
 
 DumpEnvironmentInfo(selected_envs)
 LinkTrustedEnv(selected_envs)

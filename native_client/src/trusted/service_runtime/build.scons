@@ -23,9 +23,9 @@ GENERATED='${TARGET_ROOT}/gen/native_client/src/trusted/service_runtime'
 # ----------------------------------------------------------
 # TODO(robertm): this library is too big and needs to be split up
 #                for easier unit testing
-ldr_inputs = [
+ldr_inputs = []
+obj_inputs = [
     'dyn_array.c',
-    'elf_util.c',
     'filename_util.cc',
     'load_file.c',
     'nacl_all_modules.c',
@@ -43,10 +43,8 @@ ldr_inputs = [
     'nacl_syscall_list.c',
     'nacl_text.c',
     'nacl_valgrind_hooks.c',
-    'sel_addrspace.c',
     'sel_ldr.c',
     'sel_ldr_filename.cc',
-    'sel_ldr_standard.c',
     'sel_main_common.c',
     'sel_mem.c',
     'sel_qualify.c',
@@ -65,8 +63,23 @@ ldr_inputs = [
     'thread_suspension_unwind.c',
 ]
 
+if env.Bit('usgx'):
+	obj_inputs += [
+    'elf_util_sgx.c',
+    'sel_addrspace_sgx.c',
+    'sel_ldr_standard_sgx.c',
+]
+
+else:
+	obj_inputs += [
+    'elf_util.c',
+    'sel_addrspace.c',
+    'sel_ldr_standard.c',
+]
+	
+
 if env.Bit('build_x86_32'):
-  ldr_inputs += [
+  obj_inputs += [
       'arch/x86/nacl_ldt_x86.c',
       'arch/x86_32/nacl_app_32.c',
       'arch/x86_32/nacl_switch_32.S',
@@ -82,7 +95,7 @@ if env.Bit('build_x86_32'):
       'arch/x86_32/tramp_32.S',
       ]
 elif env.Bit('build_x86_64'):
-  ldr_inputs += [
+  obj_inputs += [
       'arch/x86/nacl_ldt_x86.c',
       'arch/x86_64/nacl_app_64.c',
       'arch/x86_64/nacl_switch_64.S',
@@ -98,7 +111,7 @@ elif env.Bit('build_x86_64'):
     # because we need to generate x86-64 Windows unwind info, which
     # the GNU assembler we use elsewhere does not support.
     win64_asm_env = env.Clone(ASCOM='ml64 $ASFLAGS /c /Fo$TARGET $SOURCES')
-    ldr_inputs += [
+    obj_inputs += [
         'arch/x86_64/sel_addrspace_win_x86_64.c',
         'arch/x86_64/fnstcw.S',
         'arch/x86_64/fxsaverstor.S']
@@ -106,16 +119,16 @@ elif env.Bit('build_x86_64'):
       # This use of win64_asm_env causes an invocation of MSVC, even if sel_ldr
       # would not otherwise be actually built. So don't include it if we aren't
       # actually building sel_ldr
-      ldr_inputs += [
+      obj_inputs += [
         win64_asm_env.ComponentObject('arch/x86_64/nacl_switch_unwind_win.asm')]
   else:
-    ldr_inputs += ['arch/x86_64/sel_addrspace_posix_x86_64.c']
+    obj_inputs += ['arch/x86_64/sel_addrspace_posix_x86_64.c']
   if env.Bit('x86_64_zero_based_sandbox'):
     env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=1'])
   else:
     env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=0'])
 elif env.Bit('build_arm'):
-  ldr_inputs += [
+  obj_inputs += [
     'arch/arm/nacl_app.c',
     'arch/arm/nacl_switch_to_app_arm.c',
     'arch/arm/sel_rt.c',
@@ -127,7 +140,7 @@ elif env.Bit('build_arm'):
     'arch/arm/tramp_arm.S',
   ]
 elif env.Bit('build_mips32'):
-  ldr_inputs += [
+  obj_inputs += [
     'arch/mips/nacl_app.c',
     'arch/mips/nacl_switch_to_app_mips.c',
     'arch/mips/sel_rt.c',
@@ -140,7 +153,7 @@ elif env.Bit('build_mips32'):
   ]
 
 if env.Bit('windows'):
-  ldr_inputs += [
+  obj_inputs += [
     'win/addrspace_teardown.c',
     'win/nacl_ldt.c',
     'win/nacl_thread_nice.c',
@@ -157,7 +170,7 @@ elif env.Bit('mac'):
      [GENERATED + '/nacl_exc.h', GENERATED + '/nacl_exc_server.c'],
      ['osx/run_mig.py', GENERATED + '/exc.defs'],
      '${PYTHON} ${SOURCES} ${TARGETS}')
-  ldr_inputs += [
+  obj_inputs += [
     GENERATED + '/nacl_exc_server.c',
     'osx/crash_filter.c',
     'osx/mach_exception_handler.c',
@@ -169,7 +182,7 @@ elif env.Bit('mac'):
     'posix/x86/sel_segments.c',
   ]
 elif env.Bit('linux'):
-  ldr_inputs += [
+  obj_inputs += [
     'linux/nacl_bootstrap_args.c',
     'linux/nacl_thread_nice.c',
     'linux/r_debug.c',
@@ -178,16 +191,16 @@ elif env.Bit('linux'):
     'posix/sel_memory.c',
   ]
   if env.Bit('build_x86'):
-    ldr_inputs += [
+    obj_inputs += [
       'linux/x86/nacl_ldt.c',
       'posix/x86/sel_segments.c',
     ]
   elif env.Bit('build_arm'):
-    ldr_inputs += [
+    obj_inputs += [
       'linux/arm/sel_segments.c',
     ]
   elif env.Bit('build_mips32'):
-    ldr_inputs += [
+    obj_inputs += [
       'linux/mips/sel_segments.c',
     ]
 
@@ -196,7 +209,7 @@ elif env.Bit('linux'):
 # Add OS and architecture specific signal handling files.
 #
 if env.Bit('windows'):
-  ldr_inputs += [
+  obj_inputs += [
     'win/debug_exception_handler.c',
     'win/debug_exception_handler_standalone.c',
     'win/nacl_signal_stack.c',
@@ -205,11 +218,11 @@ if env.Bit('windows'):
     'win/sel_addrspace_win.c',
   ]
   if env.Bit('build_x86_32'):
-    ldr_inputs += [
+    obj_inputs += [
       'win/nacl_signal_32.c',
     ]
   elif env.Bit('build_x86_64'):
-    ldr_inputs += [
+    obj_inputs += [
       'win/exception_patch/exit_fast.S',
       'win/exception_patch/intercept.S',
       'win/exception_patch/ntdll_patch.c',
@@ -219,19 +232,19 @@ if env.Bit('windows'):
     raise Exception("Unsupported target")
 
 if env.Bit('linux'):
-  ldr_inputs += [
+  obj_inputs += [
       'linux/thread_suspension.c',
       'posix/nacl_signal_stack.c',
       'posix/sel_addrspace_posix.c'
       ]
   if env.Bit('build_arm'):
-    ldr_inputs += ['linux/nacl_signal_arm.c']
+    obj_inputs += ['linux/nacl_signal_arm.c']
   elif env.Bit('build_mips32'):
-    ldr_inputs += ['linux/nacl_signal_mips.c']
+    obj_inputs += ['linux/nacl_signal_mips.c']
   elif env.Bit('build_x86_32'):
-    ldr_inputs += ['linux/nacl_signal_32.c']
+    obj_inputs += ['linux/nacl_signal_32.c']
   elif env.Bit('build_x86_64'):
-    ldr_inputs += ['linux/nacl_signal_64.c']
+    obj_inputs += ['linux/nacl_signal_64.c']
   else:
     raise Exception("Unsupported target")
 
@@ -243,26 +256,33 @@ if env.Bit('linux'):
     nacl_signal_env.FilterOut(CCFLAGS=['-fstack-protector',
                                        '-fstack-protector-all'])
     nacl_signal_env.Append(CCFLAGS=['-fno-stack-protector'])
+  
   ldr_inputs += [nacl_signal_env.ComponentObject('linux/nacl_signal.c')]
 
 if env.Bit('mac'):
-  ldr_inputs += [
+  obj_inputs += [
       'osx/thread_suspension.c',
       'posix/nacl_signal_stack.c',
       'posix/sel_addrspace_posix.c'
       ]
   if env.Bit('build_x86_32'):
-    ldr_inputs += ['osx/nacl_signal_32.c']
+    obj_inputs += ['osx/nacl_signal_32.c']
   elif env.Bit('build_x86_64'):
-    ldr_inputs += ['osx/nacl_signal_64.c']
+    obj_inputs += ['osx/nacl_signal_64.c']
   else:
     raise Exception("Unsupported target")
 
 if env.Bit('windows'):
-  ldr_inputs += ['win/vm_hole.c']
+  obj_inputs += ['win/vm_hole.c']
 else:
-  ldr_inputs += ['generic/vm_hole.c']
+  obj_inputs += ['generic/vm_hole.c']
 
+if env.Bit('usgx'):
+	obj_inputs += [
+    'sgx_interface.c',
+]
+
+ldr_inputs += env.Object(obj_inputs)
 
 syscall_gen_flags = '-a ${TARGET_ARCHITECTURE} -s ${TARGET_SUBARCH}'
 
@@ -272,7 +292,11 @@ env.DualLibrary('sel', ldr_inputs)
 
 env.DualLibrary('sel_main_chrome', ['sel_main_chrome.c'])
 
-env.DualLibrary('sel_main', ['sel_main.c'])
+if env.Bit('usgx'):
+  env.DualLibrary('sel_main', ['sel_main_sgx.c'])
+else:
+  env.DualLibrary('sel_main', ['sel_main.c'])
+
 
 env.DualLibrary('env_cleanser', ['env_cleanser.c'])
 
@@ -321,6 +345,14 @@ sel_ldr_libs = ['sel',
                 'platform_qual_lib',
                 'validators',
                 ]
+
+if env.Bit('usgx'):
+  sel_main_objs = [env.ComponentObject('nacl_test_injection_main.c')]
+  env.ComponentProgram('sel_ldr', sel_main_objs,
+												EXTRA_LIBS=['sel_main'])
+  Return()
+if env.Bit('sgx'):
+  Return()
 
 if not env.Bit('coverage_enabled') or not env.Bit('windows'):
   sel_main_objs = [env.ComponentObject('nacl_test_injection_main.c')]

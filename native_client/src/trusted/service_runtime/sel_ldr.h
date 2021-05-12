@@ -57,6 +57,8 @@
 
 #include "native_client/src/trusted/validator/ncvalidate.h"
 
+#include "sgx/sgx_arch.h"
+
 EXTERN_C_BEGIN
 
 #define NACL_DEFAULT_STACK_MAX  (16 << 20)  /* main thread stack */
@@ -93,6 +95,17 @@ struct NaClSpringboardInfo {
   uint32_t start_addr;
   uint32_t end_addr;
 };
+
+// hmlee
+#if NACL_SGX == 1 || NACL_USGX == 1
+struct NaClSGX {
+	char *nacl_file;
+	char *enclave_img;
+	char *sig_file;
+	char *token_file;
+	sgx_arch_secs_t enclave_secs;
+};
+#endif
 
 struct NaClApp {
   /*
@@ -397,6 +410,12 @@ struct NaClApp {
    */
   struct NaClListNode       futex_wait_list_head;
 #endif
+
+  // hmlee
+#if NACL_SGX == 1 || NACL_USGX == 1
+  struct NaClSGX		sgx;
+#endif
+
 };
 
 

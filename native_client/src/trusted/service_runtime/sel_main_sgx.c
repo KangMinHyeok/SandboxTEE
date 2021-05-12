@@ -52,6 +52,7 @@
 #include "native_client/src/trusted/service_runtime/win/exception_patch/ntdll_patch.h"
 #include "native_client/src/trusted/service_runtime/win/debug_exception_handler.h"
 
+
 static void (*g_enable_outer_sandbox_func)(void) = NULL;
 
 void NaClSetEnableOuterSandboxFunc(void (*func)(void)) {
@@ -511,6 +512,11 @@ int NaClSelLdrMain(int argc, char **argv) {
     NaClLog(LOG_FATAL, "Failed to allocate env var array\n");
   }
   NaClSelLdrParseArgs(argc, argv, options, &env_vars, nap); // untrusted copy (options, env_vars, nap)
+
+  (nap->sgx).nacl_file = options->nacl_file;
+  (nap->sgx).enclave_img = "tmp.so";
+  (nap->sgx).sig_file = "signer/tmp.sig";
+  (nap->sgx).token_file = "signer/tmp.token";
 
   /*
    * Define the environment variables for untrusted code.
