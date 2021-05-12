@@ -142,7 +142,7 @@ void  NaClPatchOneTrampolineCall(uintptr_t  call_target_addr,
 void NaClPatchOneTrampoline(struct NaClApp *nap, uintptr_t target_addr) {
   
   uint_t target_addr_tmp[NACL_SYSCALL_BLOCK_SIZE];
-  NaClPatchOneTrampolineCall(target_addr_temp, target_addr);
+  NaClPatchOneTrampolineCall((uintptr_t) target_addr_temp, target_addr);
   //NaClPatchOneTrampolineCall(nap->nacl_syscall_addr, target_addr);
   add_pages_to_enclave(nap->secs, nap->nacl_syscall_addr, target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
 }
