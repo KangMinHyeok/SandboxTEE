@@ -564,9 +564,9 @@ werror_flags = werror_flags + ['-Wno-variadic-macros']
 #if pre_base_env.Bit('clang'):
   # Allow 'default' label in switch even when all enumeration cases
   # have been covered.
- # werror_flags += ['-Wno-covered-switch-default']
+#  werror_flags += ['-Wno-covered-switch-default']
   # Allow C++11 extensions (for "override")
- # werror_flags += ['-Wno-c++11-extensions']
+#  werror_flags += ['-Wno-c++11-extensions']
 
 
 # Method to make sure -pedantic, etc, are not stripped from the
@@ -2904,6 +2904,8 @@ def MakeSgxEnv():
   
   sgx_env.Replace(BUILD_SCONSCRIPTS = [
       'src/shared/platform/build.scons',
+      'src/shared/gio/build.scons',
+      'src/third_party/gtest/build.scons',
       'src/trusted/debug_stub/build.scons',
       'src/trusted/desc/build.scons',
       'src/trusted/fault_injection/build.scons',
@@ -2932,14 +2934,10 @@ def MakeSgxEnv():
 
   common_flags = [
           '-fPIC',
-	  #'-Werror-implicit-function-declaration',
-	  #'-Wstrict-prototypes',
-          #'-Wno-c++11-extensions',
           '-Werror',
           '-pedantic', 
           '-Wno-variadic-macros',
           '-Wall',
-          #'-Wno-covered-switch-default',
           '-ffunction-sections',
           '-fdata-sections',
           '-g',
@@ -2960,25 +2958,23 @@ def MakeSgxEnv():
   ] + ['--param', 'ssp-buffer-size=4']
 
   sgx_include = [
-	  #'-std=c11',
           '-I${SGX_SDK}/include/',
-          '-I/home/crhamm/nacl/native_client/src/include/',
           '-I/home/crhamm/nacl',
-          #'-Wextra', 
-          '-Wno-long-long', '-Wswitch-enum', '-Wsign-compare', '-Wundef', 
-          #'-Wcast-function-type',
-          #'-Wno-c++11-extensions',
-          #'-Werror-implicit-function-declaration',
+          '-Wno-long-long', 
+          '-Wswitch-enum', 
+          '-Wsign-compare', 
+          '-Wundef', 
   ]
 
   sgx_env.Prepend(
-    CCFLAGS = common_flags + [] + sgx_include, 
+    CCFLAGS = common_flags + [
+        ] + sgx_include, 
     CFLAGS = [
         '-std=c11',
         ] + sgx_include,
     CXXFLAGS = [
         '-std=c++11',
-        ] 
+        ],
     )
 
   sgx_env['LINKCOM'] = sgx_env.get('LINKCOM') + ' $_LIBGROUP' 
@@ -2989,26 +2985,8 @@ def MakeSgxEnv():
           '-Wl,--export-dynamic', 
           '-Wl,--defsym,__ImageBase=0', 
           '-Wl,--gc-sections',
-	  #'-Wl,-rpath=${SGX_SDK}/include',
 	  '-Lscons-out/sgx-linux-x86-64/lib',
-	  #'-lrt',
 	  '-Wl,--whole-archive',
-	  '-lsel',
-	  '-lnacl_error_code',
-	  '-lenv_cleanser',
-	  '-lnrd_xfer',
-	  '-lnacl_perf_counter',
-	  '-lnacl_base',
-	  '-lnacl_fault_inject',
-	  '-lnacl_interval',
-	  '-lvalidation_cache',
-	  '-lvalidators',
-	  '-ldfa_validate_caller_x86_64',
-	  '-lplatform',
-	  '-ldebug_stub',
-	  '-lsgxlib',
-	  '-lworflib',
-	  '-lgen',
 	  '-Wl,--no-whole-archive',
 	  '-eenclave_entry',
 	  '-zcombreloc',
