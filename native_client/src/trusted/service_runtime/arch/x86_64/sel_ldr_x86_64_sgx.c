@@ -144,7 +144,7 @@ void NaClPatchOneTrampoline(struct NaClApp *nap, uintptr_t target_addr) {
   uint_t target_addr_tmp[NACL_SYSCALL_BLOCK_SIZE];
   NaClPatchOneTrampolineCall((uintptr_t) target_addr_temp, target_addr);
   //NaClPatchOneTrampolineCall(nap->nacl_syscall_addr, target_addr);
-  add_pages_to_enclave(nap->secs, nap->nacl_syscall_addr, target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
+  add_pages_to_enclave(nap->sgx->secs, nap->nacl_syscall_addr, target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
 }
 
 void NaClFillMemoryRegionWithHalt(void *start, size_t size) {
@@ -172,7 +172,7 @@ void NaClFillTrampolineRegion(struct NaClApp *nap) {
   
   memset((void *)halts, NACL_HALT_OPCODE, size);
   // TODO(mhkang): check protection type of halts region, rule of skip eextended
-  add_pages_to_enclave(nap->secs, start, halts, size, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "fill memory with halt");
+  add_pages_to_enclave(nap->sgx->secs, start, halts, size, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "fill memory with halt");
 }
 
 void NaClLoadSpringboard(struct NaClApp  *nap) {
