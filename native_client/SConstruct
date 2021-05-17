@@ -2829,8 +2829,7 @@ def MakeSgxEnv():
 
   sgx_include = [
           #'-I${SGX_SDK}/include/',
-          # TODO (crhamm)
-          # '-I/home/crhamm/nacl',
+          '-I${SOURCE_ROOT}',
           '-Wno-long-long', 
           '-Wswitch-enum', 
           '-Wsign-compare', 
