@@ -2776,13 +2776,14 @@ def MakeSgxEnv():
   sgx_env.Replace(BUILD_SCONSCRIPTS = [
       'build/package_version/build.scons',
       'pynacl/build.scons',
+      'src/trusted/xcall/build.scons',
       'src/nonsfi/irt/build.scons',
       'src/nonsfi/loader/build.scons',
       'src/shared/gio/build.scons',
-      # -----------------------
       'src/shared/imc/build.scons',
       'src/shared/platform/build.scons',
       'src/third_party/gtest/build.scons',
+      'src/trusted/cpu_features/build.scons',
       'src/trusted/debug_stub/build.scons',
       'src/trusted/desc/build.scons',
       'src/trusted/fault_injection/build.scons',
@@ -2793,6 +2794,7 @@ def MakeSgxEnv():
       'src/trusted/validator/driver/build.scons',
       'src/trusted/validator_ragel/build.scons',
       'src/trusted/validator_x86/build.scons',
+      'src/trusted/platform_qualify/build.scons',
       'src/trusted/service_runtime/build.scons',
       #'src/trusted/wolfssl/build.scons',
       #'src/trusted/stdlib/build.scons',
@@ -2841,10 +2843,10 @@ def MakeSgxEnv():
         ] + sgx_include, 
     CFLAGS = [
         # '-nostdinc'
-        # '-std=c11',
+        '-std=c99',
         ] + sgx_include,
     CXXFLAGS = [
-        #'-std=c++11',
+        '-std=c++99',
         ],
     )
 
@@ -2934,6 +2936,7 @@ usgx_env.Replace(BUILD_SCONSCRIPTS = [
       'src/trusted/perf_counter/build.scons',
       'src/trusted/platform_qualify/build.scons',
       'src/trusted/seccomp_bpf/build.scons',
+      'src/trusted/xcall/build.scons',
       'src/trusted/service_runtime/build.scons',
       'src/trusted/validator/build.scons',
       'src/trusted/validator/driver/build.scons',
@@ -4058,8 +4061,8 @@ if nacl_irt_test_env in selected_envs and nacl_env not in selected_envs:
   selected_envs.append(nacl_env)
 
 #TODO(hmlee)
-selected_envs.append(sgx_env)
 selected_envs.append(usgx_env)
+selected_envs.append(sgx_env)
 
 DumpEnvironmentInfo(selected_envs)
 LinkTrustedEnv(selected_envs)

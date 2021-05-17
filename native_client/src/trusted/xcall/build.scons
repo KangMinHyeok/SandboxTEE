@@ -1,0 +1,20 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+ldr_input = []
+if env.Bit('usgx'):
+	ldr_input.append('ocall_time_u.c')
+	env.DualLibrary('usgx_nacl', ldr_input)
+elif env.Bit('sgx'):
+	ldr_input.append('enclave_framework.c')
+	ldr_input.append('ocall_time_t.c')
+	env.DualLibrary('sgx_nacl', ldr_input)
+
+
+
+
