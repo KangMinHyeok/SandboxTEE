@@ -8,6 +8,9 @@
 #include <stdalign.h>
 
 int sgx_ocall (unsigned long code, void * ms);
+int sgx_ecall (unsigned long code, void * ms);
+
+extern void * enclave_base, * enclave_top;
 
 void * sgx_ocalloc (uint64_t size);
 void sgx_ocfree (void);
@@ -20,7 +23,6 @@ void* sgx_alloc_on_ustack(size_t size) ;
 void* sgx_copy_to_ustack(const void* ptr, size_t size) ;
 void sgx_reset_ustack(const void* old_ustack) ;
 bool sgx_copy_ptr_to_enclave(void** ptr, void* uptr, size_t size) ;
-bool sgx_copy_to_enclave(const void* ptr, size_t maxsize, const void* uptr,
-		        size_t usize) ;
+bool sgx_copy_to_enclave(const void* ptr, size_t maxsize, const void* uptr, size_t usize) ;
 
 #endif

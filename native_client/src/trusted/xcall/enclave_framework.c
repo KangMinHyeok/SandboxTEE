@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
+void * enclave_base, * enclave_top;
 
 int sgx_ocall (unsigned long code, void * ms) {
 

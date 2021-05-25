@@ -1,6 +1,8 @@
 
 
 enclave_framework.c from graphene
+enclave_entry.S from graphene
+sgx_entry.S from graphene
 
 
 

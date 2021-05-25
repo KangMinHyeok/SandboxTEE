@@ -21,14 +21,12 @@
 #define SGX_ARCH_H
 
 #include <stdint.h>
-
-#define SGX_HAS_FSGSBASE (1)
+#include "native_client/src/trusted/service_runtime/sgx/sgx_defs.h"
 
 typedef uint8_t sgx_arch_key_t [384];
 typedef uint8_t sgx_arch_hash_t[32];
 typedef uint8_t sgx_arch_mac_t [16];
 // This if for passing a mac to hex2str
-#define MACBUF_SIZE ((sizeof(sgx_arch_mac_t)*2)+1) 
 
 
 typedef struct {
@@ -121,18 +119,6 @@ typedef struct {
     uint32_t valid:1;
 } sgx_arch_exitinfo_t;
 
-#define SGX_EXCEPTION_HARDWARE      3UL
-#define SGX_EXCEPTION_SOFTWARE      6UL
-
-#define SGX_EXCEPTION_VECTOR_DE     0UL  /* DIV and IDIV instructions */
-#define SGX_EXCEPTION_VECTOR_DB     1UL  /* For Intel use only */
-#define SGX_EXCEPTION_VECTOR_BP     3UL  /* INT 3 instruction */
-#define SGX_EXCEPTION_VECTOR_BR     5UL  /* BOUND instruction */
-#define SGX_EXCEPTION_VECTOR_UD     6UL  /* UD2 instruction or reserved opcodes */
-#define SGX_EXCEPTION_VECTOR_MF    16UL  /* x87 FPU floating-point or WAIT/FWAIT instruction */
-#define SGX_EXCEPTION_VECTOR_AC    17UL  /* Any data reference in memory */
-#define SGX_EXCEPTION_VECTOR_XM    19UL  /* Any SIMD floating-point exceptions */
-
 typedef struct {
     uint64_t linaddr;
     uint64_t srcpge;
@@ -144,13 +130,6 @@ typedef struct {
     uint64_t flags;
     uint8_t  reserved[56];
 } sgx_arch_secinfo_t;
-
-#define SGX_SECINFO_FLAGS_R             0x001
-#define SGX_SECINFO_FLAGS_W             0x002
-#define SGX_SECINFO_FLAGS_X             0x004
-#define SGX_SECINFO_FLAGS_SECS          0x000
-#define SGX_SECINFO_FLAGS_TCS           0x100
-#define SGX_SECINFO_FLAGS_REG           0x200
 
 typedef struct {
     /* header part (signed) */
@@ -211,7 +190,6 @@ typedef struct {
     sgx_arch_mac_t mac;
 } __attribute__((packed, aligned(512))) sgx_arch_report_t;
 
-#define SGX_REPORT_SIGNED_SIZE  384
 
 typedef struct {
     sgx_arch_hash_t mrenclave;
@@ -233,44 +211,6 @@ typedef struct {
 
 typedef uint8_t sgx_arch_key128_t[16] __attribute__((aligned(16)));
 
-
-#define EENTER      2
-#define ERESUME     3
-#define EDBGRD      4
-#define EDBGWR      5
-
-#define EREPORT     0
-#define EGETKEY     1
-#define EEXIT       4
-
-#define LAUNCH_KEY          0
-#define PROVISION_KEY       1
-#define PROVISION_SEAL_KEY  2
-#define REPORT_KEY          3
-#define SEAL_KEY            4
-
-#define KEYPOLICY_MRENCLAVE     1
-#define KEYPOLICY_MRSIGNER      2
-
-#define SGX_GPR_RAX             0x00
-#define SGX_GPR_RCX             0x08
-#define SGX_GPR_RDX             0x10
-#define SGX_GPR_RBX             0x18
-#define SGX_GPR_RSP             0x20
-#define SGX_GPR_RBP             0x28
-#define SGX_GPR_RSI             0x30
-#define SGX_GPR_RDI             0x38
-#define SGX_GPR_R8              0x40
-#define SGX_GPR_R9              0x48
-#define SGX_GPR_R10             0x50
-#define SGX_GPR_R11             0x58
-#define SGX_GPR_R12             0x60
-#define SGX_GPR_R13             0x68
-#define SGX_GPR_R14             0x70
-#define SGX_GPR_R15             0x78
-#define SGX_GPR_RFLAGS          0x80
-#define SGX_GPR_RIP             0x88
-#define SGX_GPR_EXITINFO        0xa0
 
 
 #endif /* SGX_ARCH_H */
