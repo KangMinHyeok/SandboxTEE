@@ -9,20 +9,6 @@
 enclave_entry:
   # On EENTER/ERESUME, RAX is the current SSA, RBX is the address of TCS,
   # RCX is the address of AEP. Other registers are not trusted.
-/*
-  cmpq $1, %gs:SGX_ISMAIN
-  jne .Lnot_main
-
-  pushq %rax
-  pushq %rbx
-  pushq %rcx
-  callq add_counter 
-  popq %rcx
-  popq %rbx
-  popq %rax
-
-.Lnot_main:
-*/
   # current SSA is in RAX (Trusted)
   cmpq $0, %rax
   jne .Lhandle_resume
