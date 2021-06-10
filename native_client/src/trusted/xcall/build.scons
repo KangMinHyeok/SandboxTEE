@@ -8,13 +8,15 @@ Import('env')
 
 ldr_input = []
 if env.Bit('usgx'):
+	ldr_input.append('ocall_debugp_u.c')
 	ldr_input.append('ocall_time_u.c')
 	ldr_input.append('sgx_entry.S')
 	ldr_input.append('ecall_enclave_start_u.c')
 	env.DualLibrary('usgx_nacl', ldr_input)
 elif env.Bit('sgx'):
-	ldr_input.append('enclave_framework.c')
+	ldr_input.append('ocall_debugp_t.c')
 	ldr_input.append('ocall_time_t.c')
+	ldr_input.append('enclave_framework.c')
 	ldr_input.append('enclave_entry.S')
 	ldr_input.append('handle_ecall.c')
 	env.DualLibrary('sgx_nacl', ldr_input)

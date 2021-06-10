@@ -75,6 +75,8 @@ enum {
 	OCALL_NSLEEP,
 	OCALL_POLL,
 	OCALL_DELETE,
+	
+	OCALL_DEBUGP,
 
 	OCALL_NR,
 
@@ -85,13 +87,22 @@ typedef struct {
 	long ms_tv_usec;
 } ms_ocall_gettimeofday_t;
 
+typedef struct {
+	int ms_val;
+} ms_ocall_debugp_t;
+
 
 typedef int (*sgx_ocall_fn_t)(void*);
 
+
 int sgx_ocall_gettimeofday(void * pms);
+
+int sgx_ocall_debugp(void * pms);
 
 sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_GETTIMEOFDAY] =  sgx_ocall_gettimeofday,
+	[OCALL_DEBUGP] =  sgx_ocall_debugp,
 };
+
 
 #endif

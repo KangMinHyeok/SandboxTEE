@@ -3,10 +3,8 @@
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 
 // TODO(mkpark): below struct should be changed
-#include "/usr/include/errno.h"
-#include "/usr/include/time.h"
-#include "/usr/include/x86_64-linux-gnu/sys/time.h"
-
+#include <errno.h>
+#include <time.h>
 
 int ocall_gettimeofday (struct timeval *tv)
 {
