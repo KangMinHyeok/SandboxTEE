@@ -1,0 +1,16 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+ldr_input = []
+if not env.Bit('sgx'):
+	Return()
+
+ldr_input.append('printf.c')
+env.DualLibrary('sgx_stdlib', ldr_input)
+
+

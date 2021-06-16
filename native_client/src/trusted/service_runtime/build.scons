@@ -68,7 +68,6 @@ if env.Bit('usgx'):
     'elf_util_sgx.c',
     'sel_addrspace_sgx.c',
     'sel_ldr_standard_sgx.c',
-    'sel_ldr_sgx.c'
 ]
 
 else:

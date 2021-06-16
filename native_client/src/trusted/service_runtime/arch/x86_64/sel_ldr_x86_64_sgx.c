@@ -57,7 +57,6 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
   NaClLog(2, "NaClMakeDispatchAddrs: got addr 0x%"NACL_PRIxPTR"\n",
           (uintptr_t) page_addr);
 
-  /*
   if (0 != (error = NaClMprotect(page_addr,
                                  NACL_MAP_PAGESIZE,
                                  PROT_READ | PROT_WRITE))) {
@@ -67,7 +66,6 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
     retval = 0;
     goto cleanup;
   }
-  */
 
   next_addr = (uintptr_t) page_addr;
   nacl_syscall_addr =
@@ -77,7 +75,6 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
   get_tls_fast_path2_addr =
       AddDispatchAddr(&next_addr, (uintptr_t) &NaClGetTlsFastPath2);
   
-  /*
   if (0 != (error = NaClMprotect(page_addr, NACL_MAP_PAGESIZE, PROT_READ))) {
     NaClLog(LOG_INFO,
             "NaClMakeDispatchAddrs::NaClMprotect read-only failed, errno %d\n",
@@ -85,7 +82,7 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
     retval = 0;
     goto cleanup;
   }
-  */
+  
   retval = 1;
  cleanup:
   if (0 == retval) {
@@ -141,10 +138,15 @@ void  NaClPatchOneTrampolineCall(uintptr_t  call_target_addr,
 
 void NaClPatchOneTrampoline(struct NaClApp *nap, uintptr_t target_addr) {
   
-  uint_t target_addr_tmp[NACL_SYSCALL_BLOCK_SIZE];
-  NaClPatchOneTrampolineCall((uintptr_t) target_addr_temp, target_addr);
-  //NaClPatchOneTrampolineCall(nap->nacl_syscall_addr, target_addr);
-  add_pages_to_enclave(nap->sgx->secs, nap->nacl_syscall_addr, target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
+  //int ret;
+
+	// TODO (mhkang)
+
+  NaClPatchOneTrampolineCall(nap->nacl_syscall_addr,  target_addr);
+  //ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)target_addr, (void *)target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
+
+	//if (ret < 0)
+	//	exit(1);
 }
 
 void NaClFillMemoryRegionWithHalt(void *start, size_t size) {
@@ -160,7 +162,7 @@ void NaClFillTrampolineRegion(struct NaClApp *nap) {
       (void *) (nap->mem_start + NACL_TRAMPOLINE_START),
       NACL_TRAMPOLINE_SIZE);
   */
-  void * start = (void *) (nap->mem_start + NACL_TRAMPOLINE_START);
+  void * start = (void *) (nap->sgx->enclave_secs->baseaddr + NACL_TRAMPOLINE_START);
   size_t size = NACL_TRAMPOLINE_SIZE;
   CHECK(!(size % NACL_HALT_LEN));
 
@@ -168,11 +170,11 @@ void NaClFillTrampolineRegion(struct NaClApp *nap) {
   //NACL_MAKE_MEM_UNDEFINED(start, size);
   
   // TODO(mhkang): is it possible to use stack memory as a source of add_pages_to_enclave? or heap memory should be used?
-  int halts[size] = {};
+  int * halts = (int *)malloc(sizeof(int) * size);
   
   memset((void *)halts, NACL_HALT_OPCODE, size);
   // TODO(mhkang): check protection type of halts region, rule of skip eextended
-  add_pages_to_enclave(nap->sgx->secs, start, halts, size, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "fill memory with halt");
+  add_pages_to_enclave(nap->sgx->enclave_secs, start, halts, size, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "fill memory with halt");
 }
 
 void NaClLoadSpringboard(struct NaClApp  *nap) {

@@ -416,6 +416,21 @@ NaClErrorCode NaClAppLoadFileAslr(struct NaClDesc *ndp,
   NaClLog(2, "Installing springboard\n");
   NaClLoadSpringboard(nap);
 
+ 	// -----------------------------
+ 	// load stack&heap
+  
+ 	// start of stack: 4G: 0x100000000
+  // start of heap:       0x40000000
+
+  // stack & heap size TODO(check baseaddr)
+  int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(/* nap->sgx->enclave_secs->baseaddr + */ 0xC0000000), NULL, 0x40000000, SGX_PAGE_REG, PROT_READ|PROT_WRITE, false, "patch tramp all");
+
+
+	// load service_runtime 
+	// SR's stack&heap
+	// TLS/TCS/SSA.
+
+
   /*
    * NaClMemoryProtection also initializes the mem_map w/ information
    * about the memory pages and their current protection value.

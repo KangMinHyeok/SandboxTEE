@@ -55,6 +55,9 @@
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
 #include "native_client/src/trusted/service_runtime/sel_memory.h"
 #include "native_client/src/trusted/validator/rich_file_info.h"
+#if NACL_USGX == 1
+#include "native_client/src/trusted/service_runtime/sgx_interface.h"
+#endif
 
 static int IsEnvironmentVariableSet(char const *env_name) {
   return NULL != getenv(env_name);
@@ -477,7 +480,10 @@ void  NaClLoadTrampoline(struct NaClApp *nap, enum NaClAslrMode aslr_mode) {
     NaClLog(LOG_FATAL, "NaClMakeDispatchAddrs failed!\n");
   }
 #endif
+
+#if NACL_USGX == 0
   NaClFillTrampolineRegion(nap);
+#endif
 
   /*
    * Do not bother to fill in the contents of page 0, since we make it
@@ -491,12 +497,33 @@ void  NaClLoadTrampoline(struct NaClApp *nap, enum NaClAslrMode aslr_mode) {
                   / NACL_SYSCALL_BLOCK_SIZE) - 1;
 
   NaClLog(2, "num_syscalls = %d (0x%x)\n", num_syscalls, num_syscalls);
+  
+#if NACL_USGX == 1
+  size_t temp_size = NACL_SYSCALL_BLOCK_SIZE * num_syscalls;
+  size_t rem = temp_size % PRESET_PAGESIZE;
+  if (rem != 0 ){
+  	temp_size += PRESET_PAGESIZE - rem;
+	}
 
-  for (i = 0, addr = nap->mem_start + NACL_SYSCALL_START_ADDR;
+	uint8_t * temp_addr = (uint8_t *)malloc(temp_size);
+  addr = (uintptr_t) temp_addr;
+
+#else
+	addr = nap->mem_start + NACL_SYSCALL_START_ADDR;
+#endif
+
+  for (i = 0;
        i < num_syscalls;
        ++i, addr += NACL_SYSCALL_BLOCK_SIZE) {
     NaClPatchOneTrampoline(nap, addr);
   }
+#if NACL_USGX == 1
+  int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + NACL_SYSCALL_START_ADDR), (void *)temp_addr, temp_size, SGX_PAGE_REG, PROT_READ, false, "patch tramp all");
+  if (ret < 0)
+  	exit(1);
+  free(temp_addr);
+#endif
+  
 #if NACL_ARCH(NACL_BUILD_ARCH) == NACL_x86 && NACL_BUILD_SUBARCH == 64
   NaClPatchOneTrampolineCall(nap->get_tls_fast_path1_addr,
                              nap->mem_start + NACL_SYSCALL_START_ADDR

@@ -4,6 +4,7 @@
 // hmlee: commonly used macros
 
 #define PRESET_PAGESIZE (1 << 12)
+#define SGX_PAGESIZE (1 << 12)
 
 extern unsigned long pagesize, pageshift, pagemask;
 
