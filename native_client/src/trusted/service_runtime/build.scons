@@ -68,6 +68,7 @@ if env.Bit('usgx'):
     'elf_util_sgx.c',
     'sel_addrspace_sgx.c',
     'sel_ldr_standard_sgx.c',
+    'sel_ldr_sgx.c'
 ]
 
 else:
@@ -102,10 +103,19 @@ elif env.Bit('build_x86_64'):
       'arch/x86_64/nacl_switch_to_app_64.c',
       'arch/x86_64/nacl_syscall_64.S',
       'arch/x86_64/nacl_tls_64.c',
-      'arch/x86_64/sel_ldr_x86_64.c',
+      #'arch/x86_64/sel_ldr_x86_64.c',
       'arch/x86_64/sel_rt_64.c',
       'arch/x86_64/tramp_64.S',
       ]
+  if env.Bit('usgx'):
+    obj_inputs += [
+      'arch/x86_64/sel_ldr_x86_64_sgx.c'
+    ]
+  else:
+    obj_inputs += [
+      'arch/x86_64/sel_ldr_x86_64.c'
+    ]
+
   if env.Bit('windows'):
     # We assemble the .asm assembly file with the Microsoft assembler
     # because we need to generate x86-64 Windows unwind info, which
