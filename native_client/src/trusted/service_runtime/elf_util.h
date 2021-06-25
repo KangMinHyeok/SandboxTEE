@@ -35,6 +35,13 @@ NaClErrorCode NaClElfImageValidateProgramHeaders(
   uint8_t             addr_bits,
   struct NaClElfImageInfo *info);
 
+
+#if NACL_USGX == 1
+NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
+                               struct NaClDesc *ndp,
+                               struct NaClApp *nap);
+#endif
+
 /*
  * Loads an ELF executable before the address space's memory
  * protections have been set up by NaClMemoryProtection().
