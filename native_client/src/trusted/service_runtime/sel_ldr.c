@@ -518,7 +518,7 @@ void  NaClLoadTrampoline(struct NaClApp *nap, enum NaClAslrMode aslr_mode) {
     NaClPatchOneTrampoline(nap, addr);
   }
 #if NACL_USGX == 1
-  int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + NACL_SYSCALL_START_ADDR), (void *)temp_addr, temp_size, SGX_PAGE_REG, PROT_READ, false, "patch tramp all");
+  int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + 0x100000000 + NACL_SYSCALL_START_ADDR), (void *)temp_addr, temp_size, SGX_PAGE_REG, PROT_READ | PROT_EXEC, true, "patch tramp all");
   if (ret < 0)
   	exit(1);
   free(temp_addr);
