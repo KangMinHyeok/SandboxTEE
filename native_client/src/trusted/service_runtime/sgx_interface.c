@@ -11,7 +11,6 @@ int isgx_device = -1;
 
 void * zero_page;
 
-
 int open_sgx(void) {
 
 	isgx_device = open(ISGX_FILE, O_RDWR, 0);
@@ -189,6 +188,8 @@ int add_pages_to_enclave(sgx_arch_secs_t * secs,
 		enum sgx_page_type type, int prot,
 		bool skip_eextend,
 		const char * comment) {
+	
+
 	sgx_arch_secinfo_t secinfo;
 	int ret;
 	char p[4] = "---";
@@ -196,7 +197,7 @@ int add_pages_to_enclave(sgx_arch_secs_t * secs,
 	const char * m;
 	struct sgx_enclave_add_page param;
 	uint64_t added_size;
-
+	
 	memset(&secinfo, 0, sizeof(sgx_arch_secinfo_t));
 
 	switch (type) {
@@ -253,20 +254,105 @@ int add_pages_to_enclave(sgx_arch_secs_t * secs,
 		if (param.src != (uint64_t) zero_page) param.src += pagesize;
 		added_size += pagesize;
 	}
+ 
+	return 0;
+}
+
+
+int init_enclave(struct NaClApp *nap)
+{
+	sgx_arch_secs_t *secs = nap->sgx->enclave_secs;
+	unsigned long enclave_valid_addr =
+		secs->baseaddr + secs->size - pagesize;
+	struct sgx_enclave_init param;
+	int ret, i;
+	const char * error;	
+	int sigfile, tokenfile;
+	sgx_arch_sigstruct_t sigstruct;
+	sgx_arch_token_t token;
+
+
+	if (open_sgx() < 0)
+		return -1;
+
+	//enclave_image = open((nap->sgx).enclave_img, O_RDONLY);
+
+	sigfile = open((nap->sgx)->sig_file, O_RDONLY);
+	if (sigfile < 0) {
+		perror("error while reading sigfile: ");
+		return -1;
+	}
+
+	tokenfile = open((nap->sgx)->token_file, O_RDONLY);
+	if (tokenfile < 0) {
+		printf("error while reading tokenfile\n");
+		return -1;
+	}
+
+	ret = read_enclave_sigstruct(sigfile, &sigstruct);
+	if (ret < 0) {
+		printf("error while reading sigstruct\n");
+		return -1;
+	}
+
+	ret = read_enclave_token(tokenfile, &token);
+	if (ret < 0) {
+		printf("error while reading token\n");
+		return -1;
+	}
+
+
+	printf( "enclave initializing:\n");
+	printf( "    enclave id:   0x%016lx\n", enclave_valid_addr);
+	printf( "    enclave hash:");
+	for (i = 0 ; i < (int)sizeof(sgx_arch_hash_t) ; i++)
+		printf( " %02x", (&sigstruct)->enclave_hash[i]);
+	printf( "\n");
+
+	param.addr = enclave_valid_addr,
+		param.sigstruct = (uint64_t) &sigstruct,
+		param.einittoken = (uint64_t) &token,
+
+		ret = ioctl(isgx_device, SGX_IOC_ENCLAVE_INIT, &param);
+
+	if (ret < 0) {
+		perror("enclave ECREATE failed in enclave initialization ioctl");
+		return ret;
+	}
+
+	if (ret) {
+		/* DEP 3/22/17: Try to improve error messages */
+		switch(ret) {
+			case SGX_INVALID_SIG_STRUCT:
+				error = "Invalid SIGSTRUCT";          break;
+			case SGX_INVALID_ATTRIBUTE:
+				error = "Invalid enclave attribute";  break;
+			case SGX_INVALID_MEASUREMENT:
+				error = "Invalid measurement";        break;
+			case SGX_INVALID_SIGNATURE:
+				error = "Invalid signature";          break;
+				//case SGX_INVALID_LICENSE:
+				//    error = "Invalid EINIT token";        break;
+			case SGX_INVALID_CPUSVN:
+				error = "Invalid CPU SVN";            break;
+			default:
+				error = "Unknown reason";             break;
+		}
+		printf( "enclave EINIT failed - %s\n", error);
+		return -EPERM;
+	}
 
 	return 0;
 }
 
 
-
-int init_enclave(struct NaClApp *nap) {
+int load_enclave(struct NaClApp *nap) {
 
 	//int enclave_image;
 	int sigfile, tokenfile, exec_image;
 	int ret;
 	size_t enclave_size;
 	unsigned long baseaddr;
-	sgx_arch_sigstruct_t enclave_sigstruct;
 	sgx_arch_token_t enclave_token;
 
 	if (open_sgx() < 0)
@@ -297,11 +383,6 @@ int init_enclave(struct NaClApp *nap) {
 	enclave_size = (size_t) 1024*1024*1024*64;
 	baseaddr = 0;
 
-	ret = read_enclave_sigstruct(sigfile, &enclave_sigstruct);
-	if (ret < 0) {
-		printf("error while reading sigstruct\n");
-		return -1;
-	}
 
 	ret = read_enclave_token(tokenfile, &enclave_token);
 	if (ret < 0) {
@@ -314,6 +395,9 @@ int init_enclave(struct NaClApp *nap) {
 		printf("error while creating enclave\n");
 		return -1;
 	}
+
+	//ret = init_enclave(nap->sgx->enclave_secs, &enclave_sigstruct, &enclave_token);
+
 
 	return 0;
 }

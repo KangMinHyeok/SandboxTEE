@@ -31,8 +31,8 @@ int add_pages_to_enclave(sgx_arch_secs_t * secs,
 						 bool skip_eextend,
 						 const char * comment);
 
+int load_enclave(struct NaClApp *nap);
+
 int init_enclave(struct NaClApp *nap);
-
-
 
 #endif
