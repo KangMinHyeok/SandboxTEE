@@ -358,7 +358,7 @@ sel_ldr_libs = ['sel',
 if env.Bit('usgx'):
   sel_main_objs = [env.ComponentObject('nacl_test_injection_main.c')]
   env.ComponentProgram('sel_ldr', sel_main_objs,
-												EXTRA_LIBS=['sel_main'])
+												EXTRA_LIBS=['sel_main', 'usgx_nacl'])
   Return()
 if env.Bit('sgx'):
   Return()
@@ -549,7 +549,9 @@ else:
   arch_testdata_dir = 'testdata/' + env['TARGET_ARCHITECTURE']
 
 untrusted_env = env.MakeUntrustedNativeEnv()
-hello_world_nexe = untrusted_env.File('$STAGING_DIR/hello_world.nexe')
+# hmlee
+#hello_world_nexe = untrusted_env.File('$STAGING_DIR/hello_world.nexe')
+hello_world_nexe = untrusted_env.File('/home/hmlee/SandboxTEE/native_client/src/trusted/validator_ragel/hello_world.nexe')
 
 # Doesn't work on windows under coverage.
 # TODO(bradnelson): fix this to work on windows under coverage.
