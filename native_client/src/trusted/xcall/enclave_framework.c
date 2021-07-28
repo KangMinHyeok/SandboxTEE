@@ -67,9 +67,10 @@ void* sgx_prepare_ustack(void) {
 }
 
 
+// TODO: include assert!!
 void* sgx_alloc_on_ustack_aligned(size_t size, size_t alignment) {
 
-	assert(IS_POWER_OF_2(alignment));
+	// assert(IS_POWER_OF_2(alignment));
 	void* ustack = (void*)((uint64_t) GET_ENCLAVE_TLS(ustack) - size);
 	ustack = ALIGN_DOWN_PTR_POW2(ustack, alignment);
 	if (!sgx_is_completely_outside_enclave(ustack, size)) {
@@ -94,7 +95,7 @@ void* sgx_copy_to_ustack(const void* ptr, size_t size) {
 }
 
 void sgx_reset_ustack(const void* old_ustack) {
-	assert(old_ustack <= GET_ENCLAVE_TLS(ustack_top));
+	// assert(old_ustack <= GET_ENCLAVE_TLS(ustack_top));
 	SET_ENCLAVE_TLS(ustack, old_ustack);
 }
 
