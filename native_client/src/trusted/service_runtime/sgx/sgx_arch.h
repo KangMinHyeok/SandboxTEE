@@ -212,5 +212,4 @@ typedef struct {
 typedef uint8_t sgx_arch_key128_t[16] __attribute__((aligned(16)));
 
 
-
 #endif /* SGX_ARCH_H */
