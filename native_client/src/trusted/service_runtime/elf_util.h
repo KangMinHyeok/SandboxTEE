@@ -18,6 +18,8 @@ uintptr_t NaClElfImageGetEntryPoint(struct NaClElfImage *image);
 
 struct NaClElfImage *NaClElfImageNew(struct NaClDesc *gp,
                                      NaClErrorCode *err_code);
+struct NaClElfImage *NaClElfImageServiceRuntimeNew(struct NaClDesc *gp,
+                                     NaClErrorCode *err_code);
 
 NaClErrorCode NaClElfImageValidateElfHeader(struct NaClElfImage *image);
 

@@ -353,6 +353,163 @@ NaClErrorCode NaClElfImageValidateProgramHeaders(
 }
 
 
+struct NaClElfImage *NaClElfImageServiceRuntimeNew(struct NaClDesc *ndp,
+                                     NaClErrorCode *err_code) {
+  ssize_t read_ret;
+  struct NaClElfImage *result;
+  struct NaClElfImage image;
+  union {
+    Elf32_Ehdr ehdr32;
+#if NACL_BUILD_SUBARCH == 64
+    Elf64_Ehdr ehdr64;
+#endif
+  } ehdr;
+  int cur_ph;
+
+  memset(image.loadable, 0, sizeof image.loadable);
+
+  /*
+   * We read the larger size of an ELFCLASS64 header even if it turns out
+   * we're reading an ELFCLASS32 file.  No usable ELFCLASS32 binary could
+   * be so small that it's not larger than Elf64_Ehdr anyway.
+   */
+  read_ret = (*NACL_VTBL(NaClDesc, ndp)->PRead)(ndp, &ehdr, sizeof ehdr, 0);
+  if (NaClSSizeIsNegErrno(&read_ret) || (size_t) read_ret != sizeof ehdr) {
+    *err_code = LOAD_READ_ERROR;
+    NaClLog(2, "could not load elf headers\n");
+    return 0;
+  }
+
+#if NACL_BUILD_SUBARCH == 64
+  if (ELFCLASS64 == ehdr.ehdr64.e_ident[EI_CLASS]) {
+    /*
+     * Convert ELFCLASS64 format to ELFCLASS32 format.
+     * The initial four fields are the same in both classes.
+     */
+    memcpy(image.ehdr.e_ident, ehdr.ehdr64.e_ident, EI_NIDENT);
+    image.ehdr.e_ident[EI_CLASS] = ELFCLASS32;
+    image.ehdr.e_type = ehdr.ehdr64.e_type;
+    image.ehdr.e_machine = ehdr.ehdr64.e_machine;
+    image.ehdr.e_version = ehdr.ehdr64.e_version;
+    
+    image.ehdr.e_entry = ehdr.ehdr64.e_entry;
+    image.ehdr.e_phoff = ehdr.ehdr64.e_phoff;
+    image.ehdr.e_shoff = ehdr.ehdr64.e_shoff;
+    image.ehdr.e_flags = ehdr.ehdr64.e_flags;
+    if (ehdr.ehdr64.e_ehsize != sizeof(ehdr.ehdr64)) {
+      *err_code = LOAD_BAD_EHSIZE;
+      NaClLog(2, "ELFCLASS64 file e_ehsize != %d\n", (int) sizeof(ehdr.ehdr64));
+      return 0;
+    }
+    image.ehdr.e_ehsize = sizeof(image.ehdr);
+    image.ehdr.e_phentsize = sizeof(image.phdrs[0]);
+    image.ehdr.e_phnum = ehdr.ehdr64.e_phnum;
+    image.ehdr.e_shentsize = ehdr.ehdr64.e_shentsize;
+    image.ehdr.e_shnum = ehdr.ehdr64.e_shnum;
+    image.ehdr.e_shstrndx = ehdr.ehdr64.e_shstrndx;
+  } else
+#endif
+
+  NaClDumpElfHeader(2, &image.ehdr);
+
+  /* read program headers */
+  if (image.ehdr.e_phnum > NACL_MAX_PROGRAM_HEADERS) {
+    *err_code = LOAD_TOO_MANY_PROG_HDRS;
+    NaClLog(2, "%d %d\n", image.ehdr.e_phnum, NACL_MAX_PROGRAM_HEADERS);
+  }
+
+#if NACL_BUILD_SUBARCH == 64
+  if (ELFCLASS64 == ehdr.ehdr64.e_ident[EI_CLASS]) {
+    /*
+     * We'll load the 64-bit phdrs and convert them to 32-bit format.
+     */
+    Elf64_Phdr phdr64[NACL_MAX_PROGRAM_HEADERS];
+
+    if (ehdr.ehdr64.e_phentsize != sizeof(Elf64_Phdr)) {
+      *err_code = LOAD_BAD_PHENTSIZE;
+      NaClLog(2, "bad prog headers size\n");
+      NaClLog(2, " ehdr64.e_phentsize = 0x%"NACL_PRIxElf_Half"\n",
+              ehdr.ehdr64.e_phentsize);
+      NaClLog(2, "  sizeof(Elf64_Phdr) = 0x%"NACL_PRIxS"\n",
+              sizeof(Elf64_Phdr));
+      return 0;
+    }
+
+    /*
+     * We know the multiplication won't overflow since we rejected
+     * e_phnum values larger than the small constant NACL_MAX_PROGRAM_HEADERS.
+     */
+    read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       &phdr64[0],
+                       image.ehdr.e_phnum * sizeof phdr64[0],
+                       (nacl_off64_t) image.ehdr.e_phoff);
+    if (NaClSSizeIsNegErrno(&read_ret) ||
+        (size_t) read_ret != image.ehdr.e_phnum * sizeof phdr64[0]) {
+      *err_code = LOAD_READ_ERROR;
+      NaClLog(2, "cannot load tp prog headers\n");
+      return 0;
+    }
+
+    for (cur_ph = 0; cur_ph < image.ehdr.e_phnum; ++cur_ph) {
+
+      image.phdrs[cur_ph].p_type = phdr64[cur_ph].p_type;
+			if (image.phdrs[cur_ph].p_type == PT_LOAD)
+	      image.loadable[cur_ph] = 1;
+      image.phdrs[cur_ph].p_offset = phdr64[cur_ph].p_offset;
+      image.phdrs[cur_ph].p_vaddr = phdr64[cur_ph].p_vaddr;
+      image.phdrs[cur_ph].p_paddr = phdr64[cur_ph].p_paddr;
+      image.phdrs[cur_ph].p_filesz = phdr64[cur_ph].p_filesz;
+      image.phdrs[cur_ph].p_memsz = phdr64[cur_ph].p_memsz;
+      image.phdrs[cur_ph].p_flags = phdr64[cur_ph].p_flags;
+      image.phdrs[cur_ph].p_align = phdr64[cur_ph].p_align;
+    }
+  } else
+#endif
+  {
+    if (image.ehdr.e_phentsize != sizeof image.phdrs[0]) {
+      *err_code = LOAD_BAD_PHENTSIZE;
+      NaClLog(2, "bad prog headers size\n");
+      NaClLog(2, " image.ehdr.e_phentsize = 0x%"NACL_PRIxElf_Half"\n",
+              image.ehdr.e_phentsize);
+      NaClLog(2, "  sizeof image.phdrs[0] = 0x%"NACL_PRIxS"\n",
+              sizeof image.phdrs[0]);
+      return 0;
+    }
+
+    read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       &image.phdrs[0],
+                       image.ehdr.e_phnum * sizeof image.phdrs[0],
+                       (nacl_off64_t) image.ehdr.e_phoff);
+    if (NaClSSizeIsNegErrno(&read_ret) ||
+        (size_t) read_ret != image.ehdr.e_phnum * sizeof image.phdrs[0]) {
+      *err_code = LOAD_READ_ERROR;
+      NaClLog(2, "cannot load tp prog headers\n");
+      return 0;
+    }
+  }
+
+  NaClLog(2, "=================================================\n");
+  NaClLog(2, "Elf Program headers\n");
+  NaClLog(2, "==================================================\n");
+  for (cur_ph = 0; cur_ph <  image.ehdr.e_phnum; ++cur_ph) {
+    NaClDumpElfProgramHeader(2, &image.phdrs[cur_ph]);
+  }
+
+  /* we delay allocating till the end to avoid cleanup code */
+  result = malloc(sizeof image);
+  if (result == 0) {
+    *err_code = LOAD_NO_MEMORY;
+    NaClLog(LOG_FATAL, "no enough memory for image meta data\n");
+    return 0;
+  }
+  memcpy(result, &image, sizeof image);
+  *err_code = LOAD_OK;
+  return result;
+}
+
+
 
 struct NaClElfImage *NaClElfImageNew(struct NaClDesc *ndp,
                                      NaClErrorCode *err_code) {
@@ -570,7 +727,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
   NaClValidationStatus validator_status = NaClValidationFailed;
   struct NaClValidationMetadata metadata;
   int read_last_page_if_partial_allocation_page = 1;
-  ssize_t read_ret;
+  //ssize_t read_ret;
 
   rounded_filesz = NaClRoundAllocPage(segment_size);
 
@@ -723,19 +880,20 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 	// TODO(mkpark)
 	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
 
+	/*
   if (rounded_filesz != segment_size &&
       read_last_page_if_partial_allocation_page) {
-    uintptr_t tail_offset = rounded_filesz - NACL_MAP_PAGESIZE;
+    uintptr_t tail_offset = rounded_filesz - NACL_PAGESIZE;
     size_t tail_size = segment_size - tail_offset;
     NaClLog(4, "NaClElfFileMapSegment: pread tail\n");
-    /*
+    *
     read_ret = (*NACL_VTBL(NaClDesc, ndp)->
                 PRead)(ndp,
                        (void *) (paddr + tail_offset),
                        tail_size,
                        (nacl_off64_t) (file_offset + tail_offset));
-		*/
-		image_sys_addr = (uintptr_t) malloc(NACL_MAP_PAGESIZE);
+		*
+		image_sys_addr = (uintptr_t) malloc(NACL_PAGESIZE);
 		if (NaClPtrIsNegErrno(&image_sys_addr)) 
 			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
 		
@@ -747,20 +905,22 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
     if (read_ret <= 0)
 			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed2\n"); 
 
-    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_MAP_PAGESIZE - tail_size);
+    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_PAGESIZE - tail_size);
 		
 		void *sgx_addr = (void *) (((unsigned long) tail_offset & 0xFFFFFFFF) + 0x100000000);
-		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_MAP_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
 
     if (NaClSSizeIsNegErrno(&read_ret)) {
       NaClLog(LOG_ERROR,
               "NaClElfFileMapSegment: pread load of page tail failed\n");
       return LOAD_SEGMENT_BAD_PARAM;
     }
-    rounded_filesz -= NACL_MAP_PAGESIZE;
+    rounded_filesz -= NACL_PAGESIZE;
     free((void *) image_sys_addr);
   }
+  */
   // mmap in 
+	rounded_filesz = NaClRoundPage(segment_size);
   if (rounded_filesz == 0) {
     NaClLog(4,
             "NaClElfFileMapSegment: no pages to map, probably because"
@@ -810,6 +970,265 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 }
 
 
+
+NaClErrorCode NaClElfFileMapSegmentSGX(struct NaClApp *nap,
+                                           struct NaClDesc *ndp,
+                                           Elf_Word p_flags,
+                                           Elf_Off file_offset,
+                                           //Elf_Off segment_size,
+                                           uintptr_t vaddr,
+                                           uintptr_t paddr,
+                                           Elf32_Word mem_size) {
+  size_t rounded_filesz;       // 64k rounded 
+  int mmap_prot = 0, prot = 0;
+  uintptr_t image_sys_addr;
+  NaClValidationStatus validator_status = NaClValidationFailed;
+  struct NaClValidationMetadata metadata;
+  int read_last_page_if_partial_allocation_page = 1;
+  //ssize_t read_ret;
+
+  rounded_filesz = NaClRoundAllocPage(mem_size);
+
+  NaClLog(4,
+          "NaClElfFileMapSegment: checking segment flags 0x%x"
+          " to determine map checks\n",
+          p_flags);
+  
+   // Is this the text segment?  If so, map into scratch memory and
+   // run validation (possibly cached result) with !stubout_mode,
+   // readonly_text.  If validator says it's okay, map directly into
+   // target location with NACL_ABI_PROT_READ|_EXEC.  If anything
+   // failed, fall back to PRead.  NB: the assumption is that there
+   // is only one PT_LOAD with PF_R|PF_X segment; this assumption is
+   // enforced by phdr seen_seg checks above in
+   // NaClElfImageValidateProgramHeaders.
+   //
+   // After this function returns, we will be setting memory protection
+   // in NaClMemoryProtection, so the actual memory protection used is
+   // immaterial.
+   //
+   // For rodata and data/bss, we mmap with NACL_ABI_PROT_READ or
+   // NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE as appropriate,
+   // without doing validation.  There is no fallback to PRead, since
+   // we don't validate the contents.
+   
+  switch (p_flags) {
+    case PF_R | PF_X:
+      NaClLog(4,
+              "NaClElfFileMapSegment: text segment and"
+              " file is safe for mmap\n");
+      if (NACL_VTBL(NaClDesc, ndp)->typeTag != NACL_DESC_HOST_IO) {
+        NaClLog(4, "NaClElfFileMapSegment: not supported type, got %d\n",
+                NACL_VTBL(NaClDesc, ndp)->typeTag);
+        return LOAD_STATUS_UNKNOWN;
+      }
+      
+       // Unlike the mmap case, we do not re-run validation to
+       // allow patching here; instead, we handle validation
+       // failure by going to the pread_fallback case.  In the
+       // future, we should consider doing an in-place mapping and
+       // allowing HLT patch validation, which should be cheaper
+       // since those pages that do not require patching (hopefully
+       // majority) will remain file-backed and not require swap
+       // space, even if we had to fault in every page.
+       
+      NaClLog(1, "NaClElfFileMapSegment: mapping for validation\n");
+      image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
+                        Map)(ndp,
+                             NaClDescEffectorTrustedMem(),
+                             (void *) NULL,
+                             rounded_filesz,
+                             NACL_ABI_PROT_READ,
+                             NACL_ABI_MAP_PRIVATE,
+                             file_offset);
+      if (NaClPtrIsNegErrno(&image_sys_addr)) {
+        NaClLog(LOG_INFO,
+                "NaClElfFileMapSegment: Could not make scratch mapping,"
+                " falling back to reading\n");
+        return LOAD_STATUS_UNKNOWN;
+      }
+      // ask validator / validation cache 
+      NaClMetadataFromNaClDescCtor(&metadata, ndp);
+      CHECK(mem_size == nap->static_text_end - NACL_TRAMPOLINE_END);
+      validator_status = NACL_FI_VAL(
+          "ELF_LOAD_FORCE_VALIDATION_STATUS",
+          enum NaClValidationStatus,
+          (*nap->validator->
+           Validate)(vaddr,
+                     (uint8_t *) image_sys_addr,
+                     mem_size,  // actual size 
+                     0,  // stubout_mode: no 
+                     nap->pnacl_mode ? NACL_DISABLE_NONTEMPORALS_X86 : 0,
+                     1,  // readonly_text: yes 
+                     nap->cpu_features,
+                     &metadata,
+                     nap->validation_cache));
+      NaClLog(3, "NaClElfFileMapSegment: validator_status %d\n",
+              validator_status);
+      NaClMetadataDtor(&metadata);
+      
+       // Remove scratch mapping, then map directly into untrusted
+       // address space or pread.
+       
+      NaClHostDescUnmapUnsafe((void *) image_sys_addr, rounded_filesz);
+      NACL_MAKE_MEM_UNDEFINED((void *) paddr, rounded_filesz);
+
+      if (NaClValidationSucceeded != validator_status) {
+        NaClLog(3,
+                ("NaClElfFileMapSegment: readonly_text validation for mmap"
+                 " failed.  Will retry validation allowing HALT stubbing out"
+                 " of unsupported instruction extensions.\n"));
+        return LOAD_STATUS_UNKNOWN;
+      }
+
+      NaClLog(1, "NaClElfFileMapSegment: mapping into code space\n");
+      
+       // Windows appears to not allow RWX mappings.  This interferes
+       // with HALT_SLED and having to HALT pad the last page.  We
+       // allow partial code pages, so
+       // read_last_page_if_partial_allocation_page will ensure that
+       // the last page is writable, so we will be able to write HALT
+       // instructions as needed.
+       
+      mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_EXEC;
+      prot = PROT_READ | PROT_EXEC;
+      
+       // NB: the log string is used by tests/mmap_main_nexe/nacl.scons
+       // and must be logged at a level that is less than or equal to
+       // the requested verbosity level there.
+       
+      NaClLog(1, "NaClElfFileMapSegment: EXERCISING MMAP LOAD PATH\n");
+      nap->main_exe_prevalidated = 1;
+      break;
+
+    case PF_R | PF_W:
+      // read-write (initialized data) 
+      mmap_prot = NACL_ABI_PROT_READ | NACL_ABI_PROT_WRITE;
+      prot = PROT_READ | PROT_WRITE;
+      
+       // NB: the partial page processing will result in zeros
+       // following the initialized data, so that the BSS will be zero.
+       // On a typical system, this page is mapped in and the BSS
+       // region is memset to zero, which means that this partial page
+       // is faulted in.  Rather than saving a syscall (pread) and
+       // faulting it in, we just use the same code path as for code,
+       // which is (slightly) simpler.
+       
+      break;
+
+    case PF_R:
+      // read-only 
+      mmap_prot = NACL_ABI_PROT_READ;
+      prot = PROT_READ;
+      
+       // For rodata, we allow mapping in "garbage" past a partial
+       // page; this potentially eliminates a disk I/O operation
+       // (if data section has no partial page), possibly delaying
+       // disk spin-up if the code was in the validation cache.
+       // And it saves another 64kB of swap.
+       
+      read_last_page_if_partial_allocation_page = 0;
+      break;
+
+    default:
+      NaClLog(LOG_FATAL, "NaClElfFileMapSegment: unexpected p_flags %d\n",
+              p_flags);
+  }
+
+	// TODO(mkpark)
+	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
+
+	/*
+  if (rounded_filesz != segment_size &&
+      read_last_page_if_partial_allocation_page) {
+    uintptr_t tail_offset = rounded_filesz - NACL_PAGESIZE;
+    size_t tail_size = segment_size - tail_offset;
+    NaClLog(4, "NaClElfFileMapSegment: pread tail\n");
+    *
+    read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       (void *) (paddr + tail_offset),
+                       tail_size,
+                       (nacl_off64_t) (file_offset + tail_offset));
+		*
+		image_sys_addr = (uintptr_t) malloc(NACL_PAGESIZE);
+		if (NaClPtrIsNegErrno(&image_sys_addr)) 
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
+		
+		read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       (void *) image_sys_addr,
+                       tail_size,
+                       (nacl_off64_t) (file_offset + tail_offset));
+    if (read_ret <= 0)
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed2\n"); 
+
+    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_PAGESIZE - tail_size);
+		
+		void *sgx_addr = (void *) (((unsigned long) tail_offset & 0xFFFFFFFF) + 0x100000000);
+		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+
+    if (NaClSSizeIsNegErrno(&read_ret)) {
+      NaClLog(LOG_ERROR,
+              "NaClElfFileMapSegment: pread load of page tail failed\n");
+      return LOAD_SEGMENT_BAD_PARAM;
+    }
+    rounded_filesz -= NACL_PAGESIZE;
+    free((void *) image_sys_addr);
+  }
+  */
+  // mmap in 
+	rounded_filesz = NaClRoundPage(mem_size);
+  if (rounded_filesz == 0) {
+    NaClLog(4,
+            "NaClElfFileMapSegment: no pages to map, probably because"
+            " the segment was a partial page, so it was processed by"
+            " reading.\n");
+  } else {
+    NaClLog(4,
+            "NaClElfFileMapSegment: mapping %"NACL_PRIuS" (0x%"
+            NACL_PRIxS") bytes to"
+            " address 0x%"NACL_PRIxPTR", position %"
+            NACL_PRIdElf_Off" (0x%"NACL_PRIxElf_Off")\n",
+            rounded_filesz, rounded_filesz,
+            paddr,
+            file_offset, file_offset);
+                        
+    // mkpark: map first, load to the enclave, then unmap
+    image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
+											Map)(ndp,
+													 NaClDescEffectorTrustedMem(),
+													 (void *) NULL,
+													 rounded_filesz,
+													 NACL_ABI_PROT_READ,
+													 NACL_ABI_MAP_PRIVATE,
+													 file_offset);
+		if (NaClPtrIsNegErrno(&image_sys_addr)) {
+        NaClLog(LOG_INFO,
+                "NaClElfFileMapSegment: Could not make scratch mapping,"
+                " falling back to reading\n");
+        return LOAD_STATUS_UNKNOWN;
+    }
+
+		// TODO(mkpark): below sgx_addr check! 
+		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
+    // rounded_filesz is already paged
+		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
+				SGX_PAGE_REG, prot, true, "nexe");
+		if (ret < 0) {
+			NaClLog(LOG_FATAL, 
+					("NaClElfFileMapSegment: add_pages_to_enclave to 0x%"NACL_PRIxPTR" (prot %x) "
+               "failed: got 0x%"NACL_PRIxPTR"\n"),
+              paddr, mmap_prot, image_sys_addr);
+		}
+      
+    NaClHostDescUnmapUnsafe((void *) image_sys_addr, rounded_filesz);
+  }
+  return LOAD_OK;
+}
+
+
+
 static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
                                            struct NaClDesc *ndp,
                                            Elf_Word p_flags,
@@ -822,40 +1241,25 @@ static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
   int read_last_page_if_partial_allocation_page = 1;
   ssize_t read_ret;
 
-  rounded_filesz = NaClRoundAllocPage(segment_size);
+	// change: 4K rounded
+  rounded_filesz = NaClRoundPage(segment_size);
 
   NaClLog(4,
-          "NaClElfFileMapSegment: checking segment flags 0x%x"
+          "[SGX]NaClElfFileMapSegment: checking segment flags 0x%x"
           " to determine map checks\n",
           p_flags);
   
   switch (p_flags) {
     case PF_R | PF_X:
-      NaClLog(4,
-              "NaClElfFileMapSegment: text segment and"
-              " file is safe for mmap\n");
-      if (NACL_VTBL(NaClDesc, ndp)->typeTag != NACL_DESC_HOST_IO) {
-        NaClLog(4, "NaClElfFileMapSegment: not supported type, got %d\n",
-                NACL_VTBL(NaClDesc, ndp)->typeTag);
-        return LOAD_STATUS_UNKNOWN;
-      }
-      
-      NaClLog(1, "NaClElfFileMapSegment: mapping into code space\n");
-      
       prot = PROT_READ | PROT_EXEC;
-      
-      NaClLog(1, "NaClElfFileMapSegment: EXERCISING MMAP LOAD PATH\n");
       break;
-
     case PF_R | PF_W:
       prot = PROT_READ | PROT_WRITE;
       break;
-
     case PF_R:
       prot = PROT_READ;
       read_last_page_if_partial_allocation_page = 0;
       break;
-
     default:
       NaClLog(LOG_FATAL, "NaClElfFileMapSegment: unexpected p_flags %d\n",
               p_flags);
@@ -863,15 +1267,36 @@ static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
 
 	// TODO(mkpark)
 	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
-
 	uint64_t base_addr = (uint64_t) 48*1024*1024*1024;
+
+  // uintptr_t tail_offset = rounded_filesz - NACL_PAGESIZE;
+  // size_t tail_size = segment_size - tail_offset;
+
+	image_sys_addr = (uintptr_t) malloc(rounded_filesz);
+
+	if (NaClPtrIsNegErrno(&image_sys_addr)) 
+		NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
+	
+	memset((void *)image_sys_addr, 0, rounded_filesz);
+	read_ret = (*NACL_VTBL(NaClDesc, ndp)->
+                PRead)(ndp,
+                       (void *) image_sys_addr,
+                       segment_size,
+                       (nacl_off64_t) (file_offset));
+  if (read_ret <= 0)
+			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed2\n"); 
+		
+	void *sgx_addr = (void *) ((unsigned long) paddr + base_addr);
+	read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, rounded_filesz, SGX_PAGE_REG, prot, true, "nexe_tail");
+
+/*
   if (rounded_filesz != segment_size &&
       read_last_page_if_partial_allocation_page) {
-    uintptr_t tail_offset = rounded_filesz - NACL_MAP_PAGESIZE;
+    uintptr_t tail_offset = rounded_filesz - NACL_PAGESIZE;
     size_t tail_size = segment_size - tail_offset;
     NaClLog(4, "NaClElfFileMapSegment: pread tail\n");
     
-		image_sys_addr = (uintptr_t) malloc(NACL_MAP_PAGESIZE);
+		image_sys_addr = (uintptr_t) malloc(NACL_PAGESIZE);
 		if (NaClPtrIsNegErrno(&image_sys_addr)) 
 			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
 		
@@ -883,17 +1308,22 @@ static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
     if (read_ret <= 0)
 			NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed2\n"); 
 
-    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_MAP_PAGESIZE - tail_size);
+    memset((void *) ((size_t) image_sys_addr + tail_size), 0, NACL_PAGESIZE - tail_size);
 		
 		void *sgx_addr = (void *) ((unsigned long) tail_offset + base_addr);
-		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_MAP_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+		
+		printf("sgx_addr %x\n", sgx_addr);
+		printf("image_sys_addr %x\n", image_sys_addr);
+
+		read_ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *) sgx_addr, (void *) image_sys_addr, NACL_PAGESIZE, SGX_PAGE_REG, prot, true, "nexe_tail");
+
 
     if (NaClSSizeIsNegErrno(&read_ret)) {
       NaClLog(LOG_ERROR,
               "NaClElfFileMapSegment: pread load of page tail failed\n");
       return LOAD_SEGMENT_BAD_PARAM;
     }
-    rounded_filesz -= NACL_MAP_PAGESIZE;
+    rounded_filesz -= NACL_PAGESIZE;
     free((void *) image_sys_addr);
   }
   // mmap in 
@@ -942,6 +1372,7 @@ static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
       
     NaClHostDescUnmapUnsafe((void *) image_sys_addr, rounded_filesz);
   }
+*/
   return LOAD_OK;
 }
 
@@ -953,14 +1384,13 @@ NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
                                struct NaClApp *nap) {
  
  	int segnum;
-  uintptr_t vaddr;
   uintptr_t paddr;
   uintptr_t end_vaddr;
 
   for (segnum = 0; segnum < image->ehdr.e_phnum; ++segnum) {
     const Elf_Phdr *php = &image->phdrs[segnum];
     Elf_Off offset = (Elf_Off) NaClTruncAllocPage(php->p_offset);
-    Elf_Off filesz = php->p_offset + php->p_filesz - offset;
+    //Elf_Off filesz = php->p_offset + php->p_filesz - offset;
 
     /* did we decide that we will load this segment earlier? */
     if (!image->loadable[segnum]) {
@@ -988,13 +1418,13 @@ NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
     //  NaClLog(LOG_FATAL, "parameter error should have been detected already\n");
     //}
 
-    vaddr = NaClTruncAllocPage(php->p_vaddr);
-    paddr = NaClUserToSysAddr(nap, vaddr);
-    CHECK(kNaClBadAddress != paddr);
+    paddr = php->p_vaddr;
+    // CHECK(kNaClBadAddress != paddr);
+
 
 		int map_status;
 		map_status = NaClElfFileMapSegmentServiceRuntime(nap, ndp, php->p_flags,
-																			 offset, filesz, paddr);
+																			 offset, php->p_memsz, paddr);
 		/*
 		 * NB: -Werror=switch-enum forces us to not use a switch.
 		 */
@@ -1060,9 +1490,15 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
     paddr = NaClUserToSysAddr(nap, vaddr);
     CHECK(kNaClBadAddress != paddr);
 
+
 		int map_status;
 		map_status = NaClElfFileMapSegment(nap, ndp, php->p_flags,
 																			 offset, filesz, vaddr, paddr);
+		
+		//map_status = NaClElfFileMapSegmentSGX(nap, ndp, php->p_flags,
+		//																	 offset, vaddr, paddr, php->p_memsz);
+
+
 		/*
 		 * NB: -Werror=switch-enum forces us to not use a switch.
 		 */
