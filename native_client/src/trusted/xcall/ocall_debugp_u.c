@@ -3,7 +3,7 @@
 
 #include "native_client/src/trusted/xcall/ocall_types.h"
 
-int sgx_debugp(void * pms) {
+int sgx_ocall_debugp(void * pms) {
 
 	ms_ocall_debugp_t * ms = (ms_ocall_debugp_t *) pms;
 	int val = ms->ms_val;

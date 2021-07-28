@@ -8,15 +8,13 @@
 int ocall_debugp (int val)
 {
 
-	int retval = 0;
 	ms_ocall_debugp_t * ms;
 	void* old_ustack = sgx_prepare_ustack();
 	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
 
-	retval = sgx_ocall(OCALL_DEBUGP, ms);
-	if (!retval) {
-		val = ms->ms_val;
-	}
+	ms->ms_val = val;
+
+	sgx_ocall(OCALL_DEBUGP, ms);
 	sgx_reset_ustack(old_ustack);
-	return retval;
+	return 0;
 }
