@@ -1,6 +1,6 @@
 #include "native_client/src/trusted/xcall/ecall_types.h"
 #include "native_client/src/trusted/xcall/enclave_framework.h"
-
+#include <stdio.h>
 
 int ecall_enclave_start (void)
 {
