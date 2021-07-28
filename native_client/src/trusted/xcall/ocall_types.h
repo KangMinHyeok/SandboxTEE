@@ -92,17 +92,10 @@ typedef struct {
 } ms_ocall_debugp_t;
 
 
-typedef int (*sgx_ocall_fn_t)(void*);
 
 
 int sgx_ocall_gettimeofday(void * pms);
 
 int sgx_ocall_debugp(void * pms);
-
-sgx_ocall_fn_t ocall_table[OCALL_NR] = {
-	[OCALL_GETTIMEOFDAY] =  sgx_ocall_gettimeofday,
-	[OCALL_DEBUGP] =  sgx_ocall_debugp,
-};
-
 
 #endif
