@@ -105,6 +105,8 @@ platform_inputs += [
 
 env.DualLibrary('platform', platform_inputs)
 
+if env.Bit('sgx'):
+    Return()
 
 PORT_TEST_SOURCES = ['platform_tests.cc']
 
