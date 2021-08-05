@@ -69,23 +69,41 @@ enum {
 	OCALL_SOCK_SETOPT,
 	OCALL_SOCK_SHUTDOWN,
 	//
-	OCALL_GETTIMEOFDAY,
-	OCALL_CLOCK_GETTIME,
-	OCALL_SLEEP,
-	OCALL_NSLEEP,
-	OCALL_POLL,
-	OCALL_DELETE,
-	
+	OCALL_GETTIMEOFDAY, 	// Time
+	OCALL_CLOCK_GETTIME, 	// Time
+	OCALL_SLEEP, 					// Time
+	OCALL_NSLEEP, 				// Time
+	//OCALL_POLL,	
+	//OCALL_DELETE,
+
 	OCALL_DEBUGP,
 
 	OCALL_NR,
 
 };
 
+// Time
 typedef struct {
 	long ms_tv_sec;
 	long ms_tv_usec;
 } ms_ocall_gettimeofday_t;
+
+typedef struct {
+	int ms_clk_id;
+	long ms_tp_sec;
+	long ms_tp_nsec;
+} ms_ocall_clock_gettime_t;
+
+typedef struct {
+	unsigned long ms_microsec;
+} ms_ocall_sleep_t;
+
+typedef struct {
+	long ms_rqtp_sec;
+	long ms_rqtp_nsec;
+	long ms_rmtp_sec;
+	long ms_rmtp_nsec;
+} ms_ocall_nsleep_t;
 
 typedef struct {
 	int ms_val;
@@ -93,9 +111,13 @@ typedef struct {
 
 
 
-
+// Time
 int sgx_ocall_gettimeofday(void * pms);
+int sgx_ocall_clock_gettime(void * pms);
+int sgx_ocall_sleep(void * pms);
+int sgx_ocall_nsleep(void * pms);
 
 int sgx_ocall_debugp(void * pms);
+
 
 #endif

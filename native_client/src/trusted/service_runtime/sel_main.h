@@ -29,6 +29,36 @@ void NaClSetEnableOuterSandboxFunc(void (*func)(void));
  */
 int NaClSelLdrMain(int argc, char **argv);
 
+#ifdef NACL_SGX
+#if NACL_SGX == 1
+
+struct SelLdrOptions {
+  char *nacl_file; // needed?
+  char *blob_library_file;
+  char *root_mount; // needed?
+  int app_argc;
+  char **app_argv;
+
+  int quiet;
+  int verbosity;
+  int fuzzing_quit_after_load;
+  // int skip_qualification; // done in usgx
+  int handle_signals;
+  int enable_env_passthrough;
+  int enable_exception_handling;
+  int enable_debug_stub;
+  int debug_mode_bypass_acl_checks;
+  int debug_mode_ignore_validator;
+  int debug_mode_startup_signal;
+  // mkpark: do not support host descriptor redirection
+  // struct redir *redir_queue;
+  // struct redir **redir_qend;
+};
+int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap);
+
+#endif
+#endif
+
 EXTERN_C_END
 
 #endif
