@@ -2,6 +2,7 @@
 #define SGXLIB_OCALL_TYPES_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "native_client/src/include/build_config.h"
 

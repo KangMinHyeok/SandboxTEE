@@ -2,6 +2,7 @@
 #define __ENCLAVE_OCALLS__
 
 #include <time.h>
+#include <stdint.h>
 
 // File
 int ocall_open (char * pathname, int flags, unsigned short mode);
@@ -36,12 +37,11 @@ int ocall_sleep(unsigned long * microsec);
 int ocall_nsleep(struct timespec *rqtp, struct timespec *rmtp);
 
 // Misc 
-int ocall_cpuid(void * pms);
-int ocall_getpid(void * pms);
-int ocall_fionread(void * pms);
-int ocall_futex(void * pms);
-int ocall_print_string(void * pms);
-int ocall_debugp(void * pms);
+int ocall_cpuid (unsigned int leaf, unsigned int subleaf, unsigned int values[4]);
+int ocall_getpid ();
+int ocall_fionread (int fd);
+int ocall_print_string (char * str, unsigned int length);
+int ocall_futex (int * futex, int op, int val, uint64_t * timeout, int * uaddr2, int val3);
 
 
 // Time
