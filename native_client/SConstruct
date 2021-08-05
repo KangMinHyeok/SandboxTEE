@@ -2776,27 +2776,30 @@ def MakeSgxEnv():
   sgx_env.Replace(BUILD_SCONSCRIPTS = [
       'build/package_version/build.scons',
       'pynacl/build.scons',
+      'src/shared/gio/build.scons',
+      'src/shared/platform/build.scons',
       'src/trusted/xcall/build.scons',
-      ##'src/nonsfi/irt/build.scons',
-      ##'src/nonsfi/loader/build.scons',
-      #'src/shared/gio/build.scons',
-      ##'src/shared/imc/build.scons',
-      #'src/shared/platform/build.scons',
-      ##'src/third_party/gtest/build.scons',
-      #'src/trusted/cpu_features/build.scons',
+      'src/trusted/cpu_features/build.scons',
+      
+      'src/shared/imc/build.scons',
+      'src/trusted/nacl_base/build.scons',
+      'src/trusted/fault_injection/build.scons',
+      'src/trusted/interval_multiset/build.scons',
+      'src/trusted/perf_counter/build.scons',
+      'src/trusted/service_runtime/build.scons',
+      'src/trusted/validator_x86/build.scons',
+      'src/nonsfi/irt/build.scons',
+      'src/nonsfi/loader/build.scons',
+      'src/third_party/gtest/build.scons',
+      
+      #'src/trusted/debug_stub/build.scons',
+      
       # TODO(mkpark) I'm not sure the below
-      ##'src/trusted/debug_stub/build.scons',
       #'src/trusted/desc/build.scons',
-      #'src/trusted/fault_injection/build.scons',
-      #'src/trusted/interval_multiset/build.scons',
-      #'src/trusted/nacl_base/build.scons',
-      #'src/trusted/perf_counter/build.scons',
       #'src/trusted/validator/build.scons', 
       #'src/trusted/validator/driver/build.scons',
       #'src/trusted/validator_ragel/build.scons',
-      #'src/trusted/validator_x86/build.scons',
       #'src/trusted/platform_qualify/build.scons',
-      #'src/trusted/service_runtime/build.scons',
       
       #'src/trusted/wolfssl/build.scons',
       #'src/trusted/stdlib/build.scons',
@@ -2848,7 +2851,7 @@ def MakeSgxEnv():
         '-std=c99',
         ] + sgx_include,
     CXXFLAGS = [
-        '-std=c++99',
+        '-std=c++98',
         ],
     )
 
