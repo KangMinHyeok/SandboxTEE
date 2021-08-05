@@ -62,6 +62,10 @@ typedef bool          PAL_BOL;
 #endif /* ! IN_ENCLAVE */
 
 
+#error "Do not use this header file"
+
+
+
 #define PAL_TRUE  true
 #define PAL_FALSE false
 /* The ABI includes three calls to allocate, free, and modify the
