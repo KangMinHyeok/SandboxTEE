@@ -7,6 +7,7 @@
 #error "This file must be compiled with NACL_SGX or NACL_USGX"
 #endif
 
+#define OCALL_NO_TIMEOUT   ((unsigned long) -1)
 
 enum {
 	OCALL_EXIT = 0,
@@ -46,28 +47,28 @@ enum {
 	OCALL_RMDIR,
 	OCALL_CHDIR,
 
-	OCALL_GETCWD,
-	OCALL_LINK,
-	OCALL_UNLINK,
-	OCALL_TRUNCATE,
-	OCALL_RENAME,
-	OCALL_CHMOD,
-	OCALL_ACCESS,
-	OCALL_FCNTL,
-	OCALL_GETDENTS,
+	OCALL_GETCWD,					// OS
+	OCALL_LINK,						// OS
+	OCALL_UNLINK,					// OS
+	OCALL_TRUNCATE,				// OS
+	OCALL_RENAME,					// OS
+	OCALL_CHMOD,					// OS
+	OCALL_ACCESS,					// OS
+	OCALL_FCNTL,					// OS	
+	OCALL_GETDENTS,				// OS
 	//
-	OCALL_FUTEX,
+	OCALL_FUTEX,					// Futex
 	// 
-	OCALL_SOCKETPAIR,
-	OCALL_SOCK_LISTEN,
-	OCALL_SOCK_ACCEPT,
-	OCALL_SOCK_CONNECT,
-	OCALL_SOCK_RECV,
-	OCALL_SOCK_SEND, // TODO MCAST
-	OCALL_SOCK_RECV_FD,
-	OCALL_SOCK_SEND_FD,
-	OCALL_SOCK_SETOPT,
-	OCALL_SOCK_SHUTDOWN,
+	OCALL_SOCKETPAIR,			// Socket
+	OCALL_SOCK_LISTEN,		// Socket
+	OCALL_SOCK_ACCEPT,		// Socket
+	OCALL_SOCK_CONNECT,		// Socket
+	OCALL_SOCK_RECV,			// Socket
+	OCALL_SOCK_SEND, 			// Socket		// TODO MCAST
+	OCALL_SOCK_RECV_FD,		// Socket
+	OCALL_SOCK_SEND_FD,		// Socket
+	OCALL_SOCK_SETOPT,		// Socket
+	OCALL_SOCK_SHUTDOWN,	// Socket
 	//
 	OCALL_GETTIMEOFDAY, 	// Time
 	OCALL_CLOCK_GETTIME, 	// Time
@@ -76,11 +77,86 @@ enum {
 	//OCALL_POLL,	
 	//OCALL_DELETE,
 
-	OCALL_DEBUGP,
+	OCALL_DEBUGP,					// Debug (print)
 
 	OCALL_NR,
 
 };
+
+// Socket
+typedef struct {
+	int ms_domain, ms_type, ms_protocol;
+	int ms_sockfds[2];
+} ms_ocall_socketpair_t;
+
+typedef struct {
+	int ms_domain, ms_type, ms_protocol;
+	struct sockaddr * ms_addr;
+	unsigned int ms_addrlen;
+	//struct sockopt ms_sockopt;
+} ms_ocall_sock_listen_t;
+
+typedef struct {
+	int ms_sockfd;
+	struct sockaddr * ms_addr;
+	unsigned int ms_addrlen;
+	//struct sockopt ms_sockopt;
+} ms_ocall_sock_accept_t;
+
+typedef struct {
+	int ms_domain, ms_type, ms_protocol;
+	struct sockaddr * ms_addr;
+	unsigned int ms_addrlen;
+	struct sockaddr * ms_bind_addr;
+	unsigned int ms_bind_addrlen;
+	//struct sockopt ms_sockopt;
+} ms_ocall_sock_connect_t;
+
+typedef struct {
+	int ms_sockfd;
+	void * ms_buf;
+	unsigned int ms_count;
+	struct sockaddr * ms_addr;
+	unsigned int ms_addrlen;
+} ms_ocall_sock_recv_t;
+
+typedef struct {
+	int ms_sockfd;
+	void * ms_buf;
+	unsigned int ms_count;
+	struct sockaddr * ms_addr;
+	unsigned int ms_addrlen;
+} ms_ocall_sock_send_t;
+
+typedef struct {
+	int ms_sockfd;
+	void * ms_buf;
+	unsigned int ms_count;
+	unsigned int * ms_fds;
+	unsigned int ms_nfds;
+} ms_ocall_sock_recv_fd_t;
+
+typedef struct {
+	int ms_sockfd;
+	void * ms_buf;
+	unsigned int ms_count;
+	unsigned int * ms_fds;
+	unsigned int ms_nfds;
+} ms_ocall_sock_send_fd_t;
+
+typedef struct {
+	int ms_sockfd;
+	int ms_level;
+	int ms_optname;
+	void * ms_optval;
+	unsigned int ms_optlen;
+} ms_ocall_sock_setopt_t;
+
+typedef struct {
+	int ms_sockfd;
+	int ms_how;
+} ms_ocall_sock_shutdown_t;
+
 
 // Time
 typedef struct {
@@ -109,7 +185,33 @@ typedef struct {
 	int ms_val;
 } ms_ocall_debugp_t;
 
+// Futex
+typedef struct {
+	int * ms_futex;
+	int ms_op, ms_val;
+	unsigned long ms_timeout;
+	int * ms_uaddr2;
+	int ms_val3;
+} ms_ocall_futex_t;
 
+
+
+
+
+// Futex
+int sgx_ocall_futex(void * pms);
+
+// Socket
+int sgx_ocall_socketpair(void * pms);
+int sgx_ocall_sock_listen(void * pms);
+int sgx_ocall_sock_accept(void * pms);
+int sgx_ocall_sock_connect(void * pms);
+int sgx_ocall_sock_recv(void * pms);
+int sgx_ocall_sock_send(void * pms);
+int sgx_ocall_sock_recv_fd(void * pms);
+int sgx_ocall_sock_send_fd(void * pms);
+int sgx_ocall_sock_setopt(void * pms);
+int sgx_ocall_sock_shutdown(void * pms);
 
 // Time
 int sgx_ocall_gettimeofday(void * pms);
@@ -117,6 +219,7 @@ int sgx_ocall_clock_gettime(void * pms);
 int sgx_ocall_sleep(void * pms);
 int sgx_ocall_nsleep(void * pms);
 
+// Debug
 int sgx_ocall_debugp(void * pms);
 
 

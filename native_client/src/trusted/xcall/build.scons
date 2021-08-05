@@ -10,6 +10,8 @@ ldr_input = []
 if env.Bit('usgx'):
 	ldr_input.append('ocall_debugp_u.c')
 	ldr_input.append('ocall_time_u.c')
+	ldr_input.append('ocall_socket_u.c')
+	ldr_input.append('ocall_futex_u.c')
 	ldr_input.append('sgx_entry.S')
 	ldr_input.append('sgx_thread.c')
 	ldr_input.append('ocall_tables.c')
@@ -19,6 +21,8 @@ elif env.Bit('sgx'):
 	ldr_input.append('ocall_tables.c')
 	ldr_input.append('ocall_debugp_t.c')
 	ldr_input.append('ocall_time_t.c')
+	ldr_input.append('ocall_socket_t.c')
+	ldr_input.append('ocall_futex_t.c')
 	ldr_input.append('enclave_framework.c')
 	ldr_input.append('enclave_entry.S')
 	ldr_input.append('handle_ecall.c')
@@ -31,7 +35,13 @@ elif env.Bit('sgx'):
 		'-Wl,-Tsrc/trusted/xcall/enclave.lds',
 		'-zcombreloc', '-zdefs', '-pie'])
 
-	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=['sgxsel'])
+	# check site_scons/site_tools/library_deps.py
+	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=['sgxsel', 
+	'env_cleanser', 
+	'nrd_xfer',
+	'platform',
+	#'debug_stub',
+	])
 
 
 
