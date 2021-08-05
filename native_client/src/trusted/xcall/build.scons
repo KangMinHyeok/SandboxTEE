@@ -31,7 +31,7 @@ elif env.Bit('sgx'):
 		'-Wl,-Tsrc/trusted/xcall/enclave.lds',
 		'-zcombreloc', '-zdefs', '-pie'])
 
-	envt.DualLibrary('sgx_nacl', ldr_input)
+	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=['sgxsel'])
 
 
 

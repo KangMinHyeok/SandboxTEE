@@ -1,9 +1,15 @@
+
+#include "native_client/src/include/build_config.h"
+
+
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ecall_types.h"
 #include "native_client/src/trusted/service_runtime/sgx/sgx_tls.h"
 
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
+#include "native_client/src/trusted/service_runtime/sel_ldr.h"
+#include "native_client/src/trusted/service_runtime/sel_main.h"
 
 
 
@@ -35,6 +41,15 @@ int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_targ
 				ms_ecall_enclave_start_t * ms =
 					(ms_ecall_enclave_start_t *) ecall_args;
 
+  			//struct SelLdrOptions          optionsImpl;
+  			//struct SelLdrOptions          *options = &optionsImpl;
+
+  			//struct NaClApp nap;
+
+  			// TODO (mkpark): copy options from usgx to sgx <- needed?
+  			// TODO (mkpark): copy nap from usgx to sgx
+
+				// NaClAppPrepareModuleInSGX(options, &nap);
 				if (!ms) return -1;
 				break;
 			}

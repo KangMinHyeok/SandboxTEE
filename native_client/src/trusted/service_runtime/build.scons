@@ -2,6 +2,69 @@
 # Copyright (c) 2012 The Native Client Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+'''
+'filename_util.cc',
+    'load_file.c',
+    'nacl_all_modules.c',
+    'nacl_app_thread.c',
+    'nacl_copy.c',
+    'nacl_desc_effector_ldr.c',
+    'nacl_error_gio.c',
+    'nacl_error_log_hook.c',
+    'nacl_globals.c',
+    'nacl_resource.c',
+    'nacl_signal_common.c',
+    'nacl_stack_safety.c',
+    'nacl_syscall_common.c',
+    'nacl_syscall_hook.c',
+    'nacl_syscall_list.c',
+    'nacl_text.c',
+    'nacl_valgrind_hooks.c',
+    'sel_ldr.c',
+    'sel_ldr_filename.cc',
+    'sel_main_common.c',
+    'sel_mem.c',
+    'sel_qualify.c',
+    'sel_validate_image.c',
+    'sys_clock.c',
+    'sys_exception.c',
+    'sys_fdio.c',
+    'sys_filename.c',
+    'sys_futex.c',
+    'sys_imc.c',
+    'sys_list_mappings.c',
+    'sys_memory.c',
+    'sys_parallel_io.c',
+    'sys_random.c',
+    'thread_suspension_common.c',
+    'thread_suspension_unwind.c',
+    'elf_util.c',
+    'sel_addrspace.c',
+    'sel_ldr_standard.c',
+    'arch/x86/nacl_ldt_x86.c',
+    'arch/x86_64/nacl_app_64.c',
+    'arch/x86_64/nacl_switch_64.S',
+    'arch/x86_64/nacl_switch_to_app_64.c',
+    'arch/x86_64/nacl_syscall_64.S',
+    'arch/x86_64/nacl_tls_64.c',
+    'arch/x86_64/sel_ldr_x86_64.c',
+    'arch/x86_64/sel_rt_64.c',
+    'arch/x86_64/tramp_64.S',
+		'arch/x86_64/sel_addrspace_posix_x86_64.c'
+		'linux/nacl_bootstrap_args.c',
+		'linux/nacl_thread_nice.c',
+		'linux/r_debug.c',
+		'linux/reserved_at_zero.c',
+		'posix/addrspace_teardown.c',
+		'posix/sel_memory.c',
+		'linux/x86/nacl_ldt.c',
+		'posix/x86/sel_segments.c',
+    'linux/thread_suspension.c',
+    'posix/nacl_signal_stack.c',
+    'posix/sel_addrspace_posix.c',
+    'linux/nacl_signal_64.c'
+
+'''
 
 import platform
 import os
@@ -18,6 +81,29 @@ env.Append(CPPPATH=['${TARGET_ROOT}/gen'])
 
 
 GENERATED='${TARGET_ROOT}/gen/native_client/src/trusted/service_runtime'
+
+# TODO (mkpark): we separately treat SGX env.
+
+if env.Bit('sgx'):
+	if env.Bit('x86_64_zero_based_sandbox'):
+		env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=1'])
+	else:
+		env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=0'])
+	ldr_inputs = []
+	obj_inputs = [
+    'dyn_array.c',
+    'sel_main_sgx.c',
+    	]
+	#ldr_inputs += [env.ComponentObject('linux/nacl_signal.c')]	
+	ldr_inputs += env.Object(obj_inputs)
+
+	syscall_gen_flags = '-a ${TARGET_ARCHITECTURE} -s ${TARGET_SUBARCH}'
+	env.Append(SYSCALL_GEN_FLAGS=syscall_gen_flags)
+
+	env.DualLibrary('sgxsel', ldr_inputs)
+	#env.DualLibrary('env_cleanser', ['env_cleanser.c'])
+
+	Return();
 
 
 # ----------------------------------------------------------
@@ -67,7 +153,7 @@ if env.Bit('usgx'):
 	obj_inputs += [
     'elf_util_sgx.c',
     'sel_addrspace_sgx.c',
-    'sel_ldr_standard_sgx.c',
+    'sel_ldr_standard_usgx.c',
 ]
 
 else:
@@ -299,15 +385,15 @@ env.Append(SYSCALL_GEN_FLAGS=syscall_gen_flags)
 
 env.DualLibrary('sel', ldr_inputs)
 
-env.DualLibrary('sel_main_chrome', ['sel_main_chrome.c'])
+env.DualLibrary('env_cleanser', ['env_cleanser.c'])
 
 if env.Bit('usgx'):
-  env.DualLibrary('sel_main', ['sel_main_sgx.c'])
+  env.DualLibrary('sel_main', ['sel_main_usgx.c'])
 else:
   env.DualLibrary('sel_main', ['sel_main.c'])
 
 
-env.DualLibrary('env_cleanser', ['env_cleanser.c'])
+env.DualLibrary('sel_main_chrome', ['sel_main_chrome.c'])
 
 env.DualLibrary('nacl_error_code',
                 ['nacl_error_code.c',
@@ -359,8 +445,6 @@ if env.Bit('usgx'):
   sel_main_objs = [env.ComponentObject('nacl_test_injection_main.c')]
   env.ComponentProgram('sel_ldr', sel_main_objs,
 												EXTRA_LIBS=['sel_main', 'usgx_nacl'])
-  Return()
-if env.Bit('sgx'):
   Return()
 
 if not env.Bit('coverage_enabled') or not env.Bit('windows'):
