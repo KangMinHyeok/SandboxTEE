@@ -2788,7 +2788,7 @@ def MakeSgxEnv():
       'src/trusted/perf_counter/build.scons',
       'src/trusted/service_runtime/build.scons',
       'src/trusted/validator_x86/build.scons',
-      #'src/nonsfi/irt/build.scons',
+      'src/nonsfi/irt/build.scons',
       #'src/nonsfi/loader/build.scons',
       #'src/third_party/gtest/build.scons',
       
