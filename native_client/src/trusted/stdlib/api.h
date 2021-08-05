@@ -121,7 +121,7 @@ char * strncpy(char *dst, const char *src, size_t n);
 char * strpbrk(const char *s1, const char *s2);
 char * strdup (const char *s);
 
-#if NACL_PAVE
+#if SGX//NACL_PAVE
 extern int errno;
 #else
 
