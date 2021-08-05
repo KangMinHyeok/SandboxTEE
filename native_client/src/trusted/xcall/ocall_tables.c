@@ -6,8 +6,15 @@ typedef int (*sgx_ocall_fn_t)(void*);
 
 sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 
-	
-	[OCALL_FUTEX] = sgx_ocall_futex,
+	[OCALL_ALLOC_UNTRUSTED] = sgx_ocall_alloc_untrusted,
+	[OCALL_MMAP_UNTRUSTED] = sgx_ocall_mmap_untrusted,
+	[OCALL_UNMAP_UNTRUSTED] = sgx_ocall_unmap_untrusted,
+	[OCALL_MPROTECT] = sgx_ocall_mprotect,
+
+	[OCALL_OPEN] = sgx_ocall_open,
+	[OCALL_CLOSE] = sgx_ocall_close,
+	[OCALL_READ] = sgx_ocall_read,
+	[OCALL_WRITE] = sgx_ocall_write,
 
 	[OCALL_SOCKETPAIR] = sgx_ocall_socketpair,
 	[OCALL_SOCK_LISTEN] = sgx_ocall_sock_listen,
@@ -25,6 +32,11 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_SLEEP] = sgx_ocall_sleep,
 	[OCALL_NSLEEP] = sgx_ocall_nsleep,
 	
+	[OCALL_CPUID] = sgx_ocall_cpuid,
+	[OCALL_GETPID] = sgx_ocall_getpid,
+	[OCALL_FIONREAD] = sgx_ocall_fionread,
+	[OCALL_FUTEX] = sgx_ocall_futex,
+	[OCALL_PRINT_STRING] = sgx_ocall_print_string,
 	[OCALL_DEBUGP] =  sgx_ocall_debugp,
 };
 
