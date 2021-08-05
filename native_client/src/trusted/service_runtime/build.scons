@@ -302,7 +302,7 @@ env.DualLibrary('sel', ldr_inputs)
 env.DualLibrary('sel_main_chrome', ['sel_main_chrome.c'])
 
 if env.Bit('usgx'):
-  env.DualLibrary('sel_main', ['sel_main_sgx.c'])
+  env.DualLibrary('sel_main', ['sel_main_usgx.c'])
 else:
   env.DualLibrary('sel_main', ['sel_main.c'])
 
