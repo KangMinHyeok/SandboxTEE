@@ -4,55 +4,32 @@
 # found in the LICENSE file.
 '''
 'filename_util.cc',
-    'load_file.c',
-    'nacl_all_modules.c',
-    'nacl_app_thread.c',
-    'nacl_copy.c',
+    #'load_file.c',
+    'nacl_copy.c', # ..?
     'nacl_desc_effector_ldr.c',
-    'nacl_error_gio.c',
+    'nacl_error_gio.c', 
     'nacl_error_log_hook.c',
-    'nacl_globals.c',
-    'nacl_resource.c',
-    'nacl_signal_common.c',
+    'nacl_signal_common.c', # ??
     'nacl_stack_safety.c',
-    'nacl_syscall_common.c',
-    'nacl_syscall_hook.c',
-    'nacl_syscall_list.c',
     'nacl_text.c',
     'nacl_valgrind_hooks.c',
-    'sel_ldr.c',
-    'sel_ldr_filename.cc',
-    'sel_main_common.c',
+    'sel_ldr_filename.cc', # ?
     'sel_mem.c',
     'sel_qualify.c',
     'sel_validate_image.c',
-    'sys_clock.c',
-    'sys_exception.c',
-    'sys_fdio.c',
-    'sys_filename.c',
-    'sys_futex.c',
-    'sys_imc.c',
-    'sys_list_mappings.c',
-    'sys_memory.c',
-    'sys_parallel_io.c',
-    'sys_random.c',
+    #'sys_imc.c',
     'thread_suspension_common.c',
     'thread_suspension_unwind.c',
-    'elf_util.c',
+    #'elf_util.c',
     'sel_addrspace.c',
-    'sel_ldr_standard.c',
     'arch/x86/nacl_ldt_x86.c',
     'arch/x86_64/nacl_app_64.c',
-    'arch/x86_64/nacl_switch_64.S',
-    'arch/x86_64/nacl_switch_to_app_64.c',
     'arch/x86_64/nacl_syscall_64.S',
-    'arch/x86_64/nacl_tls_64.c',
     'arch/x86_64/sel_ldr_x86_64.c',
-    'arch/x86_64/sel_rt_64.c',
-    'arch/x86_64/tramp_64.S',
+    #'arch/x86_64/tramp_64.S',
 		'arch/x86_64/sel_addrspace_posix_x86_64.c'
 		'linux/nacl_bootstrap_args.c',
-		'linux/nacl_thread_nice.c',
+		#'linux/nacl_thread_nice.c',
 		'linux/r_debug.c',
 		'linux/reserved_at_zero.c',
 		'posix/addrspace_teardown.c',
@@ -92,7 +69,30 @@ if env.Bit('sgx'):
 	ldr_inputs = []
 	obj_inputs = [
     'dyn_array.c',
+    'nacl_resource.c',
+    'nacl_globals.c',
+    'nacl_syscall_common.c',
+    'nacl_syscall_hook.c',
+    'nacl_syscall_list.c',
     'sel_main_sgx.c',
+    'sel_main_common.c',
+    'sel_ldr_sgx.c',
+    'sel_ldr_standard_sgx.c',
+    'sys_clock.c',
+    'sys_exception.c',
+    'sys_fdio.c',
+    'sys_filename.c',
+    'sys_futex.c',
+    'sys_list_mappings.c',
+    'sys_memory.c',
+    'sys_parallel_io.c',
+    'sys_random.c',
+    'nacl_all_modules.c',
+    'nacl_app_thread_sgx.c',
+    'arch/x86_64/nacl_switch_64.S',
+    'arch/x86_64/nacl_switch_to_app_64.c',
+    'arch/x86_64/nacl_tls_64.c',
+    'arch/x86_64/sel_rt_64.c',
     	]
 	#ldr_inputs += [env.ComponentObject('linux/nacl_signal.c')]	
 	ldr_inputs += env.Object(obj_inputs)
@@ -101,7 +101,7 @@ if env.Bit('sgx'):
 	env.Append(SYSCALL_GEN_FLAGS=syscall_gen_flags)
 
 	env.DualLibrary('sgxsel', ldr_inputs)
-	#env.DualLibrary('env_cleanser', ['env_cleanser.c'])
+	env.DualLibrary('env_cleanser', ['env_cleanser.c'])
 
 	Return();
 

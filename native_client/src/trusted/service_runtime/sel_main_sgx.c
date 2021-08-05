@@ -67,8 +67,8 @@ static void PrintVmmap(struct NaClApp  *nap) {
 // untrusted
 int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap) {
 
-  NaClErrorCode                 errcode = LOAD_INTERNAL;
-  struct NaClDesc               *blob_file = NULL;
+  //NaClErrorCode                 errcode = LOAD_INTERNAL;
+  //struct NaClDesc               *blob_file = NULL;
 
   int                           ret_code;
 
@@ -113,7 +113,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   // nap->skip_validator = (options->debug_mode_ignore_validator > 1);
   // nap->enable_exception_handling = options->enable_exception_handling;
 
-  errcode = LOAD_OK;
+  // errcode = LOAD_OK;
 
   /*
    * in order to report load error to the browser plugin through the
@@ -131,6 +131,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
    * Open both files first because (on Mac OS X at least)
    * NaClAppLoadFile() enables an outer sandbox.
    */
+  /*
   if (NULL != options->blob_library_file) { // delete
     NaClFileNameForValgrind(options->blob_library_file);
     blob_file = (struct NaClDesc *) NaClDescIoDescOpen(
@@ -140,7 +141,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
       NaClLog(LOG_FATAL, "Cannot open \"%s\".\n", options->blob_library_file);
     }
   }
-
+	*/
   NaClAppInitialDescriptorHookup(nap); // untrusted + trusted
 
 	// TODO(mkpark): delete the below commented code
@@ -162,9 +163,6 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   }
   */
 
-  if (options->fuzzing_quit_after_load) {
-    exit(0);
-  }
 
   /*
    * Enable the outer sandbox, if one is defined.  Do this as soon as
@@ -173,6 +171,8 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
    * We cannot enable the sandbox if file access is enabled.
    */
 
+	/*
+	// load already done
   if (NULL != options->blob_library_file) { // delete
     errcode = NaClMainLoadIrt(nap, blob_file, NULL);
     if (LOAD_OK != errcode) {
@@ -184,12 +184,8 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
 
     NaClDescUnref(blob_file);
   }
+  */
 
-  /*
-   * Print out a marker for scripts to use to mark the start of app
-   * output.
-   */
-  NaClLog(1, "NACL: Application output follows\n");
 
   /*
    * Make sure all the file buffers are flushed before entering
@@ -204,16 +200,23 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
    * directory. This is required for safety, because we allow relative
    * pathnames.
    */
+  /* // Already done in usgx
   if (NaClRootDir != NULL && NaClHostDescChdir(NaClRootDir)) { // ignore
     NaClLog(LOG_FATAL, "Could not change directory to root dir\n");
   }
+  */
 
+
+	/* unsupported
   if (options->enable_debug_stub) {
     if (!NaClDebugInit(nap)) { // delete
       goto error;
     }
   }
-  NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass
+  */
+  
+  // TODO(mkpark): check the below
+  //NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass
 
   if (!NaClCreateMainThread(nap,
                             options->app_argc,
@@ -241,7 +244,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
    */
   NaClExit(ret_code);
 
- error:
+ //error:
   fflush(stdout);
 
   if (options->verbosity > 0) {

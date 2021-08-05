@@ -70,6 +70,9 @@ env.DualLibrary('nrd_xfer', nrd_lib_inputs,
                 EXTRA_LIBS=['platform',
                             'nacl_base'])
 
+if env.Bit('sgx'):
+	Return();
+
 nacl_desc_quota_test_exe = env.ComponentProgram('nacl_desc_quota_test',
                                                 ['nacl_desc_quota_test.c'],
                                                 EXTRA_LIBS=['nrd_xfer',

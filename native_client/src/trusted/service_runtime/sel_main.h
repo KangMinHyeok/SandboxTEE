@@ -41,12 +41,12 @@ struct SelLdrOptions {
 
   int quiet;
   int verbosity;
-  int fuzzing_quit_after_load;
+  // int fuzzing_quit_after_load;
   // int skip_qualification; // done in usgx
   int handle_signals;
   int enable_env_passthrough;
   int enable_exception_handling;
-  int enable_debug_stub;
+  // int enable_debug_stub; // not supported
   int debug_mode_bypass_acl_checks;
   int debug_mode_ignore_validator;
   int debug_mode_startup_signal;

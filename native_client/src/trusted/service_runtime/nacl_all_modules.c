@@ -21,7 +21,7 @@ void  NaClAllModulesInit(void) {
   NaClFaultInjectionModuleInit();
   NaClGlobalModuleInit();  /* various global variables */
   NaClTlsInit();
-  NaClThreadNiceInit();
+  // NaClThreadNiceInit(); 
 }
 
 
