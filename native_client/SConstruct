@@ -2781,7 +2781,7 @@ def MakeSgxEnv():
       'src/trusted/xcall/build.scons',
       'src/trusted/cpu_features/build.scons',
       
-      #'src/shared/imc/build.scons',
+      'src/shared/imc/build.scons',
       #'src/trusted/nacl_base/build.scons',
       #'src/trusted/fault_injection/build.scons',
       #'src/trusted/interval_multiset/build.scons',
