@@ -1,6 +1,8 @@
 #ifndef SGXLIB_OCALL_TYPES_H
 #define SGXLIB_OCALL_TYPES_H
 
+#include <stddef.h>
+
 #include "native_client/src/include/build_config.h"
 
 #if NACL_SGX == 0 && NACL_USGX == 0
@@ -16,13 +18,6 @@ enum {
 	OCALL_MMAP_UNTRUSTED,		// Mem
 	OCALL_UNMAP_UNTRUSTED,	// Mem
 	OCALL_MPROTECT,					// Mem
-	//
-	OCALL_CPUID,						// Misc
-	OCALL_GETPID, 					// Misc
-	OCALL_FIONREAD,					// Misc
-	OCALL_FUTEX,						// Misc
-	OCALL_PRINT_STRING, 		// Misc
-	OCALL_DEBUGP,						// Misc
 	//
 	OCALL_OPEN,							// File
 	OCALL_CLOSE,						// File
@@ -75,10 +70,123 @@ enum {
 	OCALL_NSLEEP, 					// Time
 	//OCALL_POLL,	
 	//OCALL_DELETE,
-
+	//
+	OCALL_CPUID,						// Misc
+	OCALL_GETPID, 					// Misc
+	OCALL_FIONREAD,					// Misc
+	OCALL_FUTEX,						// Misc
+	OCALL_PRINT_STRING, 		// Misc
+	OCALL_DEBUGP,						// Misc
+	
+	
 	OCALL_NR,
 
 };
+
+
+// Mem
+typedef struct {
+	unsigned long ms_size;
+	void * ms_mem;
+} ms_ocall_alloc_untrusted_t;
+
+typedef struct {
+	int ms_fd;
+	unsigned long ms_offset;
+	unsigned long ms_size;
+	unsigned short ms_prot;
+	void * ms_mem;
+} ms_ocall_mmap_untrusted_t;
+
+typedef struct {
+	void * ms_mem;
+	unsigned long ms_size;
+} ms_ocall_unmap_untrusted_t;
+
+typedef struct {
+	void * ms_mem;
+	size_t ms_size;
+	int ms_prot;
+} ms_ocall_mprotect_t;
+
+// File
+typedef struct {
+	char * ms_pathname;
+	int ms_pathlen;
+	int ms_flags;
+	unsigned short ms_mode;
+} ms_ocall_open_t;
+
+typedef struct {
+	int ms_fd;
+} ms_ocall_close_t;
+
+typedef struct {
+	int ms_fd;
+	void * ms_buf;
+	unsigned int ms_count;
+} ms_ocall_read_t;
+
+typedef struct {
+	int ms_fd;
+	void * ms_buf;
+	unsigned int ms_count;
+} ms_ocall_write_t;
+
+typedef struct {
+	void * ms_path;
+	struct stat * ms_stat;
+} ms_ocall_stat_t;
+
+typedef struct {
+	void * ms_path;
+	struct stat * ms_stat;
+} ms_ocall_lstat_t;
+
+typedef struct {
+	int ms_fd;
+	struct stat * ms_stat;
+} ms_ocall_fstat_t;
+
+typedef struct {
+	int ms_fd;
+	int ms_nonblocking;
+} ms_ocall_fsetnonblock_t;
+
+typedef struct {
+	int ms_fd;
+	unsigned short ms_mode;
+} ms_ocall_fchmod_t;
+
+typedef struct {
+	int ms_fd;
+} ms_ocall_fsync_t, ms_ocall_fchdir_t, ms_ocall_fdatasync_t;
+
+typedef struct {
+	int ms_fd;
+	uint64_t ms_length;
+} ms_ocall_ftruncate_t;
+
+typedef struct {
+	int ms_fd;
+	long int ms_offset;
+	int ms_whence;
+} ms_ocall_lseek64_t;
+
+typedef struct {
+	int ms_fd;
+	void * ms_buf;
+	unsigned int ms_count;
+	unsigned long ms_pos;
+} ms_ocall_pread64_t;
+
+typedef struct {
+	int ms_fd;
+	void * ms_buf;
+	unsigned int ms_count;
+	unsigned int ms_offset;
+} ms_ocall_pwrite64_t;
+
 
 // Socket
 typedef struct {
@@ -178,11 +286,21 @@ typedef struct {
 	long ms_rmtp_nsec;
 } ms_ocall_nsleep_t;
 
+// Misc
 typedef struct {
-	int ms_val;
-} ms_ocall_debugp_t;
+	int tmp;
+} ms_ocall_pid_t;
 
-// Futex
+typedef struct {
+	unsigned int ms_leaf;
+	unsigned int ms_subleaf;
+	unsigned int ms_values[4];
+} ms_ocall_cpuid_t;
+
+typedef struct {
+	int ms_fd;
+} ms_ocall_fionread_t;
+
 typedef struct {
 	int * ms_futex;
 	int ms_op, ms_val;
@@ -191,12 +309,40 @@ typedef struct {
 	int ms_val3;
 } ms_ocall_futex_t;
 
+typedef struct {
+	char * ms_str;
+	unsigned int ms_length;
+} ms_ocall_print_string_t;
+
+typedef struct {
+	int ms_val;
+} ms_ocall_debugp_t;
 
 
+// File
+int sgx_ocall_open(void * pms);
+int sgx_ocall_close(void * pms);
+int sgx_ocall_read(void * pms);
+int sgx_ocall_write(void * pms);
 
+int sgx_ocall_stat(void * pms);
+int sgx_ocall_lstat(void * pms);
+int sgx_ocall_fstat(void * pms);
+int sgx_ocall_fsentnonblock(void * pms);
+int sgx_ocall_fchmod(void * pms);
+int sgx_ocall_fchdir(void * pms);
+int sgx_ocall_fsync(void * pms);
+int sgx_ocall_fdatasync(void * pms);
+int sgx_ocall_ftruncate(void * pms);
+int sgx_ocall_lseek64(void * pms);
+int sgx_ocall_pread64(void * pms);
+int sgx_ocall_pwrite64(void * pms);
 
-// Futex
-int sgx_ocall_futex(void * pms);
+// Mem
+int sgx_ocall_alloc_untrusted(void * pms);
+int sgx_ocall_mmap_untrusted(void * pms);
+int sgx_ocall_unmap_untrusted(void * pms);
+int sgx_ocall_mprotect(void * pms);
 
 // Socket
 int sgx_ocall_socketpair(void * pms);
@@ -216,7 +362,12 @@ int sgx_ocall_clock_gettime(void * pms);
 int sgx_ocall_sleep(void * pms);
 int sgx_ocall_nsleep(void * pms);
 
-// Debug
+// Misc 
+int sgx_ocall_cpuid(void * pms);
+int sgx_ocall_getpid(void * pms);
+int sgx_ocall_fionread(void * pms);
+int sgx_ocall_futex(void * pms);
+int sgx_ocall_print_string(void * pms);
 int sgx_ocall_debugp(void * pms);
 
 
