@@ -61,6 +61,9 @@ if env.Bit('build_x86'):
 env.ComponentLibrary('rdfa_validator',
                      [validator32, validator64] + features)
 
+if env.Bit('sgx'):
+	Return();
+
 validator_benchmark = env.ComponentProgram(
     'rdfa_validator_benchmark',
     ['validator_benchmark.cc'],

@@ -107,7 +107,7 @@ LIBRARY_DEPENDENCIES_SGX = {
         'cpu_features',
         ],
     'sel': [
-        'nacl_error_code',
+        #'nacl_error_code',
         'env_cleanser',
         'nrd_xfer',
         'nacl_perf_counter',
@@ -115,10 +115,10 @@ LIBRARY_DEPENDENCIES_SGX = {
         'nacl_fault_inject',
         'nacl_interval',
         'platform',
-        'platform_qual_lib',
+        #'platform_qual_lib',
         'gio',
         'validation_cache',
-        'validators',
+        #'validators',
         ],
     'sel_main': [
         'sel',

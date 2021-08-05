@@ -35,8 +35,6 @@
 		'posix/addrspace_teardown.c',
 		'posix/sel_memory.c',
 		'linux/x86/nacl_ldt.c',
-		'posix/x86/sel_segments.c',
-    'linux/thread_suspension.c',
     'posix/nacl_signal_stack.c',
     'posix/sel_addrspace_posix.c',
     'linux/nacl_signal_64.c'
@@ -66,7 +64,6 @@ if env.Bit('sgx'):
 		env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=1'])
 	else:
 		env.Append(CPPDEFINES=['-DNACL_X86_64_ZERO_BASED_SANDBOX=0'])
-	ldr_inputs = []
 	obj_inputs = [
     'dyn_array.c',
     'nacl_resource.c',
@@ -89,18 +86,21 @@ if env.Bit('sgx'):
     'sys_random.c',
     'nacl_all_modules.c',
     'nacl_app_thread_sgx.c',
+    'linux/thread_suspension.c',
+		'posix/x86/sel_segments.c',
     'arch/x86_64/nacl_switch_64.S',
     'arch/x86_64/nacl_switch_to_app_64.c',
     'arch/x86_64/nacl_tls_64.c',
     'arch/x86_64/sel_rt_64.c',
     	]
+	ldr_inputs = []
 	#ldr_inputs += [env.ComponentObject('linux/nacl_signal.c')]	
 	ldr_inputs += env.Object(obj_inputs)
 
 	syscall_gen_flags = '-a ${TARGET_ARCHITECTURE} -s ${TARGET_SUBARCH}'
 	env.Append(SYSCALL_GEN_FLAGS=syscall_gen_flags)
 
-	env.DualLibrary('sgxsel', ldr_inputs)
+	env.DualLibrary('sel', ldr_inputs)
 	env.DualLibrary('env_cleanser', ['env_cleanser.c'])
 
 	Return();

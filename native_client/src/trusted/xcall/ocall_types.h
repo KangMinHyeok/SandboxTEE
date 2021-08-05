@@ -12,72 +12,69 @@
 enum {
 	OCALL_EXIT = 0,
 	//
-	OCALL_PRINT_STRING,
-	OCALL_ALLOC_UNTRUSTED,
-	OCALL_MMAP_UNTRUSTED,
-	OCALL_UNMAP_UNTRUSTED,
-	OCALL_MPROTECT,
+	OCALL_ALLOC_UNTRUSTED,	// Mem
+	OCALL_MMAP_UNTRUSTED,		// Mem
+	OCALL_UNMAP_UNTRUSTED,	// Mem
+	OCALL_MPROTECT,					// Mem
 	//
-	OCALL_CPUID,
+	OCALL_CPUID,						// Misc
+	OCALL_GETPID, 					// Misc
+	OCALL_FIONREAD,					// Misc
+	OCALL_FUTEX,						// Misc
+	OCALL_PRINT_STRING, 		// Misc
+	OCALL_DEBUGP,						// Misc
 	//
-	OCALL_OPEN,
-	OCALL_CLOSE,
-	OCALL_READ,
-	OCALL_WRITE,
+	OCALL_OPEN,							// File
+	OCALL_CLOSE,						// File
+	OCALL_READ,							// File
+	OCALL_WRITE,						// File
 	//
-	OCALL_GETPID, 
-	// FILE
 	// OCALL_FSEEK,
 	// OCALL_FTELL,
 	// OCALL_FFLUSH,
-	OCALL_STAT,
-	OCALL_LSTAT,
-	OCALL_FSTAT,
-	OCALL_FIONREAD,
-	OCALL_FSETNONBLOCK,
-	OCALL_FCHMOD, // 
-	OCALL_FCHDIR, // 
-	OCALL_FSYNC, //
-	OCALL_FDATASYNC, //
-	OCALL_FTRUNCATE,
-	OCALL_LSEEK64, 
-	OCALL_PREAD64,
-	OCALL_PWRITE64,
-	OCALL_MKDIR,
-	OCALL_RMDIR,
-	OCALL_CHDIR,
-
-	OCALL_GETCWD,					// OS
-	OCALL_LINK,						// OS
-	OCALL_UNLINK,					// OS
-	OCALL_TRUNCATE,				// OS
-	OCALL_RENAME,					// OS
-	OCALL_CHMOD,					// OS
-	OCALL_ACCESS,					// OS
-	OCALL_FCNTL,					// OS	
-	OCALL_GETDENTS,				// OS
+	OCALL_STAT,							// File
+	OCALL_LSTAT,						// File
+	OCALL_FSTAT,						// File
+	OCALL_FSETNONBLOCK,			// File
+	OCALL_FCHMOD, 					// File
+	OCALL_FCHDIR, 					// File 
+	OCALL_FSYNC, 						// File
+	OCALL_FDATASYNC, 				// File
+	OCALL_FTRUNCATE,				// File
+	OCALL_LSEEK64, 					// File
+	OCALL_PREAD64,					// File
+	OCALL_PWRITE64,					// File
 	//
-	OCALL_FUTEX,					// Futex
+	OCALL_MKDIR,						// OS
+	OCALL_RMDIR,						// OS
+	OCALL_CHDIR,						// OS
+	OCALL_GETCWD,						// OS 
+	OCALL_LINK,							// OS
+	OCALL_UNLINK,						// OS
+	OCALL_TRUNCATE,					// OS 
+	OCALL_RENAME,						// OS 
+	OCALL_CHMOD,						// OS 
+	OCALL_ACCESS,						// OS 
+	OCALL_FCNTL,						// OS 	
+	OCALL_GETDENTS,					// OS 
 	// 
-	OCALL_SOCKETPAIR,			// Socket
-	OCALL_SOCK_LISTEN,		// Socket
-	OCALL_SOCK_ACCEPT,		// Socket
-	OCALL_SOCK_CONNECT,		// Socket
-	OCALL_SOCK_RECV,			// Socket
-	OCALL_SOCK_SEND, 			// Socket		// TODO MCAST
-	OCALL_SOCK_RECV_FD,		// Socket
-	OCALL_SOCK_SEND_FD,		// Socket
-	OCALL_SOCK_SETOPT,		// Socket
-	OCALL_SOCK_SHUTDOWN,	// Socket
+	OCALL_SOCKETPAIR,				// Socket
+	OCALL_SOCK_LISTEN,			// Socket
+	OCALL_SOCK_ACCEPT,			// Socket
+	OCALL_SOCK_CONNECT,			// Socket
+	OCALL_SOCK_RECV,				// Socket
+	OCALL_SOCK_SEND, 				// Socket		// TODO MCAST
+	OCALL_SOCK_RECV_FD,			// Socket
+	OCALL_SOCK_SEND_FD,			// Socket
+	OCALL_SOCK_SETOPT,			// Socket
+	OCALL_SOCK_SHUTDOWN,		// Socket
 	//
-	OCALL_GETTIMEOFDAY, 	// Time
-	OCALL_CLOCK_GETTIME, 	// Time
-	OCALL_SLEEP, 					// Time
-	OCALL_NSLEEP, 				// Time
+	OCALL_GETTIMEOFDAY, 		// Time
+	OCALL_CLOCK_GETTIME, 		// Time
+	OCALL_SLEEP, 						// Time
+	OCALL_NSLEEP, 					// Time
 	//OCALL_POLL,	
 	//OCALL_DELETE,
-
-	OCALL_DEBUGP,					// Debug (print)
 
 	OCALL_NR,
 
