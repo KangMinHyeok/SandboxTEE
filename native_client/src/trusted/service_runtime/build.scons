@@ -153,7 +153,7 @@ if env.Bit('usgx'):
 	obj_inputs += [
     'elf_util_sgx.c',
     'sel_addrspace_sgx.c',
-    'sel_ldr_standard_sgx.c',
+    'sel_ldr_standard_usgx.c',
 ]
 
 else:
