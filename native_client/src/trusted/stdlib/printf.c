@@ -17,11 +17,12 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include "pal_internal.h"
+//#include "pal_internal.h"
 #include "api.h"
 
 
 //#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
+# include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 #ifndef NO_INTERNAL_PRINTF
 
@@ -62,7 +63,7 @@ vprintf(const char * fmt, va_list *ap)
     b.cnt = 0;
     vfprintfmt((void *) &fputch, NULL, &b, fmt, ap);
     ocall_print_string (b.buf, b.idx);
-
+    
     return b.cnt;
     }
 
@@ -78,6 +79,6 @@ printf(const char * fmt, ...)
 
     return cnt;
 }
-extern_alias(printf);
+//extern_alias(printf);
 
 #endif
