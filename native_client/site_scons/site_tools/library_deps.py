@@ -80,6 +80,55 @@ LIBRARY_DEPENDENCIES_DEFAULT = {
         ],
     }
 
+# The following is a map from a library, to the corresponding
+# list of dependent libraries that must be included after that library, in
+# the list of libraries.
+LIBRARY_DEPENDENCIES_SGX = {
+    'arm_validator_core': [
+        'cpu_features',
+        ],
+    'validation_cache': [
+        'platform',
+        ],
+    'debug_stub': [
+        'sel',
+        ],
+    'platform': [
+        'gio',
+        ],
+    'nacl_base': [
+        'platform',
+        ],
+    'nrd_xfer': [
+        'nacl_base',
+        'platform',
+        ],
+    'platform_qual_lib': [
+        'cpu_features',
+        ],
+    'sel': [
+        'nacl_error_code',
+        'env_cleanser',
+        'nrd_xfer',
+        'nacl_perf_counter',
+        'nacl_base',
+        'nacl_fault_inject',
+        'nacl_interval',
+        'platform',
+        'platform_qual_lib',
+        'gio',
+        'validation_cache',
+        'validators',
+        ],
+    'sel_main': [
+        'sel',
+        'debug_stub',
+        ],
+    'serialization': [
+        'platform',
+        ],
+    }
+
 # Untrusted only library dependencies.
 # Include names here that otherwise clash with trusted names.
 UNTRUSTED_LIBRARY_DEPENDENCIES = {
@@ -152,8 +201,12 @@ def AddLibDeps(env, platform, libraries):
         VisitLibrary(library)
 
   def GetLibraryDeps(library):
-    ret = (LIBRARY_DEPENDENCIES_DEFAULT.get(library, []) +
-        PLATFORM_LIBRARY_DEPENDENCIES.get(platform, {}).get(library, []))
+    if env.Bit('sgx'):
+        ret =  (LIBRARY_DEPENDENCIES_SGX.get(library, []) +
+            PLATFORM_LIBRARY_DEPENDENCIES.get(platform, {}).get(library, []))
+    else:
+        ret = (LIBRARY_DEPENDENCIES_DEFAULT.get(library, []) +
+            PLATFORM_LIBRARY_DEPENDENCIES.get(platform, {}).get(library, []))
     if env['NACL_BUILD_FAMILY'] != 'TRUSTED':
       ret.extend(UNTRUSTED_LIBRARY_DEPENDENCIES.get(library, []))
     if library == 'validators' and env.Bit('build_x86'):
