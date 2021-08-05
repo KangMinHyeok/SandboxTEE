@@ -2790,7 +2790,7 @@ def MakeSgxEnv():
       'src/trusted/validator_x86/build.scons',
       'src/nonsfi/irt/build.scons',
       'src/nonsfi/loader/build.scons',
-      #'src/third_party/gtest/build.scons',
+      'src/third_party/gtest/build.scons',
       
       #'src/trusted/debug_stub/build.scons',
       
