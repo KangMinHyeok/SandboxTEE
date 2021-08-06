@@ -41,18 +41,18 @@ enum {
 	OCALL_PREAD64,					// File
 	OCALL_PWRITE64,					// File
 	//
-	OCALL_MKDIR,						// OS
-	OCALL_RMDIR,						// OS
-	OCALL_CHDIR,						// OS
-	OCALL_GETCWD,						// OS 
-	OCALL_LINK,							// OS
-	OCALL_UNLINK,						// OS
-	OCALL_TRUNCATE,					// OS 
-	OCALL_RENAME,						// OS 
-	OCALL_CHMOD,						// OS 
-	OCALL_ACCESS,						// OS 
-	OCALL_FCNTL,						// OS 	
-	OCALL_GETDENTS,					// OS 
+	OCALL_MKDIR,						// Dir
+	OCALL_RMDIR,						// Dir
+	OCALL_CHDIR,						// Dir
+	OCALL_GETCWD,						// Dir
+	OCALL_LINK,							// Dir
+	OCALL_UNLINK,						// Dir
+	OCALL_TRUNCATE,					// Dir
+	OCALL_RENAME,						// Dir
+	OCALL_CHMOD,						// Dir
+	OCALL_ACCESS,						// Dir
+	OCALL_FCNTL,						// Dir	
+	OCALL_GETDENTS,					// Dir 
 	// 
 	OCALL_SOCKETPAIR,				// Socket
 	OCALL_SOCK_LISTEN,			// Socket
@@ -100,19 +100,20 @@ typedef struct {
 } ms_ocall_mmap_untrusted_t;
 
 typedef struct {
-	void * ms_mem;
+	const void * ms_mem;
 	unsigned long ms_size;
 } ms_ocall_unmap_untrusted_t;
 
 typedef struct {
-	void * ms_mem;
+	const void * ms_mem;
 	size_t ms_size;
 	int ms_prot;
 } ms_ocall_mprotect_t;
 
+
 // File
 typedef struct {
-	char * ms_pathname;
+	const char * ms_pathname;
 	int ms_pathlen;
 	int ms_flags;
 	unsigned short ms_mode;
@@ -130,17 +131,17 @@ typedef struct {
 
 typedef struct {
 	int ms_fd;
-	void * ms_buf;
+	const void * ms_buf;
 	unsigned int ms_count;
 } ms_ocall_write_t;
 
 typedef struct {
-	void * ms_path;
+	const void * ms_path;
 	struct stat * ms_stat;
 } ms_ocall_stat_t;
 
 typedef struct {
-	void * ms_path;
+	const void * ms_path;
 	struct stat * ms_stat;
 } ms_ocall_lstat_t;
 
@@ -183,10 +184,72 @@ typedef struct {
 
 typedef struct {
 	int ms_fd;
-	void * ms_buf;
+	const void * ms_buf;
 	unsigned int ms_count;
 	unsigned int ms_offset;
 } ms_ocall_pwrite64_t;
+
+
+// Dir
+typedef struct {
+	const char * ms_pathname;
+	unsigned short ms_mode;
+} ms_ocall_mkdir_t;
+
+typedef struct {
+	const char * ms_pathname;
+} ms_ocall_rmdir_t;
+
+typedef struct {
+	const char * ms_pathname;
+} ms_ocall_chdir_t;
+
+typedef struct {
+	char * ms_path;
+	size_t ms_pathlen;
+	size_t ms_size;
+} ms_ocall_getcwd_t;
+
+typedef struct {
+	const char * ms_oldpath;
+	const char * ms_newpath;
+} ms_ocall_link_t;
+
+typedef struct {
+	const char * ms_pathname;
+} ms_ocall_unlink_t;
+
+typedef struct {
+	const char * ms_pathname;
+	unsigned int ms_size;
+} ms_ocall_truncate_t;
+
+typedef struct {
+	const char * ms_oldpath;
+	const char * ms_newpath;
+} ms_ocall_rename_t;
+
+typedef struct {
+	const char * ms_path;
+	uint64_t ms_mode;
+} ms_ocall_chmod_t;
+
+typedef struct {
+	const char * ms_pathname;
+	unsigned short ms_mode;
+} ms_ocall_access_t;
+
+typedef struct {
+	int ms_fd;
+	int ms_cmd;
+	long ms_args;
+} ms_ocall_fcntl_t;
+
+typedef struct {
+	int ms_fd;
+	struct linux_dirent64 * ms_dirp;
+	unsigned int ms_size;
+} ms_ocall_getdents_t;
 
 
 // Socket
@@ -197,7 +260,7 @@ typedef struct {
 
 typedef struct {
 	int ms_domain, ms_type, ms_protocol;
-	struct sockaddr * ms_addr;
+	const struct sockaddr * ms_addr;
 	unsigned int ms_addrlen;
 	//struct sockopt ms_sockopt;
 } ms_ocall_sock_listen_t;
@@ -211,7 +274,7 @@ typedef struct {
 
 typedef struct {
 	int ms_domain, ms_type, ms_protocol;
-	struct sockaddr * ms_addr;
+  const	struct sockaddr * ms_addr;
 	unsigned int ms_addrlen;
 	struct sockaddr * ms_bind_addr;
 	unsigned int ms_bind_addrlen;
@@ -228,9 +291,9 @@ typedef struct {
 
 typedef struct {
 	int ms_sockfd;
-	void * ms_buf;
+	const void * ms_buf;
 	unsigned int ms_count;
-	struct sockaddr * ms_addr;
+	const struct sockaddr * ms_addr;
 	unsigned int ms_addrlen;
 } ms_ocall_sock_send_t;
 
@@ -244,9 +307,9 @@ typedef struct {
 
 typedef struct {
 	int ms_sockfd;
-	void * ms_buf;
+	const void * ms_buf;
 	unsigned int ms_count;
-	unsigned int * ms_fds;
+	const unsigned int * ms_fds;
 	unsigned int ms_nfds;
 } ms_ocall_sock_send_fd_t;
 
@@ -254,7 +317,7 @@ typedef struct {
 	int ms_sockfd;
 	int ms_level;
 	int ms_optname;
-	void * ms_optval;
+	const void * ms_optval;
 	unsigned int ms_optlen;
 } ms_ocall_sock_setopt_t;
 
@@ -311,7 +374,7 @@ typedef struct {
 } ms_ocall_futex_t;
 
 typedef struct {
-	char * ms_str;
+	const char * ms_str;
 	unsigned int ms_length;
 } ms_ocall_print_string_t;
 
@@ -325,11 +388,10 @@ int sgx_ocall_open(void * pms);
 int sgx_ocall_close(void * pms);
 int sgx_ocall_read(void * pms);
 int sgx_ocall_write(void * pms);
-
 int sgx_ocall_stat(void * pms);
 int sgx_ocall_lstat(void * pms);
 int sgx_ocall_fstat(void * pms);
-int sgx_ocall_fsentnonblock(void * pms);
+int sgx_ocall_fsetnonblock(void * pms);
 int sgx_ocall_fchmod(void * pms);
 int sgx_ocall_fchdir(void * pms);
 int sgx_ocall_fsync(void * pms);
@@ -338,6 +400,20 @@ int sgx_ocall_ftruncate(void * pms);
 int sgx_ocall_lseek64(void * pms);
 int sgx_ocall_pread64(void * pms);
 int sgx_ocall_pwrite64(void * pms);
+
+// OS
+int sgx_ocall_mkdir(void * pmd);
+int sgx_ocall_rmdir(void * pmd);
+int sgx_ocall_chdir(void * pmd);
+int sgx_ocall_getcwd(void * pmd);
+int sgx_ocall_link(void * pmd);
+int sgx_ocall_unlink(void * pmd);
+int sgx_ocall_truncate(void * pmd);
+int sgx_ocall_rename(void * pmd);
+int sgx_ocall_chmod(void * pmd);
+int sgx_ocall_access(void * pmd);
+int sgx_ocall_fcntl(void * pmd);
+int sgx_ocall_getdents(void * pmd);
 
 // Mem
 int sgx_ocall_alloc_untrusted(void * pms);
