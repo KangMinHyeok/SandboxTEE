@@ -15,7 +15,9 @@
 #include "native_client/src/include/portability.h"
 
 #include <stdarg.h>
-#include <stdio.h>
+//#include <stdio.h>
+#include "native_client/src/trusted/stdlib/stdio.h"
+#include "native_client/src/trusted/stdlib/files.h"
 
 EXTERN_C_BEGIN
 
