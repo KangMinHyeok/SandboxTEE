@@ -37,7 +37,7 @@ int sgx_ocall_unmap_untrusted(void * pms) {
 int sgx_ocall_mprotect(void * pms) {
 	ms_ocall_mprotect_t * ms = (ms_ocall_mprotect_t *) pms;
 	int ret = 0;
-	ret = mprotect(ms->ms_mem, ms->ms_size, ms->ms_prot);
+	ret = mprotect((void *)ms->ms_mem, ms->ms_size, ms->ms_prot);
 	return ret;
 }
 

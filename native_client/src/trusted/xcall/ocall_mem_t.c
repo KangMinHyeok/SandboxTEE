@@ -49,7 +49,7 @@ int ocall_mmap_untrusted (int fd, uint64_t offset, uint64_t size, unsigned short
 	return retval;
 }
 
-int ocall_unmap_untrusted (void * mem, uint64_t size) {
+int ocall_unmap_untrusted (const void * mem, uint64_t size) {
 	int retval = 0;
 	void * old_ustack = sgx_prepare_ustack();
 	ms_ocall_unmap_untrusted_t *ms;
