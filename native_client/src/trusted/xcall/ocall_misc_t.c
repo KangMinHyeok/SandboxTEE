@@ -50,7 +50,7 @@ int ocall_fionread (int fd) {
 	return retval;
 }
 
-int ocall_print_string (char * str, unsigned int length) {   
+int ocall_print_string (const char * str, unsigned int length) {   
 	int retval = 0;
 	ms_ocall_print_string_t * ms;
 	void * old_ustack = sgx_prepare_ustack();
@@ -82,7 +82,7 @@ out:
 	return retval;
 }
 
-int ocall_futex (int * futex, int op, int val, uint64_t * timeout, int * uaddr2, int val3) {
+int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3) {
 	int retval = 0;
 	ms_ocall_futex_t * ms; 
 	void * old_ustack = sgx_prepare_ustack();
@@ -105,8 +105,7 @@ int ocall_futex (int * futex, int op, int val, uint64_t * timeout, int * uaddr2,
 	return retval;
 }
 
-int ocall_debugp (int val)
-{
+int ocall_debugp (int val) {
 
 	ms_ocall_debugp_t * ms;
 	void* old_ustack = sgx_prepare_ustack();
