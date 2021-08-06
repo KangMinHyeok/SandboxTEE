@@ -10,6 +10,7 @@ ldr_input = []
 if env.Bit('usgx'):
 	ldr_input.append('ocall_mem_u.c')
 	ldr_input.append('ocall_file_u.c')
+	ldr_input.append('ocall_dir_u.c')
 	ldr_input.append('ocall_time_u.c')
 	ldr_input.append('ocall_socket_u.c')
 	ldr_input.append('ocall_misc_u.c')
@@ -22,6 +23,7 @@ elif env.Bit('sgx'):
 	ldr_input.append('ocall_tables.c')
 	ldr_input.append('ocall_mem_t.c')
 	ldr_input.append('ocall_file_t.c')
+	ldr_input.append('ocall_dir_t.c')
 	ldr_input.append('ocall_time_t.c')
 	ldr_input.append('ocall_socket_t.c')
 	ldr_input.append('ocall_misc_t.c')
