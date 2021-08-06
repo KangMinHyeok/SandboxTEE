@@ -561,6 +561,9 @@ else:
 # Allow variadic macros
 werror_flags = werror_flags + ['-Wno-variadic-macros']
 
+# Allow function pointer to object pointer conversion
+werror_flags = werror_flags + ['-Werror=pedantic']
+
 #if pre_base_env.Bit('clang'):
   # Allow 'default' label in switch even when all enumeration cases
   # have been covered.
@@ -2797,10 +2800,10 @@ def MakeSgxEnv():
       'src/trusted/validator_ragel/build.scons',
       'src/trusted/validator_x86/build.scons',
       #'src/trusted/platform_qualify/build.scons',
+      'src/trusted/stdlib/build.scons',
       'src/trusted/service_runtime/build.scons',
       
       #'src/trusted/wolfssl/build.scons',
-      #'src/trusted/stdlib/build.scons',
   ])
   
   sgx_env.AddMethod(SDKInstallBin)
