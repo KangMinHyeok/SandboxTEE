@@ -22,9 +22,7 @@ int ocall_socketpair(int domain, int type, int protocol, int sockfds[2]) {
 	return retval;
 }
 
-int ocall_sock_listen (int domain, int type, int protocol,
-		struct sockaddr * addr, unsigned int * addrlen
-		) {
+int ocall_sock_listen (int domain, int type, int protocol, struct sockaddr * addr, unsigned int * addrlen) {
 
 	int retval = 0; 
 	unsigned int bind_len = *addrlen;
@@ -86,7 +84,7 @@ int ocall_sock_accept(int sockfd, struct sockaddr * addr, unsigned int * addrlen
 	return retval;
 }
 
-int ocall_sock_connect (int domain, int type, int protocol, struct sockaddr * addr,	unsigned int addrlen,
+int ocall_sock_connect (int domain, int type, int protocol, const struct sockaddr * addr,	unsigned int addrlen,
 		struct sockaddr * bind_addr, unsigned int * bind_addrlen) {   
 	int retval = 0;
 	unsigned int bind_len = bind_addrlen ? *bind_addrlen : 0;
@@ -152,7 +150,7 @@ int ocall_sock_recv (int sockfd, void * buf, unsigned int count, struct sockaddr
 	return retval;
 }
 
-int ocall_sock_send (int sockfd, void * buf, unsigned int count, struct sockaddr * addr, unsigned int addrlen) {
+int ocall_sock_send (int sockfd, const void * buf, unsigned int count, const struct sockaddr * addr, unsigned int addrlen) {
 	int retval = 0;
 	ms_ocall_sock_send_t * ms;
 	void* old_ustack = sgx_prepare_ustack();
@@ -196,7 +194,7 @@ int ocall_sock_recv_fd (int sockfd, void * buf, unsigned int count,	unsigned int
 	return retval;
 }
 
-int ocall_sock_send_fd (int sockfd, void * buf, unsigned int count,	unsigned int * fds, unsigned int nfds) {
+int ocall_sock_send_fd (int sockfd, const void * buf, unsigned int count,	const unsigned int * fds, unsigned int nfds) {
 	int retval = 0;
 	ms_ocall_sock_send_fd_t * ms;
 	void * old_ustack = sgx_prepare_ustack();
@@ -213,7 +211,7 @@ int ocall_sock_send_fd (int sockfd, void * buf, unsigned int count,	unsigned int
 	return retval;
 }
 
-int ocall_sock_setopt (int sockfd, int level, int optname, void * optval, unsigned int optlen) {
+int ocall_sock_setopt (int sockfd, int level, int optname, const void * optval, unsigned int optlen) {
 	int retval = 0;
 	ms_ocall_sock_setopt_t * ms;
 	void * old_ustack = sgx_prepare_ustack();

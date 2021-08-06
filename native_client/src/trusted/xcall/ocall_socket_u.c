@@ -147,7 +147,7 @@ int sgx_ocall_sock_recv(void * pms)  {
 int sgx_ocall_sock_send(void * pms) {
 	ms_ocall_sock_send_t * ms = (ms_ocall_sock_send_t *) pms;
 	int ret = 0;
-	struct sockaddr * addr = ms->ms_addr;
+	const struct sockaddr * addr = ms->ms_addr;
 	socklen_t addrlen = ms->ms_addr ? ms->ms_addrlen : 0;
 
 	ret = sendto(ms->ms_sockfd, ms->ms_buf, ms->ms_count, MSG_NOSIGNAL,	addr, addrlen);
