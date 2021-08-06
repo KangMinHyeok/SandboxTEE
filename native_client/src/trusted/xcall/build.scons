@@ -42,6 +42,7 @@ elif env.Bit('sgx'):
 	'env_cleanser', 
 	'nrd_xfer',
 	'platform',
+    'sgx_stdlib',
 	#'debug_stub',
 	])
 
