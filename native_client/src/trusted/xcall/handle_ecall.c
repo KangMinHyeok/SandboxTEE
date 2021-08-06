@@ -5,7 +5,6 @@
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ecall_types.h"
 #include "native_client/src/trusted/service_runtime/sgx/sgx_tls.h"
-
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
@@ -33,7 +32,7 @@ int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_targ
 	SET_ENCLAVE_TLS(ustack_top,  untrusted_stack);
 	SET_ENCLAVE_TLS(ustack,      untrusted_stack);
 	
-	ocall_debugp(111);
+	//ocall_debugp(111);
 	
 	switch(ecall_index) {
 		case ECALL_ENCLAVE_START:

@@ -8,9 +8,12 @@ Import('env')
 
 ldr_input = []
 if not env.Bit('sgx'):
+	print("SGX is not set in stdlib")
 	Return()
 
 ldr_input.append('printf.c')
+ldr_input.append('slab.c')
+ldr_input.append('strlen.c')
 env.DualLibrary('sgx_stdlib', ldr_input)
 
 

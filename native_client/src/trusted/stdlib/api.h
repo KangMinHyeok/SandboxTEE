@@ -115,13 +115,13 @@ typedef ptrdiff_t ssize_t;
 /* Libc String functions string.h/stdlib.h */
 size_t strnlen (const char *str, size_t maxlen);
 size_t strlen (const char *str);
-int strncmp (const char *s1, const char *s2, int n);
+//int strncmp (const char *s1, const char *s2, int n);
 int strcmp(const char *s1, const char *s2);
 char * strncpy(char *dst, const char *src, size_t n);
 char * strpbrk(const char *s1, const char *s2);
 char * strdup (const char *s);
 
-#if SGX//NACL_PAVE
+#if NACL_SGX == 1//NACL_PAVE
 extern int errno;
 #else
 
@@ -176,7 +176,7 @@ void fprintfmt (int (*_fputch)(void *, int, void *), void * f, void * putdat,
 void vfprintfmt (int (*_fputch)(void *, int, void *), void * f, void * putdat,
                  const char * fmt, va_list *ap);
 
-int snprintf (char * buf, int n, const char * fmt, ...);
+//int snprintf (char * buf, int n, const char * fmt, ...);
 
 /* Miscelleneous */
 
@@ -222,6 +222,8 @@ int get_config_entries (struct config_store * cfg, const char * key,
                         char * key_buf, size_t key_bufsize);
 ssize_t get_config_entries_size (struct config_store * cfg, const char * key);
 int set_config (struct config_store * cfg, const char * key, const char * val);
+
+int vsnprintf (char *string, size_t maxlen, const char *format, va_list args);
 
 #define CONFIG_MAX      4096
 
