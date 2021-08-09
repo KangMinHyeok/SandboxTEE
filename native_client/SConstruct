@@ -2802,7 +2802,7 @@ def MakeSgxEnv():
       'src/trusted/validator_ragel/build.scons',
       'src/trusted/validator_x86/build.scons',
       #'src/trusted/platform_qualify/build.scons',
-      #'src/trusted/stdlib/build.scons',
+      'src/trusted/stdlib/build.scons',
       'src/trusted/service_runtime/build.scons',
   ])
   
