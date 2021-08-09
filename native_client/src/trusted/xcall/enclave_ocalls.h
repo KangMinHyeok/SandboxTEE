@@ -8,7 +8,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-
+#include "native_client/src/trusted/stdlib/fileio.h"
 
 struct linux_dirent64 {
 	ino64_t        d_ino;    /* 64-bit inode number */
@@ -41,6 +41,7 @@ int ocall_fdatasync (int fd);
 int ocall_ftruncate (int fd, uint64_t length);
 int ocall_pread64 (int fd, void * buf, size_t count, unsigned long pos);
 int ocall_pwrite64 (int fd, const void * buf, size_t count, unsigned long offset);
+int ocall_fflush(FILE *fp);
 
 // Dir 
 int ocall_mkdir (const char * pathname, unsigned short mode);
@@ -82,7 +83,6 @@ int ocall_fionread (int fd);
 int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3);
 int ocall_print_string (const char * str, unsigned int length);
 int ocall_debugp (int val);
-
 
 
 
