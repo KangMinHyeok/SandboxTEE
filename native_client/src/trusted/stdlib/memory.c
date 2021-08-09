@@ -3,7 +3,7 @@
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ocall_types.h"
 
-#include "stdio.h"
+#include <stdio.h>
 
 static const int slab_levels[SLAB_LEVEL] = { SLAB_LEVEL_SIZES };
 static spinlock_t slab_lock;
