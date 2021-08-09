@@ -22,9 +22,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <api.h>
+//#include <api.h>
 // #include <ctype.h>
+#include "native_client/src/trusted/stdlib/string.h"
+#include "native_client/src/trusted/stdlib/memory.h"
+#include "native_client/src/include/build_config.h"
 
+#if NACL_SGX == 1
 bool isspace(int c) {
   return (c == ' ' || c == '\t'); // || whatever other char you consider space
 }
@@ -206,7 +210,8 @@ strpbrk(const char *s1, const char *s2)
   return (NULL);
 }
 
-
+// TODO(mhkang): delete strncpy, it is moved to strcpy.c
+/*
   char *
 strncpy(char *dst, const char *src, size_t n)
 {
@@ -215,7 +220,7 @@ strncpy(char *dst, const char *src, size_t n)
     const char *s = src;
     do { 
       if ((*d++ = *s++) == 0) {
-        /* NUL pad the remaining n-1 bytes */
+        // NUL pad the remaining n-1 bytes
         while (--n != 0)
           *d++ = 0;
         break;
@@ -224,7 +229,7 @@ strncpy(char *dst, const char *src, size_t n)
   }
   return (dst);
 }
-
+*/
   int
 strcmp(const char *s1, const char *s2)
 {
@@ -300,3 +305,5 @@ char * sgx_strdup (const char *s)
 
   return new_s;
 }
+
+#endif
