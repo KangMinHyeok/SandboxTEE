@@ -11,9 +11,12 @@ if not env.Bit('sgx'):
 	print("SGX is not set in stdlib")
 	Return()
 
+envt = env.Clone()
+envt.Append(CCFLAGS=['-Wno-point-arith'])
 ldr_input.append('printf.c')
 ldr_input.append('slab.c')
 ldr_input.append('strlen.c')
-env.DualLibrary('sgx_stdlib', ldr_input)
+
+envt.DualLibrary('sgx_stdlib', ldr_input)
 
 
