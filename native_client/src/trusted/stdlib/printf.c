@@ -43,8 +43,9 @@ struct printbuf {
 
 
 static int 
-fputch(void * f, int ch, struct printbuf * b)
+fputch(void * f, int ch, void * _b)
 {
+    struct printbuf * b = (struct printbuf *)_b;
     b->buf[b->idx++] = ch; 
     if (b->idx == PRINTBUF_SIZE - 1) {
         ocall_print_string (b->buf, b->idx);
@@ -61,7 +62,7 @@ vprintf(const char * fmt, va_list *ap)
 
     b.idx = 0;
     b.cnt = 0;
-    vfprintfmt((void *) &fputch, NULL, &b, fmt, ap);
+    vfprintfmt( &fputch, NULL, &b, fmt, ap);
     ocall_print_string (b.buf, b.idx);
     
     return b.cnt;
