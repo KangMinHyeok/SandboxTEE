@@ -17,6 +17,8 @@
 #include "native_client/src/trusted/desc/nacl_desc_null.h"
 #include "native_client/src/trusted/service_runtime/include/sys/fcntl.h"
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
+//#include "native_client/src/trusted/stdlib/string.h"
+//#include "native_client/src/trusted/stdlib/stddef.h"
 
 struct NaClDesc *NaClResourceOpen(struct NaClResource *self,
                                   char const          *resource_locator,
