@@ -382,7 +382,11 @@ typedef __WINT_TYPE__ wint_t;
 #undef        __need_NULL
 #ifdef _STDDEF_H
 /* Offset of member MEMBER in a struct of type TYPE. */
+#if !defined(__need_STDDEF_H_misc)
+#ifndef offsetof
 #define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
+#endif
+#endif
 #if (defined (__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) \
                                                          || (defined(__cplusplus) && __cplusplus >= 201103L)
 #ifndef _GCC_MAX_ALIGN_T
