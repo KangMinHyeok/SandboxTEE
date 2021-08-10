@@ -22,8 +22,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-//#include <api.h>
-// #include <ctype.h>
 #include "native_client/src/trusted/stdlib/string.h"
 #include "native_client/src/trusted/stdlib/memory.h"
 #include "native_client/src/include/build_config.h"
@@ -230,15 +228,8 @@ strncpy(char *dst, const char *src, size_t n)
   return (dst);
 }
 */
-  int
-strcmp(const char *s1, const char *s2)
-{
-  while (*s1 == *s2++)
-    if (*s1++ == 0)
-      return (0);
-  return (*(unsigned char *)s1 - *(unsigned char *)--s2);
-}
-  unsigned long
+
+unsigned long
 strtoul(const char *nptr, char **endptr, register int base)
 {
   register const char *s = nptr;
