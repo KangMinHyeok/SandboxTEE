@@ -58,9 +58,10 @@ int ocall_fclose(FILE *fp);
 size_t ocall_fread(void *buf, size_t size, size_t count, register FILE *fp);
 // TODO: impl
 size_t ocall_fwrite(const void *prt, size_t size, size_t nmemb, register FILE *fp);
-
-
 // TODO: impl
+int ocall_flock(int fd, int operation);
+// TODO: impl
+FILE * ocall_fdopen(int fd, const char *mode);
 // TODO: impl
 // TODO: impl
 
@@ -104,6 +105,8 @@ int ocall_getpid ();
 int ocall_fionread (int fd);
 int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3);
 int ocall_print_string (const char * str, unsigned int length);
+// TODO: impl
+int ocall_fprint_string (FILE *fp, const char * str, unsigned int length);
 int ocall_debugp (int val);
 
 
