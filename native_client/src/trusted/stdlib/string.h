@@ -20,10 +20,17 @@ extern bool isalpha(int c);
 extern bool isupper(int c);
 extern char *strchr(const char *s, int c_in);
 extern char *strpbrk(const char *s1, const char *s2);
-extern int strcmp(const char *s1, const char *s2);
 extern unsigned long strtoul(const char *nptr, char **endptr, register int base);
 // TODO(mhkang): check if it is in use.
 //extern char *sgx_strdup(const char *s);
+
+// strcmp.c
+extern int strcmp(const char *s1, const char *s2);
+extern int strncmp(const char *s1, const char *s2, size_t n);
+
+// strdup.c
+extern char * strdup(const char *s);
+extern char * strndup(const char *s, size_t n);
 
 #endif
 
