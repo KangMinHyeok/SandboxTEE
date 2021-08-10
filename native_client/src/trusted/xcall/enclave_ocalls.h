@@ -8,7 +8,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "native_client/src/trusted/stdlib/fileio.h"
+#include "native_client/src/trusted/stdlib/filestruct.h"
 
 struct linux_dirent64 {
 	ino64_t        d_ino;    /* 64-bit inode number */
