@@ -13,7 +13,8 @@ typedef struct
   unsigned char hold ;
   unsigned char *buffer ;
   unsigned char * curp ;
-  unsigned istemp; 
+  unsigned istemp;
+  int _fileno; 
 }FILE ;
 
 #endif
