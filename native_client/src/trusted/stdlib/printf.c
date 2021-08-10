@@ -19,6 +19,7 @@
 
 //#include "pal_internal.h"
 #include "api.h"
+#include "stdio.h"
 
 
 //#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
@@ -56,17 +57,17 @@ fputch(void * f, int ch, void * _b)
 }
 
 int
-vprintf(const char * fmt, va_list *ap)
+vprintf(const char *__restrict fmt, va_list *ap)
 {
     struct printbuf b;
 
     b.idx = 0;
     b.cnt = 0;
-    vfprintfmt( &fputch, NULL, &b, fmt, ap);
+    vfprintfmt( &fputch, NULL, &b, fmt, (va_list *)ap);
     ocall_print_string (b.buf, b.idx);
     
     return b.cnt;
-    }
+}
 
 int
 printf(const char * fmt, ...)
@@ -76,6 +77,31 @@ printf(const char * fmt, ...)
 
     va_start(ap, fmt);
     cnt = vprintf(fmt, &ap);
+    va_end(ap);
+
+    return cnt;
+}
+
+int
+vfprintf(FILE *__restrict fp, const char *__restrict fmt, va_list *ap)
+{
+    struct printbuf b;
+    b.idx = 0;
+    b.cnt = 0;
+    vfprintfmt(&fputch, NULL, &b, fmt, (va_list *)ap);
+    ocall_fprint_string(fp, b.buf, b.idx);
+
+    return b.cnt;
+}
+
+int 
+fprintf(FILE *fp, const char *fmt, ...)
+{
+    va_list ap;
+    int cnt;
+    
+    va_start(ap, fmt);
+    cnt  = vfprintf(fp, fmt, &ap);
     va_end(ap);
 
     return cnt;
