@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "native_client/src/trusted/stdlib/filestruct.h"
+#include "native_client/src/trusted/stdlib/stddef.h"
 
 struct linux_dirent64 {
 	ino64_t        d_ino;    /* 64-bit inode number */
@@ -41,7 +42,28 @@ int ocall_fdatasync (int fd);
 int ocall_ftruncate (int fd, uint64_t length);
 int ocall_pread64 (int fd, void * buf, size_t count, unsigned long pos);
 int ocall_pwrite64 (int fd, const void * buf, size_t count, unsigned long offset);
+// TODO: impl
 int ocall_fflush(FILE *fp);
+// TODO: impl
+int ocall_ferror(FILE *fp);
+// TODO: impl
+long ocall_ftell(FILE *fp);
+// TODO: impl
+int ocall_fseek (FILE *fp, long offset, int whence);
+// TODO: impl
+FILE * ocall_fopen(const char *file, const char *mod);
+// TODO: impl
+int ocall_fclose(FILE *fp);
+// TODO: impl
+size_t ocall_fread(void *buf, size_t size, size_t count, register FILE *fp);
+// TODO: impl
+size_t ocall_fwrite(const void *prt, size_t size, size_t nmemb, register FILE *fp);
+
+
+// TODO: impl
+// TODO: impl
+// TODO: impl
+
 
 // Dir 
 int ocall_mkdir (const char * pathname, unsigned short mode);
