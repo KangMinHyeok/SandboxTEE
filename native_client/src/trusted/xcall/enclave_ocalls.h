@@ -40,8 +40,10 @@ int ocall_fchdir (int fd);
 int ocall_fsync (int fd);
 int ocall_fdatasync (int fd);
 int ocall_ftruncate (int fd, uint64_t length);
+int ocall_lseek64(int fd, long int offset, int whence);
 int ocall_pread64 (int fd, void * buf, size_t count, unsigned long pos);
 int ocall_pwrite64 (int fd, const void * buf, size_t count, unsigned long offset);
+int ocall_dup (int fd);
 // TODO: impl
 int ocall_fflush(FILE *fp);
 // TODO: impl
@@ -100,6 +102,7 @@ int ocall_sleep(unsigned long * microsec);
 int ocall_nsleep(struct timespec *rqtp, struct timespec *rmtp);
 
 // Misc 
+void ocall_exit (int exitcode);
 int ocall_cpuid (unsigned int leaf, unsigned int subleaf, unsigned int values[4]);
 int ocall_getpid ();
 int ocall_fionread (int fd);
