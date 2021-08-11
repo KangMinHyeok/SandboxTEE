@@ -12,11 +12,3 @@ void HandleExternalEvent (int event, void * uc){
   UNREFERENCED_PARAMETER(event);
 }
 
-/* This does not return */
-void __abort(void) {
-}
-
-void warn (const char *format, ...)
-{
-
-}

@@ -1,4 +1,4 @@
-#ifndef __ENCALVE_OCALLS__
+#ifndef __ENCLAVE_OCALLS__
 #define __ENCLAVE_OCALLS__
 
 #include <unistd.h>
@@ -7,11 +7,11 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <sys/types.h>
-#include <sys/socket.h>
+//#include <sys/socket.h>
 #include "native_client/src/trusted/stdlib/filestruct.h"
 #include "native_client/src/trusted/stdlib/stddef.h"
 
-
+struct sockaddr;
 // Mem
 int ocall_alloc_untrusted (uint64_t size, void ** mem);
 int ocall_mmap_untrusted (int fd, uint64_t offset, uint64_t size, unsigned short prot, void ** mem);
@@ -37,11 +37,11 @@ int ocall_pread64 (int fd, void * buf, size_t count, unsigned long pos);
 int ocall_pwrite64 (int fd, const void * buf, size_t count, unsigned long offset);
 int ocall_dup (int fd);
 // TODO: impl
-int ocall_fflush(FILE *fp);
+//int ocall_fflush(FILE *fp);
 // TODO: impl
-int ocall_ferror(FILE *fp);
+//int ocall_ferror(FILE *fp);
 // TODO: impl
-long ocall_ftell(FILE *fp);
+//long ocall_ftell(FILE *fp);
 // TODO: impl
 int ocall_fseek (FILE *fp, long offset, int whence);
 // TODO: impl
@@ -60,6 +60,7 @@ FILE * ocall_fdopen(int fd, const char *mode);
 int ocall_dup(int oldfd);
 // TODO: impl
 int ocall_lseek64(int fd, long int off, int whence);
+int ocall_getpid(void);
 
 // Dir 
 int ocall_mkdir (const char * pathname, unsigned short mode);
@@ -99,7 +100,7 @@ int ocall_nsleep(struct timespec *rqtp, struct timespec *rmtp);
 // Misc 
 void ocall_exit (int exitcode);
 int ocall_cpuid (unsigned int leaf, unsigned int subleaf, unsigned int values[4]);
-int ocall_getpid ();
+int ocall_getpid (void);
 int ocall_fionread (int fd);
 int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3);
 int ocall_print_string (const char * str, unsigned int length);

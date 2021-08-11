@@ -40,6 +40,13 @@ int sgx_ocall_getpid(void * pms) {
 	return getpid();
 }
 
+void sgx_ocall_exit(int status)
+{
+    //TODO: impl
+    status += 1;
+    return;
+}
+
 int sgx_ocall_fionread(void * pms) {
 	ms_ocall_fionread_t * ms = (ms_ocall_fionread_t *) pms;
 	int ret = 0;

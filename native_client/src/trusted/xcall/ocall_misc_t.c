@@ -3,6 +3,7 @@
 #include "native_client/src/trusted/xcall/ocall_types.h"
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ecall_types.h"
+#include "native_client/src/trusted/stdlib/filestruct.h"
 
 
 void ocall_exit(int exitcode) {
@@ -58,6 +59,12 @@ int ocall_fionread (int fd) {
 	return retval;
 }
 
+void ocall_exit(int status)
+{
+    // TODO: impl
+    status = status + 1;
+    return;
+}
 int ocall_print_string (const char * str, unsigned int length) {   
 	int retval = 0;
 	ms_ocall_print_string_t * ms;
@@ -88,6 +95,13 @@ int ocall_print_string (const char * str, unsigned int length) {
 out: 
 	sgx_reset_ustack(old_ustack);
 	return retval;
+}
+
+
+int ocall_fprint_string (FILE *fp, const char * str, unsigned int length){
+    // TODO: impl
+    int ret = 0;
+    return ret;
 }
 
 int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3) {
