@@ -22,6 +22,8 @@
 //#include "native_client/src/trusted/stdlib/libioP.h"
 //#include "native_client/src/trusted/stdlib/stdfiles.h"
 #include "native_client/src/trusted/stdlib/stdio.h"
+#include "native_client/src/trusted/stdlib/stddef.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #include "native_client/src/include/build_config.h"
 
 #if NACL_SGX == 1
@@ -31,4 +33,21 @@
 FILE *stdin = (FILE *) 0;
 FILE *stdout = (FILE *) 1;
 FILE *stderr = (FILE *) 2;
+int open(const char *__file, int __oflag, ...)
+{
+    short mode = 0;
+    va_list ap;
+    va_start(ap, __oflag);
+    mode = va_arg(ap, int);
+    int ret = ocall_open(__file,__oflag, mode);
+    va_end(ap);
+    return ret;
+}
+int setvbuf (FILE *__restrict __stream, char *__restrict __buf, int __modes, size_t __n)
+{
+    //TODO: impl
+    int ret = 0;
+    return ret;
+}
+
 #endif
