@@ -1,5 +1,5 @@
 #include <asm/errno.h>
-
+#include <sys/socket.h>
 
 #include "native_client/src/shared/platform/nacl_check.h"
 #include "native_client/src/shared/platform/nacl_host_desc.h"
