@@ -49,7 +49,7 @@
 #include "native_client/src/trusted/xcall/sgx_thread.h"
 
 
-int ecall_enclave_start (void);
+int ecall_enclave_start (struct NaClApp *nap);
 
 /*
  * Fill from static_text_end to end of that page with halt
@@ -293,7 +293,7 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 
 	create_tcs_mapper ((void *)((uint64_t)nap->sgx->enclave_secs->baseaddr + (uint64_t)tcs_addr), thread_num);
 	map_tcs(gettid());
-	ecall_enclave_start();
+	ecall_enclave_start(nap);
 
 }
 

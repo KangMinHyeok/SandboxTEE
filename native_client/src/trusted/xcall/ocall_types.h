@@ -13,7 +13,6 @@
 #define OCALL_NO_TIMEOUT   ((unsigned long) -1)
 
 enum {
-	OCALL_EXIT = 0,
 	//
 	OCALL_ALLOC_UNTRUSTED,	// Mem
 	OCALL_MMAP_UNTRUSTED,		// Mem
@@ -40,6 +39,7 @@ enum {
 	OCALL_LSEEK64, 					// File
 	OCALL_PREAD64,					// File
 	OCALL_PWRITE64,					// File
+	OCALL_DUP,							// File
 	//
 	OCALL_MKDIR,						// Dir
 	OCALL_RMDIR,						// Dir
@@ -72,6 +72,7 @@ enum {
 	//OCALL_POLL,	
 	//OCALL_DELETE,
 	//
+	OCALL_EXIT,							// Misc
 	OCALL_CPUID,						// Misc
 	OCALL_GETPID, 					// Misc
 	OCALL_FIONREAD,					// Misc
@@ -189,6 +190,9 @@ typedef struct {
 	unsigned int ms_offset;
 } ms_ocall_pwrite64_t;
 
+typedef struct {
+	int ms_fd;
+} ms_ocall_dup_t;
 
 // Dir
 typedef struct {
@@ -400,6 +404,7 @@ int sgx_ocall_ftruncate(void * pms);
 int sgx_ocall_lseek64(void * pms);
 int sgx_ocall_pread64(void * pms);
 int sgx_ocall_pwrite64(void * pms);
+int sgx_ocall_dup(void * pms);
 
 // OS
 int sgx_ocall_mkdir(void * pmd);
@@ -440,6 +445,7 @@ int sgx_ocall_sleep(void * pms);
 int sgx_ocall_nsleep(void * pms);
 
 // Misc 
+int sgx_ocall_exit(void * pms);
 int sgx_ocall_cpuid(void * pms);
 int sgx_ocall_getpid(void * pms);
 int sgx_ocall_fionread(void * pms);

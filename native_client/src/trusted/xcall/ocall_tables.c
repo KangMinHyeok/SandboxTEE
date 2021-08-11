@@ -27,6 +27,7 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_LSEEK64] = sgx_ocall_lseek64,
 	[OCALL_PREAD64] = sgx_ocall_pread64,
 	[OCALL_PWRITE64] = sgx_ocall_pwrite64,
+	[OCALL_DUP] = sgx_ocall_dup,
 
 	[OCALL_MKDIR] = sgx_ocall_mkdir,
 	[OCALL_RMDIR] = sgx_ocall_rmdir,
@@ -56,7 +57,8 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_CLOCK_GETTIME] = sgx_ocall_clock_gettime,
 	[OCALL_SLEEP] = sgx_ocall_sleep,
 	[OCALL_NSLEEP] = sgx_ocall_nsleep,
-	
+
+	[OCALL_EXIT] = sgx_ocall_exit,
 	[OCALL_CPUID] = sgx_ocall_cpuid,
 	[OCALL_GETPID] = sgx_ocall_getpid,
 	[OCALL_FIONREAD] = sgx_ocall_fionread,
