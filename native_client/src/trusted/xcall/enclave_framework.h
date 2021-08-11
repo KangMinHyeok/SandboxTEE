@@ -25,4 +25,5 @@ void sgx_reset_ustack(const void* old_ustack) ;
 bool sgx_copy_ptr_to_enclave(void** ptr, void* uptr, size_t size) ;
 bool sgx_copy_to_enclave(const void* ptr, size_t maxsize, const void* uptr, size_t usize) ;
 
+uint32_t rdrand(void);
 #endif
