@@ -8,6 +8,11 @@
 #include "native_client/src/trusted/service_runtime/sgx/sgx_common.h"
 
 
+// TODO must modify
+unsigned long pagesize = PRESET_PAGESIZE;
+unsigned long pageshift = PRESET_PAGESIZE - 1;
+unsigned long pagemask = ~(PRESET_PAGESIZE - 1); 
+
 #define MAX_UNTRUSTED_STACK_BUF 128*PRESET_PAGESIZE
 
 int ocall_open (const char * pathname, int flags, unsigned short mode) {
