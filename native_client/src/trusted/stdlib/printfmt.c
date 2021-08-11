@@ -7,7 +7,9 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-#include "api.h"
+#include "native_client/src/trusted/stdlib/api.h"
+#include "native_client/src/trusted/stdlib/stddef.h"
+#include "native_client/src/trusted/stdlib/string.h"
 
 // Print a number (base <= 16) in reverse order,
 // using specified fputch function and associated pointer putdat.
@@ -283,8 +285,9 @@ struct sprintbuf {
 };
 
 static int
-sprintputch(void * f, int ch, struct sprintbuf * b)
+sprintputch(void * f, int ch, void * _b)
 {
+        struct sprintbuf *b = (struct sprintbuf *)_b;
         if (b->cnt >= b->max)
                 return -1;
 
@@ -301,12 +304,31 @@ vsprintf(char * buf, int n, const char * fmt, va_list *ap)
                 return 0;
 
         // print the string to the buffer
-        vfprintfmt((void *) sprintputch, (void *) 0, &b, fmt, ap);
+        vfprintfmt(sprintputch, (void *) 0, &b, fmt, ap);
 
         // null terminate the buffer
         if (b.cnt < n)
                 b.buf[b.cnt] = '\0';
 
+        return b.cnt;
+}
+
+int
+vsnprintf(char *buf, size_t n, const char *fmt, va_list ap)
+{
+
+        struct sprintbuf b = { 0, n, buf };
+
+        if (!buf || n < 1)
+                return 0;
+
+        // print the string to the buffer
+        vfprintfmt(sprintputch, (void *) 0, &b, fmt, (va_list *)&ap);
+
+        // null terminate the buffer
+        if (b.cnt < (int)n)
+                b.buf[b.cnt] = '\0';
+        
         return b.cnt;
 }
 
