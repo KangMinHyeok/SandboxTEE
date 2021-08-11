@@ -39,6 +39,7 @@
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #include "native_client/src/trusted/stdlib/errno.h"
 #include <sys/mman.h>
+#include "native_client/src/trusted/stdlib/api.h"
 
 // # include "native_client/src/shared/platform/posix/nacl_file_lock.h"
 # if NACL_ANDROID
@@ -599,16 +600,17 @@ int NaClHostDescFstat(struct NaClHostDesc  *d,
 
   return 0;
 }
-/*
+
 int NaClHostDescIsatty(struct NaClHostDesc *d) {
   int retval;
 
   NaClHostDescCheckValidity("NaClHostDescIsatty", d);
-  retval = isatty(d->d);
+  // TODO: handle isatty
+  retval = 1;//isatty(d->d);
   // * When isatty fails it returns zero and sets errno. 
   return (0 == retval) ? -NaClXlateErrno(errno) : retval;
 }
-*/
+
 int NaClHostDescClose(struct NaClHostDesc *d) {
   int retval;
 
