@@ -2,6 +2,7 @@
 
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ocall_types.h"
+#include "native_client/src/trusted/stdlib/assert.h"
 
 #include <stdio.h>
 
@@ -595,9 +596,11 @@ void __free (void * addr, int size)
 /* This does not return */
 
 //TODO
-void __abort(void) {
+//void __abort(void) {
     //ocall_exit(13);
-}
+//}
+
+
 
 static inline void slab_free (SLAB_MGR mgr, void * obj)
 {
