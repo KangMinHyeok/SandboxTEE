@@ -6,6 +6,8 @@
 
 #if NACL_SGX == 1
 #include <bits/types.h>
+#include <sys/stat.h>
+
 int fflush(FILE *fp);
 int fsync(int fd);
 int ferror(FILE *fp);
@@ -23,6 +25,10 @@ int fdatasync(int fd);
 FILE *fdopen(int fd, const char *mode);
 int ffs(register int mask);
 int fileno(FILE *fp);
+int fstat64(int fd, struct stat64 *buf);
+void perror(const char *s);
+int getpid(void);
+int dup(int oldfd);
 #endif
 
 #endif
