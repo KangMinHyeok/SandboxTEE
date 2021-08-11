@@ -19,8 +19,10 @@ void vfprintfmt (int (*_fputch)(void *, int, void *), void * f, void * putdat,
                  const char * fmt, va_list *ap);
 
 
+int open(const char *__file, int __oflag, ...);
 
-
+//int setvbuf(FILE *fp, int mode, size_t size);
+int setvbuf (FILE *__restrict __stream, char *__restrict __buf, int __modes, size_t __n);
 #endif 
 #define EOF (-1)
 
