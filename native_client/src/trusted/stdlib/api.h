@@ -182,7 +182,7 @@ int vfprintf(FILE *fp, const char *fmt, va_list *ap);
 //             __gnuc_va_list __arg);
 
 int fprintf(FILE *fp, const char *fmt, ...);
-//int snprintf (char * buf, int n, const char * fmt, ...);
+int snprintf (char * buf, int n, const char * fmt, ...);
 #endif 
 /* Miscelleneous */
 

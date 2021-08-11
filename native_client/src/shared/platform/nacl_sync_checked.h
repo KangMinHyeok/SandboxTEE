@@ -18,7 +18,9 @@
 #include "native_client/src/include/nacl_base.h"
 
 #include "native_client/src/shared/platform/nacl_sync.h"
-
+#if defined(__native_client__) || (NACL_WINDOWS == 0)
+#include <pthread.h>
+#endif
 EXTERN_C_BEGIN
 
 /*

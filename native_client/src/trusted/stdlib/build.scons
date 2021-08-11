@@ -25,6 +25,7 @@ ldr_input.append('errno-loc.c')
 ldr_input.append('stdio.c')
 ldr_input.append('memory.c')
 ldr_input.append('fileio.c')
+ldr_input.append('qsort.c')
 envt.DualLibrary('sgx_stdlib', ldr_input)
 
 
