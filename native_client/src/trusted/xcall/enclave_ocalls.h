@@ -11,14 +11,6 @@
 #include "native_client/src/trusted/stdlib/filestruct.h"
 #include "native_client/src/trusted/stdlib/stddef.h"
 
-struct linux_dirent64 {
-	ino64_t        d_ino;    /* 64-bit inode number */
-	off64_t        d_off;    /* 64-bit offset to next structure */
-	unsigned short d_reclen; /* Size of this dirent */
-	unsigned char  d_type;   /* File type */
-	char           d_name[]; /* Filename (null-terminated) */
-};
-
 
 // Mem
 int ocall_alloc_untrusted (uint64_t size, void ** mem);
@@ -63,8 +55,9 @@ int ocall_flock(int fd, int operation);
 // TODO: impl
 FILE * ocall_fdopen(int fd, const char *mode);
 // TODO: impl
+int ocall_dup(int oldfd);
 // TODO: impl
-
+int ocall_lseek64(int fd, long int off, int whence);
 
 // Dir 
 int ocall_mkdir (const char * pathname, unsigned short mode);
@@ -94,6 +87,8 @@ int ocall_sock_setopt (int sockfd, int level, int optname, const void * optval, 
 int ocall_sock_shutdown (int sockfd, int how);
 
 // Time
+// TODO: impl
+int ocall_gettime (struct timeval *tv);
 int ocall_gettimeofday (struct timeval *tv);
 int ocall_clock_gettime (int clk_id, struct timespec *tp);
 int ocall_sleep(unsigned long * microsec);
@@ -108,7 +103,8 @@ int ocall_print_string (const char * str, unsigned int length);
 // TODO: impl
 int ocall_fprint_string (FILE *fp, const char * str, unsigned int length);
 int ocall_debugp (int val);
-
+// TODO: impl
+void ocall_exit(int status);
 
 
 #endif
