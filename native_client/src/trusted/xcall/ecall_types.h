@@ -8,7 +8,7 @@ enum {
 };
 
 typedef struct {
-	int temp;
+	unsigned char *nap;
 } ms_ecall_enclave_start_t;
 
 
