@@ -334,3 +334,16 @@ int ocall_pwrite64 (int fd, const void * buf, size_t count, unsigned long offset
 	return retval;
 }
 
+int ocall_dup(int fd) {
+	int retval = 0;
+	ms_ocall_dup_t * ms;
+	void * old_ustack = sgx_prepare_ustack();
+	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
+
+	ms->ms_fd = fd;
+
+	retval = sgx_ocall(OCALL_DUP, ms);
+	sgx_reset_ustack(old_ustack);
+
+	return retval;
+}

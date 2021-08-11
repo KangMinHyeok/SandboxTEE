@@ -133,3 +133,10 @@ int sgx_ocall_pwrite64(void * pms) {
 	return ret;
 }
 
+int sgx_ocall_dup(void * pms) {
+	ms_ocall_dup_t * ms = (ms_ocall_dup_t *) pms;
+	int ret = 0;
+	ret = dup(ms->ms_fd);
+	return ret;
+}
+
