@@ -22,6 +22,7 @@ void * memcpy (void *dstpp, const void *srcpp, size_t len);
 void * memmove (void *dstpp, const void *srcpp, size_t len);
 void * memset (void *dstpp, int c, size_t len);
 int memcmp (const void *s1, const void *s2, size_t len);
+void * memalign(size_t align, size_t len);
 
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
 int _DkVirtualMemoryFree (void * addr, uint64_t size);
