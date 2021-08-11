@@ -24,6 +24,7 @@
 #include "native_client/src/trusted/service_runtime/nacl_tls.h"
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
 #include "native_client/src/trusted/service_runtime/thread_suspension.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 #if !defined(FUTEX_WAIT_PRIVATE)
 # define FUTEX_WAIT_PRIVATE FUTEX_WAIT
@@ -51,7 +52,13 @@ struct NaClAppThreadSuspendedRegisters {
  * which is very out-of-date.)
  */
 static void FutexWait(Atomic32 *addr, Atomic32 value) {
-  if (syscall(__NR_futex, addr, FUTEX_WAIT_PRIVATE, value, 0, 0, 0) != 0) {
+  int ret;
+#if NACL_SGX == 1
+  ret = ocall_futex((int *)addr, FUTEX_WAIT_PRIVATE, value, 0, 0, 0);
+#else
+  ret = syscall(__NR_futex, addr, FUTEX_WAIT_PRIVATE, value, 0, 0, 0);
+#endif
+  if (ret != 0) {
     /*
      * We get EWOULDBLOCK if *addr != value (EAGAIN is a synonym).
      * We get EINTR if interrupted by a signal.
@@ -67,7 +74,13 @@ static void FutexWait(Atomic32 *addr, Atomic32 value) {
  * |waiters| is the maximum number of threads that will be woken up.
  */
 static void FutexWake(Atomic32 *addr, int waiters) {
-  if (syscall(__NR_futex, addr, FUTEX_WAKE_PRIVATE, waiters, 0, 0, 0) < 0) {
+  int ret;
+#if NACL_SGX == 1
+  ret = ocall_futex((int *)addr, FUTEX_WAKE_PRIVATE, waiters, 0, 0, 0);
+#else
+  ret = syscall(__NR_futex, addr, FUTEX_WAKE_PRIVATE, waiters, 0, 0, 0);
+#endif
+  if (ret < 0) {
     NaClLog(LOG_FATAL, "FutexWake: futex() failed with error %d\n", errno);
   }
 }
