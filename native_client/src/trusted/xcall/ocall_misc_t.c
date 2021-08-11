@@ -5,6 +5,14 @@
 #include "native_client/src/trusted/xcall/ecall_types.h"
 
 
+void ocall_exit(int exitcode) {
+	int64_t code = exitcode;
+
+	while (true) {
+		sgx_ocall(OCALL_EXIT, (void *) code);
+	}
+}
+
 int ocall_cpuid (unsigned int leaf, unsigned int subleaf, unsigned int values[4]) {
 	int retval = 0;
 	ms_ocall_cpuid_t * ms;

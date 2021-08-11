@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
@@ -9,6 +10,18 @@
 
 #include "native_client/src/trusted/xcall/ocall_types.h"
 
+
+int sgx_ocall_exit(void * pms) {
+	int64_t ms = (int64_t) pms;
+
+	if (ms != (int64_t)((uint8_t) ms)) {
+		printf("Saturation error in exit code %ld, getting rounded down to %u\n", ms, (uint8_t) ms);
+		ms = 255;
+	}
+
+	syscall(SYS_exit_group, (int) ms);
+	return 0;
+}
 
 int sgx_ocall_cpuid(void * pms) {
 	ms_ocall_cpuid_t * ms = (ms_ocall_cpuid_t *) pms;
