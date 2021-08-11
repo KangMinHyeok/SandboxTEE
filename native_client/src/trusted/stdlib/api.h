@@ -196,6 +196,7 @@ uint16_t __ntohs (uint16_t x);
 
 extern const char * const * sys_errlist_internal;
 
+char * getenv (const char *name);
 /* Graphene functions */
 
 int get_norm_path (const char * path, char * buf, int offset, int size);
@@ -230,6 +231,12 @@ ssize_t get_config_entries_size (struct config_store * cfg, const char * key);
 int set_config (struct config_store * cfg, const char * key, const char * val);
 
 int vsnprintf (char *string, size_t maxlen, const char *format, va_list args);
+
+//int snprintf(char *s, size_t maxlen, const char *format, ...);
+void vfprintfmt(int (*_fputch)(void *, int, void *), void *f, void * putdat,
+        const char * fmt, va_list *ap);
+
+int isatty(int fd);
 
 #define CONFIG_MAX      4096
 
