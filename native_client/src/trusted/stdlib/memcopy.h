@@ -36,8 +36,8 @@
    exhaustive in the sense that I tried all alignment and length
    combinations, with and without overlap.  */
 
-#include <host_endian.h>
-
+//#include <host_endian.h>
+#include "native_client/src/trusted/stdlib/endian.h"
 /* Type to use for aligned memory operations.
    This should normally be the biggest type supported by a single load
    and store.  */
