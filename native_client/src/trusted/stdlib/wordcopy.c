@@ -20,9 +20,10 @@
 
 /* BE VERY CAREFUL IF YOU CHANGE THIS CODE...!  */
 
-#include <stddef.h>
+#include "native_client/src/trusted/stdlib/stddef.h"
 //#include <sysdeps/generic/memcopy.h>
-#include <memcopy.h>
+#include "native_client/src/trusted/stdlib/memcopy.h"
+//#include <memcopy.h>
 /* _wordcopy_fwd_aligned -- Copy block beginning at SRCP to
    block beginning at DSTP with LEN `op_t' words (not LEN bytes!).
    Both SRCP and DSTP should be aligned for memory operations on `op_t's.  */
