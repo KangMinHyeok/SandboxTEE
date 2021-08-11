@@ -13,7 +13,10 @@
 
 #include "native_client/src/include/build_config.h"
 
-#if defined(__native_client__) || NACL_LINUX || NACL_OSX
+struct NaClMutex;
+#if NACL_SGX == 1
+//# include "native_client/src/shared/platform/sgx/nacl_fast_mutex.h"
+#elif defined(__native_client__) || NACL_LINUX || NACL_OSX
 # include <pthread.h>
 # include "native_client/src/shared/platform/posix/nacl_fast_mutex.h"
 #elif NACL_WINDOWS
@@ -38,15 +41,19 @@ typedef struct timespec NACL_TIMESPEC_T;
 // src/trusted/service_runtime/include/sys/time.h, so there is no conflict.
 typedef struct nacl_abi_timespec NACL_TIMESPEC_T;
 #endif
-
 struct NaClMutex {
-#if defined(__native_client__) || NACL_LINUX || NACL_OSX
+
+#if NACL_SGX == 1
+  int32_t mu;
+  char reserved[40]; // for padding
+  int held;
+#elif defined(__native_client__) || NACL_LINUX || NACL_OSX
   pthread_mutex_t mu;
   int held;
 #elif NACL_WINDOWS
   void* lock;
   int held;
-  /*
+  /*  
    * Windows lock implementation is recursive -- use a boolean to
    * convert to a binary mutex.
    */
@@ -55,6 +62,18 @@ struct NaClMutex {
 #endif
 };
 
+#if NACL_SGX == 1
+struct NaClCondVar {
+    struct NaClMutex mu; 
+    int seq;
+    int pad;
+};
+
+struct NaClFastMutex{
+    struct NaClMutex mu;
+};
+
+#else
 struct NaClCondVar {
 #if defined(__native_client__) || NACL_LINUX || NACL_OSX
   pthread_cond_t cv;
@@ -64,6 +83,7 @@ struct NaClCondVar {
 # error "What OS?"
 #endif
 };
+#endif
 
 struct nacl_abi_timespec;
 
