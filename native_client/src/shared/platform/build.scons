@@ -74,11 +74,12 @@ elif env.Bit('mac'):
 
 if env.Bit('sgx'):
   platform_inputs += [
+    'sgx/aligned_malloc.c',
     'sgx/condition_variable.c',
     'sgx/nacl_clock.c',
     'sgx/nacl_fast_mutex.c',
     'sgx/nacl_find_addrsp.c',
-    'sgx/nacl_host_desc_origin.c',
+    #'sgx/nacl_host_desc_origin.c',
     'sgx/nacl_host_ifc.c',
     'sgx/nacl_threads.c',
     'sgx/nacl_timestamp.c',
