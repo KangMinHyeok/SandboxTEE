@@ -43,6 +43,9 @@
 #include "native_client/src/trusted/service_runtime/sel_main_common.h"
 #include "native_client/src/trusted/service_runtime/sel_qualify.h"
 
+
+#include "native_client/src/trusted/stdlib/fileio.h"
+//#include "native_client/src/trusted/stdlib/stdio.h"
 /*
 static void VmentryPrinter(void           *state,
                     struct NaClVmmapEntry *vmep) {
@@ -245,10 +248,12 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   NaClExit(ret_code);
 
  //error:
+  // mhkang
   fflush(stdout);
 
   if (options->verbosity > 0) {
     printf("Dumping vmmap.\n");
+    
     fflush(stdout);
     // PrintVmmap(nap);
     fflush(stdout);

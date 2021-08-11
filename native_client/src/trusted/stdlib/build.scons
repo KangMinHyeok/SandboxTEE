@@ -11,9 +11,20 @@ if not env.Bit('sgx'):
 	print("SGX is not set in stdlib")
 	Return()
 
+envt = env.Clone()
+envt.Append(CCFLAGS=['-Wno-pointer-arith'])
 ldr_input.append('printf.c')
-ldr_input.append('slab.c')
+#ldr_input.append('slab.c')
 ldr_input.append('strlen.c')
-env.DualLibrary('sgx_stdlib', ldr_input)
+ldr_input.append('strchr.c')
+ldr_input.append('strcpy.c')
+ldr_input.append('strcmp.c')
+ldr_input.append('strdup.c')
+ldr_input.append('strtol.c')
+ldr_input.append('errno-loc.c')
+ldr_input.append('stdio.c')
+ldr_input.append('memory.c')
+ldr_input.append('fileio.c')
+envt.DualLibrary('sgx_stdlib', ldr_input)
 
 

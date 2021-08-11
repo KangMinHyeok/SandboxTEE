@@ -16,6 +16,7 @@
 #include "native_client/src/include/build_config.h"
 //#include "native_client/src/trusted/xcall/enclave_exception.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
+//#include "native_client/src/trusted/stdlib/stddef.h"
 
 void * memcpy (void *dstpp, const void *srcpp, size_t len);
 void * memmove (void *dstpp, const void *srcpp, size_t len);
@@ -150,8 +151,43 @@ extern void _wordcopy_fwd_dest_aligned (long int, long int, int);
 typedef unsigned char byte;
 
 #ifndef size_t
+#ifndef __size_t__        /* BeOS */
+#ifndef __SIZE_T__        /* Cray Unicos/Mk */
+#ifndef _SIZE_T        /* in case <sys/types.h> has defined it. */
+#ifndef _SYS_SIZE_T_H
+#ifndef _T_SIZE_
+#ifndef _T_SIZE
+#ifndef __SIZE_T
+#ifndef _SIZE_T_
+#ifndef _BSD_SIZE_T_
+#ifndef _SIZE_T_DEFINED_
+#ifndef _SIZE_T_DEFINED
+#ifndef _BSD_SIZE_T_DEFINED_        /* Darwin */
+#ifndef _SIZE_T_DECLARED        /* FreeBSD 5 */
+#ifndef ___int_size_t_h
+#ifndef _GCC_SIZE_T
+#ifndef _SIZET_
+#ifndef __size_t
+
 typedef __kernel_size_t size_t;
 #endif
+#endif /* __size_t */
+#endif /* _SIZET_ */
+#endif /* _GCC_SIZE_T */
+#endif /* ___int_size_t_h */
+#endif /* _SIZE_T_DECLARED */
+#endif /* _BSD_SIZE_T_DEFINED_ */
+#endif /* _SIZE_T_DEFINED */
+#endif /* _SIZE_T_DEFINED_ */
+#endif /* _BSD_SIZE_T_ */
+#endif /* _SIZE_T_ */
+#endif /* __SIZE_T */
+#endif /* _T_SIZE */
+#endif /* _T_SIZE_ */
+#endif /* _SYS_SIZE_T_H */
+#endif /* _SIZE_T */
+#endif /* __SIZE_T__ */
+#endif /* __size_t__ */
 
 /*
 #define LIST_TYPE(STRUCT) struct list_head ##_## STRUCT

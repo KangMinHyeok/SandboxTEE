@@ -5,7 +5,7 @@
  */
 
 #include <stdlib.h>
-#include <string.h>
+//#include <string.h>
 
 #include "native_client/src/trusted/fault_injection/fault_injection.h"
 
@@ -16,6 +16,7 @@
 #include "native_client/src/shared/platform/nacl_log.h"
 #include "native_client/src/shared/platform/nacl_sync.h"
 #include "native_client/src/shared/platform/nacl_sync_checked.h"
+#include "native_client/src/trusted/stdlib/string.h"
 
 #if 0
 /* to crash on error, rather than let a confused process keep running */
@@ -584,7 +585,7 @@ void NaClFaultInjectionModuleInternalInit(void) {
     return;
   }
   /* get a definitely-mutable version that we will free later */
-  config = STRDUP(config);
+  config = strdup(config);
   /* Leave as CHECK since otherwise using process would die soon anyway */
   CHECK(NULL != config);
   for (cur_entry = config; '\0' != *cur_entry; cur_entry = next_entry) {

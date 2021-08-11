@@ -28,6 +28,7 @@
 // #include "native_client/src/trusted/service_runtime/include/sys/errno.h"
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/trusted/stdlib/list.h"
+#include "native_client/src/trusted/stdlib/filestruct.h"
 
 /* WARNING: this declaration may conflict with some header files */
 #ifndef ssize_t
@@ -113,27 +114,27 @@ typedef ptrdiff_t ssize_t;
 /* Libc functions */
 
 /* Libc String functions string.h/stdlib.h */
-size_t strnlen (const char *str, size_t maxlen);
-size_t strlen (const char *str);
+//size_t strnlen (const char *str, size_t maxlen);
+//size_t strlen (const char *str);
 //int strncmp (const char *s1, const char *s2, int n);
-int strcmp(const char *s1, const char *s2);
-char * strncpy(char *dst, const char *src, size_t n);
-char * strpbrk(const char *s1, const char *s2);
-char * strdup (const char *s);
+//int strcmp(const char *s1, const char *s2);
+//char * strncpy(char *dst, const char *src, size_t n);
+//char * strpbrk(const char *s1, const char *s2);
+//char * strdup (const char *s);
 
-#if NACL_SGX == 1//NACL_PAVE
-extern int errno;
-#else
+//#if NACL_SGX == 1//NACL_PAVE
+//extern int errno;
+//#else
 
-#endif
+//#endif
 // 
 // int errno;
-long strtol (const char *s, char **endptr, int base);
+//long strtol (const char *s, char **endptr, int base);
 int atoi (const char *nptr);
 long int atol (const char *nptr);
 
-char * strchr (const char *s, int c_in);
-unsigned long strtoul(const char *nptr, char **endptr, register int base);
+//char * strchr (const char *s, int c_in);
+//unsigned long strtoul(const char *nptr, char **endptr, register int base);
 
 void * memcpy (void *dstpp, const void *srcpp, size_t len);
 void * memmove (void *dstpp, const void *srcpp, size_t len);
@@ -170,14 +171,19 @@ void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
      static_strlen(force_static(str)))
 
 /* Libc printf functions. stdio.h/stdarg.h. */
-void fprintfmt (int (*_fputch)(void *, int, void *), void * f, void * putdat,
-                const char * fmt, ...);
+#if NACL_SGX == 1
+int vprintf(const char *fmt, va_list *ap);
+//extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
 
-void vfprintfmt (int (*_fputch)(void *, int, void *), void * f, void * putdat,
-                 const char * fmt, va_list *ap);
+int printf(const char *fmt, ...);
 
+int vfprintf(FILE *fp, const char *fmt, va_list *ap);
+//extern int vfprintf (FILE *__restrict __s, const char *__restrict __format,
+//             __gnuc_va_list __arg);
+
+int fprintf(FILE *fp, const char *fmt, ...);
 //int snprintf (char * buf, int n, const char * fmt, ...);
-
+#endif 
 /* Miscelleneous */
 
 int inet_pton4 (const char *src, int len, void *dst);

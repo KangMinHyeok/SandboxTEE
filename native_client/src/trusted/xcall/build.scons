@@ -40,7 +40,8 @@ elif env.Bit('sgx'):
 		'-zcombreloc', '-zdefs', '-pie'])
 
 	# check site_scons/site_tools/library_deps.py
-	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=['sel', 
+	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=[
+    'sel', 
 	'env_cleanser', 
 	'nrd_xfer',
 	'platform',

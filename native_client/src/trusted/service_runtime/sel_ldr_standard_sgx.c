@@ -42,7 +42,7 @@
 #include "native_client/src/trusted/service_runtime/sel_util.h"
 #include "native_client/src/trusted/service_runtime/sel_addrspace.h"
 
-
+#include "native_client/src/trusted/stdlib/string.h"
 
 int NaClReportExitStatus(struct NaClApp *nap, int exit_status) {
   NaClXMutexLock(&nap->mu);
