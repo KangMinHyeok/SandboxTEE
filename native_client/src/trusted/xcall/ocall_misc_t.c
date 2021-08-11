@@ -59,12 +59,6 @@ int ocall_fionread (int fd) {
 	return retval;
 }
 
-void ocall_exit(int status)
-{
-    // TODO: impl
-    status = status + 1;
-    return;
-}
 int ocall_print_string (const char * str, unsigned int length) {   
 	int retval = 0;
 	ms_ocall_print_string_t * ms;
