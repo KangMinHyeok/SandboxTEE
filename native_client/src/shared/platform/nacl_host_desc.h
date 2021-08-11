@@ -20,7 +20,9 @@
 #include "native_client/src/shared/platform/nacl_sync.h"
 #include "native_client/src/trusted/service_runtime/include/sys/time.h"
 
-#if NACL_LINUX || NACL_OSX
+#if NACL_SGX == 1
+# include "native_client/src/shared/platform/sgx/nacl_host_desc_types.h"
+#elif NACL_LINUX || NACL_OSX
 # include "native_client/src/shared/platform/posix/nacl_host_desc_types.h"
 #elif NACL_WINDOWS
 # include "native_client/src/shared/platform/win/nacl_host_desc_types.h"
