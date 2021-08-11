@@ -57,6 +57,7 @@
 #include "native_client/src/trusted/validator/rich_file_info.h"
 #if NACL_USGX == 1
 #include "native_client/src/trusted/service_runtime/sgx_interface.h"
+#include "native_client/src/trusted/stdlib/fileio.h"
 #endif
 
 static int IsEnvironmentVariableSet(char const *env_name) {
