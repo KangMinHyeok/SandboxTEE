@@ -404,7 +404,7 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     print("libsel size is "+str(size))
     areas.append(MemoryArea('libsel', file=args['libsel'], 
         flags=PAGEINFO_REG, addr = addr_index))
-    addr_index += 0x10000000
+    addr_index += 0x20000000
 
     size = ENCLAVE_STACK_SIZE
     for t in range(attr['thread_num']):
@@ -415,7 +415,7 @@ def get_memory_areas(attr, args): # manifest, attr, args):
 
     
     size = size=attr['thread_num'] * PAGESIZE
-    addr_index = 0xc20000000
+    addr_index = 0xc30000000
     areas.append(MemoryArea('tls', size=size,
                            flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
     addr_index += size

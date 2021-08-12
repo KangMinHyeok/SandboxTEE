@@ -244,7 +244,7 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 	// : c10000000 ~ c10010000
 	// TLS/TCS/SSA.
 	// : c20000000 ~ 
-	void *stack_addr = (void *) 0xc10000000; 
+	void *stack_addr = (void *) 0xc20000000; 
 
 	memset(data, 0, SSAFRAMESIZE*SSAFRAMENUM);
 
@@ -252,7 +252,7 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 			0x100000, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "SR's stack&heap"); 
 
 
-	void *tls_addr = (void *) 0xc20000000;
+	void *tls_addr = (void *) 0xc30000000;
 	void *tcs_addr = (void *) ((unsigned long) tls_addr + NACL_PAGESIZE); 
 	void *ssa_addr = (void *) ((unsigned long)tls_addr + 3*NACL_PAGESIZE);
 

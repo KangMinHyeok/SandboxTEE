@@ -1,4 +1,5 @@
 
+#include "native_client/src/trusted/service_runtime/sgx/sgx_common.h"
 #include "native_client/src/trusted/service_runtime/sgx_interface.h"
 
 #define ISGX_FILE "/dev/isgx"

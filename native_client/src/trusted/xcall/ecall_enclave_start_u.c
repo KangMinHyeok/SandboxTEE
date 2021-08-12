@@ -8,6 +8,7 @@
 int ecall_enclave_start (struct NaClApp * nap) {
 
 	ms_ecall_enclave_start_t ms;
+
 	char *buf = malloc(1024);
 	char *p;
 	int len;
@@ -134,7 +135,7 @@ int ecall_enclave_start (struct NaClApp * nap) {
 	memcpy(p, &(nap->sc_nprocessors_onln), len);
 
 	ms.nap = buf;
-
+	
 	return sgx_ecall(ECALL_ENCLAVE_START, &ms);
 }
 
