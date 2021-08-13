@@ -2,28 +2,26 @@
 
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ocall_types.h"
-#include "native_client/src/trusted/stdlib/assert.h"
-
-#include <stdio.h>
 
 static const int slab_levels[SLAB_LEVEL] = { SLAB_LEVEL_SIZES };
 static spinlock_t slab_lock;
 static SLAB_MGR slab_mgr = NULL;
+static int slab_alignment;
 
-#define system_malloc(size) __malloc(size)
 #define system_lock() spinlock_lock(&slab_lock)
 #define system_unlock() spinlock_unlock(&slab_lock)
-#define system_free(addr, size) __free(addr, size)
 
 
-#if STATIC_SLAB == 1
+//#if STATIC_SLAB == 1
 # define POOL_SIZE 256 * 1024 * 1024 /* 64MB by default */
 static char mem_pool[POOL_SIZE];
 static void *bump = mem_pool;
 static void *mem_pool_end = &mem_pool[POOL_SIZE];
-#else
+//#else
 #define PAGE_SIZE (slab_alignment)
-#endif
+//#endif
+
+//#define PAGE_SIZE (slab_alignment)
 
 static unsigned long pgsz = PRESET_PAGESIZE;
 void * heap_base;
@@ -42,6 +40,14 @@ spinlock_t heap_vma_lock;
 
 struct atomic_int alloced_pages, max_alloced_pages;
 
+/*#define __INIT_SUM_OBJ_SIZE(size) \
+    ((SLAB_LEVELS_SUM + SLAB_HDR_SIZE * SLAB_LEVEL) * (size))
+#define __INIT_MIN_MEM_SIZE() \
+    (sizeof(SLAB_MGR_TYPE) + sizeof(SLAB_AREA_TYPE) * SLAB_LEVEL)
+#define __INIT_MAX_MEM_SIZE(size) \
+    (__INIT_MIN_MEM_SIZE() + __INIT_SUM_OBJ_SIZE((size)))
+*/
+
 static void assert_vma_list (void)
 {
 #if ASSERT_VMA == 1
@@ -49,9 +55,10 @@ static void assert_vma_list (void)
     struct heap_vma * vma;
 
     listp_for_each_entry(vma, &heap_vma_list, list) {
-        printf(   "[%d] %p - %p\n", pal_sec.pid, vma->bottom, vma->top);
+       //TODO
+       // printf(   "[%d] %p - %p\n", pal_sec.pid, vma->bottom, vma->top);
         if (last_addr < vma->top || vma->top <= vma->bottom) {
-            printf( "*** [%d] corrupted heap vma: %p - %p (last = %p) ***\n", pal_sec.pid, vma->bottom, vma->top, last_addr);
+            //printf( "*** [%d] corrupted heap vma: %p - %p (last = %p) ***\n", pal_sec.pid, vma->bottom, vma->top, last_addr);
 #ifdef DEBUG
             if (pal_sec.in_gdb)
                 __asm__ volatile ("int $3" ::: "memory");
@@ -68,9 +75,10 @@ void * get_reserved_pages(void * addr, uint64_t size)
     if (!size)
         return NULL;
 
-    printf("*** get_reserved_pages: heap_base %p, heap_size %llu, limit %p ***\n", heap_base, heap_size, heap_base + heap_size);
+//TODO
+    //printf("*** get_reserved_pages: heap_base %p, heap_size %llu, limit %p ***\n", heap_base, heap_size, heap_base + heap_size);
     if (addr >= heap_base + heap_size) {
-        printf(   "*** allocating out of heap: %p ***\n", addr);
+      //  printf(   "*** allocating out of heap: %p ***\n", addr);
         return NULL;
     }
 
@@ -80,7 +88,7 @@ void * get_reserved_pages(void * addr, uint64_t size)
     if ((uintptr_t) addr & (pgsz - 1))
         addr = (void *) ((uintptr_t) addr & ~(pgsz - 1));
         
-    printf("allocate %d bytes at %p\n", size, addr);
+    //printf("allocate %d bytes at %p\n", size, addr);
 
     spinlock_lock(&heap_vma_lock);
 
@@ -126,7 +134,7 @@ void * get_reserved_pages(void * addr, uint64_t size)
 
     spinlock_unlock(&heap_vma_lock);
 
-    printf(    "*** Not enough space on the heap (requested = %llu) ***\n", size);
+    //printf(    "*** Not enough space on the heap (requested = %llu) ***\n", size);
     __asm__ volatile("int $3");
     return NULL;
 
@@ -150,14 +158,14 @@ allocated:
             listp_first_entry(&heap_vma_list, struct heap_vma, list);
     }
 
-    if (prev && next)
+   /* if (prev && next)
         printf(   "insert vma between %p-%p and %p-%p\n",
                 next->bottom, next->top, prev->bottom, prev->top);
-                else if (prev)
+      else if (prev)
         printf(   "insert vma below %p-%p\n", prev->bottom, prev->top);
-    else if (next)
+      else if (next)
         printf(   "insert vma above %p-%p\n", next->bottom, next->top);
-
+*/
     vma = NULL;
     while (prev) {
          struct heap_vma * prev_prev = NULL;
@@ -171,15 +179,15 @@ allocated:
             prev_prev = list_entry(prev->list.prev, struct heap_vma, list);
 
         if (!vma) {
-         printf(   "merge %p-%p and %p-%p\n", addr, addr + size,
-                    prev->bottom, prev->top);
+         //printf(   "merge %p-%p and %p-%p\n", addr, addr + size,
+                    //iprev->bottom, prev->top);
 
             vma = prev;
             vma->top = (addr + size > vma->top) ? addr + size : vma->top;
             vma->bottom = addr;
         } else {
-            printf(   "merge %p-%p and %p-%p\n", vma->bottom, vma->top,
-                    prev->bottom, prev->top);
+            //printf(   "merge %p-%p and %p-%p\n", vma->bottom, vma->top,
+            //        prev->bottom, prev->top);
 
             vma->top = (prev->top > vma->top) ? prev->top : vma->top;
             listp_del(prev, &heap_vma_list,list);
@@ -198,14 +206,14 @@ allocated:
             next_next = list_entry(next->list.next, struct heap_vma, list);
 
         if (!vma) {
-            printf(   "merge %p-%p and %p-%p\n", addr, addr + size,
-                    next->bottom, next->top);
+            //printf(   "merge %p-%p and %p-%p\n", addr, addr + size,
+            //        next->bottom, next->top);
 
             vma = next;
             vma->top = (addr + size > vma->top) ? addr + size : vma->top;
         } else {
-            printf(   "merge %p-%p and %p-%p\n", vma->bottom, vma->top,
-                    next->bottom, next->top);
+            //printf(   "merge %p-%p and %p-%p\n", vma->bottom, vma->top,
+            //        next->bottom, next->top);
                      vma->bottom = next->bottom;
                       listp_del(next, &heap_vma_list, list);
             free(next);
@@ -227,8 +235,8 @@ allocated:
         }
 
     if (vma->bottom >= vma->top) {
-        printf( "*** Bad memory bookkeeping: %p - %p ***\n",
-                vma->bottom, vma->top);
+        //printf( "*** Bad memory bookkeeping: %p - %p ***\n",
+        //        vma->bottom, vma->top);
 #ifdef DEBUG
         /*
         if (pal_sec.in_gdb)
@@ -247,7 +255,7 @@ void free_pages(void * addr, uint64_t size)
 {
     void * addr_top = addr + size;
 
-    printf(   "free_pages: trying to free %p %llu\n", addr, size);
+    //printf(   "free_pages: trying to free %p %llu\n", addr, size);
 
     if (!addr || !size)
         return;
@@ -267,7 +275,7 @@ void free_pages(void * addr, uint64_t size)
     if (addr < heap_base)
         addr = heap_base;
 
-    printf(   "free %d bytes at %p\n", size, addr);
+    //printf(   "free %d bytes at %p\n", size, addr);
 
     spinlock_lock(&heap_vma_lock);
 
@@ -305,20 +313,17 @@ void free_pages(void * addr, uint64_t size)
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot)
 {
 
-    void * addr = *paddr, * mem;
+    void * addr = *paddr;
+    void * mem;
 
-    //int flags = HOST_FLAGS(alloc_type, prot|PAL_PROT_WRITECOPY);
-    //prot = HOST_PROT(prot);
-    /* The memory should have MAP_PRIVATE and MAP_ANONYMOUS */
-    //flags |= MAP_ANONYMOUS|(addr ? MAP_FIXED : 0);
-    //mem = (void *) ARCH_MMAP(addr, size, prot, flags, -1, 0);
      if ((alloc_type & PAL_ALLOC_INTERNAL) && addr)
         return -PAL_ERROR_INVAL;
 
-    if (size == 0)
+     if (size == 0)
         __asm__ volatile ("int $3");
 
-    mem = get_reserved_pages(addr, size);
+     mem = get_reserved_pages(addr, size);
+
     if (!mem)
         return addr ? -PAL_ERROR_DENIED : -PAL_ERROR_NOMEM;
     if (addr && mem != addr) {
@@ -329,18 +334,7 @@ int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int pro
     }
 
     memset(mem, 0, size);
-/*
-    if (alloc_type & PAL_ALLOC_INTERNAL) {
-        SGX_DBG(DBG_M, "pal allocates %p-%p for internal use\n", mem, mem + size);
-        _DkSpinLock(&pal_vma_lock);
-        assert(pal_nvmas < PAL_VMA_MAX);
-        pal_vmas[pal_nvmas].bottom = mem;
-        pal_vmas[pal_nvmas].top = mem + size;
-        pal_nvmas++;
-        _DkSpinUnlock(&pal_vma_lock);
-    }
-
-    *paddr = mem; */
+    
     return 0;
 }
 
@@ -350,7 +344,7 @@ int _DkVirtualMemoryFree (void * addr, uint64_t size)
     if (sgx_is_completely_within_enclave(addr, size)) {
         free_pages(addr, size);
     } else {
-        printf("OCALL!! free from untrusted mapping\n");
+        //printf("OCALL!! free from untrusted mapping\n");
         /* Possible to have untrusted mapping. Simply unmap
            the memory outside the enclave */
         ocall_unmap_untrusted(addr, size);
@@ -365,7 +359,6 @@ static inline void * __malloc (int size)
     void * addr = NULL;
 
 #if STATIC_SLAB == 1
-    // debug_print("%s [%d]: %d\n", __FUNCTION__, __LINE__, size);
     if (bump + size <= mem_pool_end) {
         addr = bump;
         bump += size;
@@ -380,6 +373,8 @@ static inline void * __malloc (int size)
                           PAL_PROT_READ|PAL_PROT_WRITE);
     return addr;
 }
+
+#define system_malloc(size) __malloc(size)
 
 static inline void __set_free_slab_area (SLAB_AREA area, SLAB_MGR mgr,
         int level)
@@ -414,7 +409,7 @@ static inline int enlarge_slab_mgr (SLAB_MGR mgr, int level)
 
     /* If the allocation failed, always try smaller sizes */
     for (; size > 0; size >>= 1) {
-        area = (SLAB_AREA) system_malloc(__MAX_MEM_SIZE(slab_levels[level], size));
+        area = (SLAB_AREA) __malloc(__MAX_MEM_SIZE(slab_levels[level], size));
         if (area)
             break;
     }
@@ -448,27 +443,34 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
     for (i = 0 ; i < SLAB_LEVEL ; i++)
         if (size <= slab_levels[i]) {
             level = i;
-            break;
+            ocall_debugp(i);
+        break;
+        
         }
 
     if (level == -1) {
-        LARGE_MEM_OBJ mem = (LARGE_MEM_OBJ)
-            system_malloc(sizeof(LARGE_MEM_OBJ_TYPE) + size);
+        LARGE_MEM_OBJ mem = (LARGE_MEM_OBJ) system_malloc(sizeof(LARGE_MEM_OBJ_TYPE) + size);
+        ocall_debugp(11);
         if (!mem)
             return NULL;
 
         mem->size = size;
         OBJ_LEVEL(mem) = (unsigned char) -1;
-
+        ocall_debugp(22);
         return OBJ_RAW(mem);
     }
+    ocall_debugp(5555555);
+    
     system_lock();
     assert(mgr->addr[level] <= mgr->addr_top[level]);
+
     if (mgr->addr[level] == mgr->addr_top[level] &&
             listp_empty(&mgr->free_list[level])) {
+        ocall_debugp(722);
         int ret = enlarge_slab_mgr(mgr, level);
+        ocall_debugp(44);
         if (ret < 0) {
-            system_unlock();
+           system_unlock();
             return NULL;
         }
     }
@@ -481,6 +483,7 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
         mgr->addr[level] += slab_levels[level] + SLAB_HDR_SIZE;
     }
     assert(mgr->addr[level] <= mgr->addr_top[level]);
+    ocall_debugp(55);
     OBJ_LEVEL(mobj) = level;
     system_unlock();
 
@@ -489,19 +492,22 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
         (unsigned long *) ((void *) OBJ_RAW(mobj) + slab_levels[level]);
     *m = SLAB_CANARY_STRING;
 #endif
-
+    ocall_debugp(7777);
     return OBJ_RAW(mobj);
 }
 
 void * malloc (size_t size)
 {
+    ocall_debugp(1);
     void * ptr = slab_alloc(slab_mgr, size);
-
+    ocall_debugp(2);
 #ifdef DEBUG
     /* In debug builds, try to break code that uses uninitialized heap
      * memory by explicitly initializing to a non-zero value. */
     if (ptr)
+        ocall_debugp(3);
         memset(ptr, 0xa5, size);
+        ocall_debugp(4);
 #endif
 
     if (!ptr) {
@@ -510,15 +516,18 @@ void * malloc (size_t size)
          * If malloc() failed internally, we cannot handle the
          * condition and must terminate the current process.
          */
-        printf("******** Out-of-memory in PAL ********\n");
+        ocall_debugp(5);
+        //printf("******** Out-of-memory in PAL ********\n");
 
 #if PRINT_ENCLAVE_STAT
+        ocall_debugp(6);
         print_alloced_pages();
 #endif
+        ocall_debugp(7);
+
          // SGX_DBG(DBG_I, "DkProcessExit: Returning exit code %d\n", exitcode);
         
-        //TODO
-        //ocall_exit(-1);
+        ocall_exit(-1);
     }
 
     return ptr;
@@ -534,7 +543,7 @@ void* realloc (void *ptr, size_t size)
 {
     void *res;
 
-  printf("------buggy realloc is called...\n");
+  //printf("------buggy realloc is called...\n");
 
     if (!ptr) { // no existing malloc
         res = malloc(size);
@@ -593,14 +602,14 @@ void __free (void * addr, int size)
     _DkVirtualMemoryFree(addr, size);
 }
 
+#define system_free(addr, size) __free(addr, size)
+
 /* This does not return */
 
-//TODO
-//void __abort(void) {
-    //ocall_exit(13);
-//}
 
-
+/*void __abort(void) {
+    ocall_exit(13);
+}*/
 
 static inline void slab_free (SLAB_MGR mgr, void * obj)
 {
@@ -626,7 +635,7 @@ static inline void slab_free (SLAB_MGR mgr, void * obj)
      * more likely to be detected by adding a non-zero offset to the level,
      * so a level of 0 in the header would no longer be a valid level. */
     if (level >= SLAB_LEVEL) {
-        printf("Heap corruption detected: invalid heap level %d\n", level);
+        //printf("Heap corruption detected: invalid heap level %d\n", level);
         __abort();
     }
 
@@ -775,4 +784,72 @@ void * memset (void *dstpp, int c, size_t len)
     }
 
   return dstpp;
+}
+
+#ifdef PAGE_SIZE
+static inline int init_size_align_up(int size)
+{
+    int s = __INIT_MAX_MEM_SIZE(size);
+    int p = ((s + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1)) - s;
+    int o = __INIT_SUM_OBJ_SIZE(1);
+    return size + p / o;
+}
+#endif
+
+static inline SLAB_MGR create_slab_mgr (void)
+{
+
+#ifdef PAGE_SIZE
+    size_t size = init_size_align_up(STARTUP_SIZE);
+#else
+    size_t size = STARTUP_SIZE;
+#endif
+
+    void * mem = NULL;
+    SLAB_AREA area;
+    SLAB_MGR mgr;
+
+    for (; size > 0; size >>= 1) {
+        mem = __malloc(__INIT_MAX_MEM_SIZE(size));
+        if (mem)
+            break;
+    }
+
+    if (!mem)
+        return NULL;
+
+    mgr = (SLAB_MGR) mem;
+
+    void * addr = (void *) mgr + sizeof(SLAB_MGR_TYPE);
+    int i;
+    for (i = 0 ; i < SLAB_LEVEL ; i++) {
+        area = (SLAB_AREA) addr;
+        area->size = size; // STARTUP_SIZE; 2 ok, 4 bad.. why?
+
+        INIT_LIST_HEAD(area, __list);
+        INIT_LISTP(&mgr->area_list[i]);
+        listp_add_tail(area, &mgr->area_list[i], __list);
+
+        INIT_LISTP(&mgr->free_list[i]);
+        mgr->size[i] = 0;
+        __set_free_slab_area(area, mgr, i);
+
+        addr += __MAX_MEM_SIZE(slab_levels[i], STARTUP_SIZE);
+    }
+
+    return mgr;
+
+}
+
+void init_slab_mgr (int alignment)
+{
+    if (slab_mgr)
+        return;
+
+    spinlock_init(&slab_lock);
+
+    slab_alignment = alignment;
+    slab_mgr = create_slab_mgr();
+    if (!slab_mgr)
+        init_fail(PAL_ERROR_NOMEM, "cannot initialize slab manager");
 }

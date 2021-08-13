@@ -1,41 +1,57 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
-#include <assert.h>
+#include "assert.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <asm/fcntl.h>
 #include <errno.h>
-
+#include <stdio.h>
 //#include "pal_internal.h"
+
 #include "list.h"
 #include "spinlock.h"
 #include "pal_error.h"
 #include "atomic.h"
 
 #include "native_client/src/include/build_config.h"
-//#include "native_client/src/trusted/xcall/enclave_exception.h"
+#include "native_client/src/trusted/xcall/enclave_exception.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
-//#include "native_client/src/trusted/stdlib/stddef.h"
+
+void *memalign(size_t align, size_t len);
+
+//extern void __assert_fail (__const char *__assertion, __const char *__file,
+//               unsigned int __line, __const char *__function)
+//     __THROW __attribute__ ((__noreturn__));
+
+int ocall_unmap_untrusted (const void * mem, uint64_t size);
 
 void * memcpy (void *dstpp, const void *srcpp, size_t len);
 void * memmove (void *dstpp, const void *srcpp, size_t len);
 void * memset (void *dstpp, int c, size_t len);
 int memcmp (const void *s1, const void *s2, size_t len);
-void * memalign(size_t align, size_t len);
 
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
 int _DkVirtualMemoryFree (void * addr, uint64_t size);
-
+void init_slab_mgr (int alignment);
 
 void *malloc(size_t size);
 void *realloc (void *ptr, size_t size);
 void free(void *ptr);
 void *calloc(size_t nmemb, size_t size);
 
+#define init_fail(exitcode, reason)                                     \
+    do {                                                                \
+        printf("PAL failed at " __FILE__  ":%s:%u (exitcode = %u, reason=%s)\n", \
+               __FUNCTION__, (unsigned int)__LINE__,                    \
+               (unsigned int) (exitcode), (const char *) (reason));     \
+        ocall_exit(exitcode);                                       \
+    } while (0)
+
 #define PAL_ALLOC_INTERNAL    0x8000
 #define PRESET_PAGESIZE (1 << 12)
 #define ASSERT_VMA 0
+#define STARTUP_SIZE 16
 
 /* Memory Protection Flags */
 #define PAL_PROT_NONE       0x0     /* 0x0 Page can not be accessed. */
@@ -152,43 +168,8 @@ extern void _wordcopy_fwd_dest_aligned (long int, long int, int);
 typedef unsigned char byte;
 
 #ifndef size_t
-#ifndef __size_t__        /* BeOS */
-#ifndef __SIZE_T__        /* Cray Unicos/Mk */
-#ifndef _SIZE_T        /* in case <sys/types.h> has defined it. */
-#ifndef _SYS_SIZE_T_H
-#ifndef _T_SIZE_
-#ifndef _T_SIZE
-#ifndef __SIZE_T
-#ifndef _SIZE_T_
-#ifndef _BSD_SIZE_T_
-#ifndef _SIZE_T_DEFINED_
-#ifndef _SIZE_T_DEFINED
-#ifndef _BSD_SIZE_T_DEFINED_        /* Darwin */
-#ifndef _SIZE_T_DECLARED        /* FreeBSD 5 */
-#ifndef ___int_size_t_h
-#ifndef _GCC_SIZE_T
-#ifndef _SIZET_
-#ifndef __size_t
-
 typedef __kernel_size_t size_t;
 #endif
-#endif /* __size_t */
-#endif /* _SIZET_ */
-#endif /* _GCC_SIZE_T */
-#endif /* ___int_size_t_h */
-#endif /* _SIZE_T_DECLARED */
-#endif /* _BSD_SIZE_T_DEFINED_ */
-#endif /* _SIZE_T_DEFINED */
-#endif /* _SIZE_T_DEFINED_ */
-#endif /* _BSD_SIZE_T_ */
-#endif /* _SIZE_T_ */
-#endif /* __SIZE_T */
-#endif /* _T_SIZE */
-#endif /* _T_SIZE_ */
-#endif /* _SYS_SIZE_T_H */
-#endif /* _SIZE_T */
-#endif /* __SIZE_T__ */
-#endif /* __size_t__ */
 
 /*
 #define LIST_TYPE(STRUCT) struct list_head ##_## STRUCT
@@ -324,9 +305,12 @@ struct slab_debug {
 #define OBJ_LEVEL(obj) ((obj)->level)
 #define OBJ_RAW(obj) (&(obj)->raw)
 
-//#ifndef system_lock
-//#define system_lock() spinlock_lock(&slab_lock)
-//#endif
+#ifndef system_lock
+#define system_lock() spinlock_lock(&slab_lock)
+#endif
+#ifndef system_unlock
+#define system_unlock() spinlock_unlock(&slab_lock)
+#endif
 
 DEFINE_LIST(slab_area);
 
@@ -359,5 +343,12 @@ typedef struct slab_mgr {
     SLAB_AREA active_area[SLAB_LEVEL];
 } SLAB_MGR_TYPE, * SLAB_MGR;
 
+
+#define __INIT_SUM_OBJ_SIZE(size) \
+    ((SLAB_LEVELS_SUM + SLAB_HDR_SIZE * SLAB_LEVEL) * (size))
+#define __INIT_MIN_MEM_SIZE() \
+    (sizeof(SLAB_MGR_TYPE) + sizeof(SLAB_AREA_TYPE) * SLAB_LEVEL)
+#define __INIT_MAX_MEM_SIZE(size) \
+    (__INIT_MIN_MEM_SIZE() + __INIT_SUM_OBJ_SIZE((size)))
 
 #endif
