@@ -10,8 +10,11 @@
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/include/portability.h"
 
-//#include <stdlib.h>
+#if NACL_SGX == 0
+#include <stdlib.h>
+#else
 #include "native_client/src/trusted/stdlib/api.h"
+#endif
 
 #include "native_client/src/shared/gio/gio.h"
 
