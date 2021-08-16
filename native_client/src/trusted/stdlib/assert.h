@@ -21,8 +21,8 @@
 
 void warn (const char *format, ...);
 void __abort(void);
-# ifdef assert
-# undef assert
+//# ifdef assert
+//# undef assert
 # define assert(test)                                                   \
     ({                                                                  \
         long _val = (long) (test);                                      \
@@ -33,10 +33,10 @@ void __abort(void);
                     __abort(); })                                       \
             : (void) 0;                                                 \
     })
-#else
+//##else
 
-  /*
-void
+
+/*void
 __assert_fail_base (const char *fmt, const char *assertion, const char *file,
 		    unsigned int line, const char *function)
 {
@@ -91,7 +91,7 @@ __assert_fail (const char *assertion, const char *file, unsigned int line,
 	__abort();
 }
 
-  */
-#endif 
+  */ //TODO crhamm
+//#endif 
 
 #endif

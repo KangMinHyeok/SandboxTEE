@@ -36,11 +36,11 @@
 #undef PROFILING
 #define PROFILING 0
 #endif
-
+/*
 #ifndef IN_ENCLAVE
 # error "pal_internal.h can only be included in PAL"
 #endif
-
+*/
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -62,7 +62,7 @@ typedef bool          PAL_BOL;
 #endif /* ! IN_ENCLAVE */
 
 
-#error "Do not use this header file"
+//#error "Do not use this header file"
 
 
 
@@ -77,9 +77,10 @@ typedef bool          PAL_BOL;
 /* Memory Allocation Flags */
 #define PAL_ALLOC_RESERVE     0x0001   /* Only reserve the memory */
 
-#ifdef IN_ENCLAVE
+//TODO crhamm
+//#ifdef IN_ENCLAVE
 #define PAL_ALLOC_INTERNAL    0x8000
-#endif
+//#endif
 
 /* Memory Protection Flags */
 #define PAL_PROT_NONE       0x0     /* 0x0 Page can not be accessed. */

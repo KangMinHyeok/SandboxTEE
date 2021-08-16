@@ -130,6 +130,8 @@ typedef ptrdiff_t ssize_t;
 // 
 // int errno;
 //long strtol (const char *s, char **endptr, int base);
+void init_slab_mgr (int alignment);
+
 int atoi (const char *nptr);
 long int atol (const char *nptr);
 
@@ -172,17 +174,18 @@ void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
 
 /* Libc printf functions. stdio.h/stdarg.h. */
 #if NACL_SGX == 1
-int vprintf(const char *fmt, va_list *ap);
+//TODO crhamm int vprintf(const char *fmt, va_list *ap);
 //extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
 
 int printf(const char *fmt, ...);
 
-int vfprintf(FILE *fp, const char *fmt, va_list *ap);
+
+//TODO crhamm int vfprintf(FILE *fp, const char *fmt, va_list *ap);
 //extern int vfprintf (FILE *__restrict __s, const char *__restrict __format,
 //             __gnuc_va_list __arg);
 
 int fprintf(FILE *fp, const char *fmt, ...);
-int snprintf (char * buf, int n, const char * fmt, ...);
+//TODO crhamm int snprintf (char * buf, int n, const char * fmt, ...);
 #endif 
 /* Miscelleneous */
 

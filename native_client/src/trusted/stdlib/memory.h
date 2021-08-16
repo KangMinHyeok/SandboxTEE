@@ -20,9 +20,9 @@
 
 void *memalign(size_t align, size_t len);
 
-//extern void __assert_fail (__const char *__assertion, __const char *__file,
-//               unsigned int __line, __const char *__function)
-//     __THROW __attribute__ ((__noreturn__));
+extern void __assert_fail (__const char *__assertion, __const char *__file,
+               unsigned int __line, __const char *__function)
+     __THROW __attribute__ ((__noreturn__));
 
 int ocall_unmap_untrusted (const void * mem, uint64_t size);
 
@@ -185,7 +185,7 @@ typedef __kernel_size_t size_t;
     } while (0)
 */
 #define PRINT_ENCLAVE_STAT  (0)
-/*
+
 #define DEFINE_LIST(STRUCT)                     \
     struct STRUCT;                              \
     LIST_TYPE(STRUCT) {                         \
@@ -226,10 +226,10 @@ typedef __kernel_size_t size_t;
 
 #define listp_prev_entry(NODE, LISTP, FIELD)                            \
         ((NODE) == (LISTP)->first ? NULL : (NODE)->FIELD.prev)
-*/
-#ifndef SLAB_LEVEL
+
+//#ifndef SLAB_LEVEL
 #define SLAB_LEVEL      8
-#endif
+//#endif
 
 /*#define INIT_LIST_HEAD(OBJECT, FIELD) do {      \
         (OBJECT)->FIELD.next = NULL;            \

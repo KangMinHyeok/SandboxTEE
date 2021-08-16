@@ -21,7 +21,7 @@
 
 #include "api.h"
 //#include <sysdeps/generic/memcopy.h>
-#include <memcopy.h>
+#include "memcopy.h"
 int printf  (const char  *fmt, ...);
 
 size_t getsize(void * p) {
