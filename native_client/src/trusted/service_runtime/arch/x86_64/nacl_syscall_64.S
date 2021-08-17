@@ -39,7 +39,10 @@
          *
          * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
          */
-#if NACL_LINUX
+#if NACL_SGX
+        // TODO: need to check the number
+        movq %gs:(92), %rdx
+#elif NACL_LINUX
         /*
          * Linux uses TLS.
          * We use "@GOTTPOFF" rather than "@TPOFF" in order to be PIC-friendly.
