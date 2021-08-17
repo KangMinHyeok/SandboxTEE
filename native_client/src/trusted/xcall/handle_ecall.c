@@ -10,6 +10,7 @@
 #include "native_client/src/trusted/service_runtime/sel_ldr.h"
 #include "native_client/src/trusted/service_runtime/sel_main.h"
 
+#include "native_client/src/trusted/stdlib/memory.h"
 
 
 int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_target, void * untrusted_stack, void * enclave_base_addr)
@@ -32,8 +33,6 @@ int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_targ
 	SET_ENCLAVE_TLS(ustack_top,  untrusted_stack);
 	SET_ENCLAVE_TLS(ustack,      untrusted_stack);
 	
-	//ocall_debugp(111);
-	
 	switch(ecall_index) {
 		case ECALL_ENCLAVE_START:
 			{
@@ -45,6 +44,12 @@ int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_targ
   			struct SelLdrOptions          *options = &optionsImpl;
 
   			struct NaClApp nap;
+
+  			init_slab_mgr(512);
+  			
+  			char *p = malloc(100);
+
+  			(void) p;
 
   			// TODO (mkpark): copy nap from usgx to sgx
   			char *nap_p;
