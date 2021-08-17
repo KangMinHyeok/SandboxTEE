@@ -320,7 +320,7 @@ struct NaClApp *NaClAppCreate(void) {
   if (!NaClAppCtor(nap))
     NaClLog(LOG_FATAL, "NaClAppCtor() failed\n");
 
-#if NACL_SGX == 1 || NACL_USGX == 1
+#if NACL_USGX == 1
 	nap->sgx = malloc(sizeof(struct NaClSGX));
 	if (nap->sgx == NULL)
 		NaClLog(LOG_FATAL, "Failed to allocated NaClSGX\n");
