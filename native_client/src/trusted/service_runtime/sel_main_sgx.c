@@ -45,6 +45,7 @@
 
 
 #include "native_client/src/trusted/stdlib/fileio.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 //#include "native_client/src/trusted/stdlib/stdio.h"
 /*
 static void VmentryPrinter(void           *state,
@@ -81,9 +82,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
 
 
   ret_code = 1;
-
-  NaClAllModulesInit();
-
+  
   if (!DynArrayCtor(&env_vars, 0)) { // untrusted copy
     NaClLog(LOG_FATAL, "Failed to allocate env var array\n");
   }
@@ -105,11 +104,10 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   }
   envp = NaClEnvCleanserEnvironment(&env_cleanser); // untrusted
 
-
-  if (options->debug_mode_bypass_acl_checks) {
+  // if (options->debug_mode_bypass_acl_checks) {
     /* If both -m and -a are specified, -m takes precedence. */
     NaClInsecurelyBypassAllAclChecks(); // delete
-  }
+  // }
 
 	// Already copied from USGx
   // nap->ignore_validator_result = (options->debug_mode_ignore_validator > 0);
@@ -221,8 +219,9 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   // TODO(mkpark): check the below
   //NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass
 
+  printf("%s %d\n", __func__, __LINE__);
   if (!NaClCreateMainThread(nap,
-                            options->app_argc,
+                            0, // options->app_argc,
                             options->app_argv,
                             envp)) {
     NaClLog(LOG_FATAL, "creating main thread failed\n");
