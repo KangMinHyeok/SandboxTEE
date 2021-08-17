@@ -24,8 +24,8 @@
 #include "pal_internal.h"
 #include "api.h"
 
-#ifndef NO_INTERNAL_ALLOC
-
+//#ifndef NO_INTERNAL_ALLOC
+#include "list.h"
 #include "pal_defs.h"
 #include "pal_error.h"
 
@@ -35,9 +35,9 @@
 //#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #define PRESET_PAGESIZE (1 << 12)
 #define PRINT_ENCLAVE_STAT  (0)
-
+#define STATIC_SLAB 1
 static int slab_alignment;
-//TODO crhamm static spinlock_t slab_mgr_lock;
+//static spinlock_t slab_mgr_lock;
 
 #if STATIC_SLAB == 1
 # define POOL_SIZE 256 * 1024 * 1024 /* 64MB by default */
@@ -54,12 +54,18 @@ static void *mem_pool_end = &mem_pool[POOL_SIZE];
 static inline void * __malloc (int size)
 {
     void * addr = NULL;
+    //TODO crhamm 
+    ocall_debugp(POOL_SIZE);
+    ocall_debugp((long int) bump);
+    ocall_debugp((long int) mem_pool_end);
 
 #if STATIC_SLAB == 1
     // debug_print("%s [%d]: %d\n", __FUNCTION__, __LINE__, size);
-    if (bump + size <= mem_pool_end) {
+    if(size <= POOL_SIZE) {
+   // TODO crhamm if (bump + size <= mem_pool_end) {
         addr = bump;
         bump += size;
+        ocall_debugp((long int) bump);
         return addr;
     }
 #endif
@@ -93,7 +99,7 @@ static SLAB_MGR slab_mgr = NULL;
 
 void init_slab_mgr (int alignment)
 {
-    slab_mgr = NULL;
+    //slab_mgr = NULL;
 
     if (slab_mgr)
         return;
@@ -101,15 +107,18 @@ void init_slab_mgr (int alignment)
     spinlock_init(&slab_lock);
     
     slab_alignment = alignment;
+    ocall_debugp(alignment);
     slab_mgr = create_slab_mgr();
+    ocall_debugp(513);
     if (!slab_mgr)
         init_fail(PAL_ERROR_NOMEM, "cannot initialize slab manager");
 }
 
 void * malloc (size_t size)
 {
+    ocall_debugp(500);
     void * ptr = slab_alloc(slab_mgr, size);
-
+    ocall_debugp(501);
 #ifdef DEBUG
     /* In debug builds, try to break code that uses uninitialized heap
      * memory by explicitly initializing to a non-zero value. */
@@ -174,4 +183,4 @@ void free (void * ptr)
 
 }
 
-#endif /* !NO_INTERNAL_ALLOC */
+//#endif /* !NO_INTERNAL_ALLOC */
