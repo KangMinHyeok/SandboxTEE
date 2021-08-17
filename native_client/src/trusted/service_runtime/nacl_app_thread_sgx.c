@@ -94,6 +94,7 @@ void WINAPI NaClAppThreadLauncher(void *state) {
   NaClAppThreadSetSuspendState(natp, NACL_APP_THREAD_TRUSTED,
                                NACL_APP_THREAD_UNTRUSTED);
 
+  printf("%s %d\n", __func__, __LINE__);
   NaClStartThreadInApp(natp, natp->user.prog_ctr);
 }
 
@@ -179,10 +180,12 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
                                         uint32_t       user_tls2) {
   struct NaClAppThread *natp;
 
+  printf("%s %d\n", __func__, __LINE__);
   natp = NaClAlignedMalloc(sizeof *natp, __alignof(struct NaClAppThread));
   if (natp == NULL) {
     return NULL;
   }
+  printf("%s %d\n", __func__, __LINE__);
 
   NaClLog(4, "         natp = 0x%016"NACL_PRIxPTR"\n", (uintptr_t) natp);
   NaClLog(4, "          nap = 0x%016"NACL_PRIxPTR"\n", (uintptr_t) nap);
@@ -196,17 +199,21 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
   natp->host_thread_is_defined = 0;
   memset(&natp->host_thread, 0, sizeof(natp->host_thread));
 
+  printf("%s %d\n", __func__, __LINE__);
   if (!NaClAppThreadInitArchSpecific(natp, usr_entry, usr_stack_ptr)) {
     goto cleanup_free;
   }
 
+  printf("%s %d\n", __func__, __LINE__);
   NaClTlsSetTlsValue1(natp, user_tls1);
   NaClTlsSetTlsValue2(natp, user_tls2);
 
+  printf("%s %d\n", __func__, __LINE__);
   natp->signal_stack = NULL;
   natp->exception_stack = 0;
   natp->exception_flag = 0;
 
+  printf("%s %d\n", __func__, __LINE__);
   if (!NaClMutexCtor(&natp->mu)) {
     goto cleanup_free;
   }
@@ -227,6 +234,7 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
 
   natp->dynamic_delete_generation = 0;
 
+  printf("%s %d\n", __func__, __LINE__);
   if (!NaClCondVarCtor(&natp->futex_condvar)) {
     goto cleanup_suspend_mu;
   }
@@ -252,8 +260,10 @@ int NaClAppThreadSpawn(struct NaClApp *nap,
                        uintptr_t      usr_stack_ptr,
                        uint32_t       user_tls1,
                        uint32_t       user_tls2) {
+  printf("%s %d\n", __func__, __LINE__);
   struct NaClAppThread *natp = NaClAppThreadMake(nap, usr_entry, usr_stack_ptr,
                                                  user_tls1, user_tls2);
+  printf("%s %d\n", __func__, __LINE__);
   if (natp == NULL) {
     return 0;
   }
@@ -261,6 +271,7 @@ int NaClAppThreadSpawn(struct NaClApp *nap,
    * We set host_thread_is_defined assuming, for now, that
    * NaClThreadCtor() will succeed.
    */
+  printf("%s %d\n", __func__, __LINE__);
   natp->host_thread_is_defined = 1;
   if (!NaClThreadCtor(&natp->host_thread, NaClAppThreadLauncher, (void *) natp,
                       NACL_KERN_STACK_SIZE)) {
