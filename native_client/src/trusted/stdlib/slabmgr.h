@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <sys/mman.h>
 #include "native_client/src/trusted/stdlib/assert.h"
-//#include "native_client/src/trusted/stdlib/list.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 // Before calling any of `system_malloc` and `system_free` this library will
@@ -218,18 +217,15 @@ static inline int init_size_align_up(int size)
 }
 #endif /* PAGE_SIZE */
 
-//TODO crhamm
 #ifndef STARTUP_SIZE
-# define STARTUP_SIZE 2
+# define STARTUP_SIZE 16
 #endif
 
 static inline void __set_free_slab_area (SLAB_AREA area, SLAB_MGR mgr,
         int level)
 {
     int slab_size = slab_levels[level] + SLAB_HDR_SIZE;
-    ocall_debugp(level);
     mgr->addr[level] = (void *) area->raw;
-    ocall_debugp(SLAB_HDR_SIZE);
     mgr->addr_top[level] = (void *) area->raw + (area->size * slab_size);
     mgr->size[level] += area->size;
     mgr->active_area[level] = area;
@@ -239,7 +235,6 @@ static inline SLAB_MGR create_slab_mgr (void)
 {
 #ifdef PAGE_SIZE
     size_t size = init_size_align_up(STARTUP_SIZE);
-    // debug_print("%s [%d]: %d\n", __FUNCTION__, __LINE__, size);
 #else
     size_t size = STARTUP_SIZE;
 #endif
@@ -363,7 +358,6 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
             break;
         }
 
-    ocall_debugp(level);
     if (level == -1) {
         LARGE_MEM_OBJ mem = (LARGE_MEM_OBJ)
             system_malloc(sizeof(LARGE_MEM_OBJ_TYPE) + size);
@@ -375,13 +369,12 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
 
         return OBJ_RAW(mem);
     }
-    ocall_debugp(503);
+    
     system_lock();
-    //assert(mgr->addr[level] <= mgr->addr_top[level]);
-    ocall_debugp(504);
+    assert(mgr->addr[level] <= mgr->addr_top[level]);
+    
     if (mgr->addr[level] == mgr->addr_top[level] &&
             listp_empty(&mgr->free_list[level])) {
-        ocall_debugp(506);
         int ret = enlarge_slab_mgr(mgr, level);
         if (ret < 0) {
             system_unlock();
@@ -389,7 +382,6 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
         }
    } 
        
-    ocall_debugp(505);
     if (!listp_empty(&mgr->free_list[level])) {
         mobj = listp_first_entry(&mgr->free_list[level], SLAB_OBJ_TYPE, __list);
         listp_del(mobj, &mgr->free_list[level], __list);
@@ -397,9 +389,8 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
         mobj = (void *) mgr->addr[level];
         mgr->addr[level] += slab_levels[level] + SLAB_HDR_SIZE;
     }
-   // assert(mgr->addr[level] <= mgr->addr_top[level]);
+    assert(mgr->addr[level] <= mgr->addr_top[level]);
     OBJ_LEVEL(mobj) = level;
-    ocall_debugp(507);
     system_unlock();
 
 #ifdef SLAB_CANARY
@@ -407,7 +398,7 @@ static inline void * slab_alloc (SLAB_MGR mgr, int size)
         (unsigned long *) ((void *) OBJ_RAW(mobj) + slab_levels[level]);
     *m = SLAB_CANARY_STRING;
 #endif
-    ocall_debugp(506);
+    
     return OBJ_RAW(mobj);
 }
 
