@@ -17,7 +17,8 @@ struct enclave_tls {
 	void *   ustack_top;
 	void *   ustack;
 	int is_main;
-	struct pal_handle_thread * thread;
+	// struct pal_handle_thread * thread;
+	struct NaClThreadContext *nacl_current_thread;
 };
 
 #  define GET_ENCLAVE_TLS(member)                                   \
