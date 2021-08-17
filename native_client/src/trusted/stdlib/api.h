@@ -30,6 +30,10 @@
 #include "native_client/src/trusted/stdlib/list.h"
 #include "native_client/src/trusted/stdlib/filestruct.h"
 
+#if NACL_SGX == 0
+#error "it should be included only with NACL_SGX == 1"
+#endif
+
 /* WARNING: this declaration may conflict with some header files */
 #ifndef ssize_t
 typedef ptrdiff_t ssize_t;
@@ -173,7 +177,6 @@ void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
      static_strlen(force_static(str)))
 
 /* Libc printf functions. stdio.h/stdarg.h. */
-#if NACL_SGX == 1
 //TODO crhamm int vprintf(const char *fmt, va_list *ap);
 //extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
 
@@ -185,8 +188,8 @@ int printf(const char *fmt, ...);
 //             __gnuc_va_list __arg);
 
 int fprintf(FILE *fp, const char *fmt, ...);
-//TODO crhamm int snprintf (char * buf, int n, const char * fmt, ...);
-#endif 
+
+// int snprintf (char * buf, int n, const char * fmt, ...);
 /* Miscelleneous */
 
 int inet_pton4 (const char *src, int len, void *dst);
