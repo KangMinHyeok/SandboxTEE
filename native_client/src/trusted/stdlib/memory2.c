@@ -1,7 +1,6 @@
 #include "native_client/src/trusted/stdlib/memory.h"
 #include "native_client/src/include/build_config.h"
 
-#if NACL_SGX == 1
 #include "native_client/src/trusted/stdlib/stddef.h"
 #include "native_client/src/trusted/stdlib/errno.h"
 #include "native_client/src/trusted/stdlib/assert.h"
@@ -187,4 +186,3 @@ void *memalign(size_t align, size_t len){
     return aligned_alloc(align, len);
 }
 
-#endif
