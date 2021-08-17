@@ -1271,8 +1271,10 @@ static NaClErrorCode NaClElfFileMapSegmentServiceRuntime(struct NaClApp *nap,
 
   // uintptr_t tail_offset = rounded_filesz - NACL_PAGESIZE;
   // size_t tail_size = segment_size - tail_offset;
+  printf("offset : %lx\n", file_offset);
 
 	image_sys_addr = (uintptr_t) malloc(rounded_filesz);
+	memset((void *)image_sys_addr, 0, rounded_filesz);
 
 	if (NaClPtrIsNegErrno(&image_sys_addr)) 
 		NaClLog(LOG_FATAL, "NaClElfFileMapSegment: malloc failed1\n"); 
@@ -1389,7 +1391,7 @@ NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
 
   for (segnum = 0; segnum < image->ehdr.e_phnum; ++segnum) {
     const Elf_Phdr *php = &image->phdrs[segnum];
-    Elf_Off offset = (Elf_Off) NaClTruncAllocPage(php->p_offset);
+    // Elf_Off offset = (Elf_Off) NaClTruncAllocPage(php->p_offset);
     //Elf_Off filesz = php->p_offset + php->p_filesz - offset;
 
     /* did we decide that we will load this segment earlier? */
@@ -1424,7 +1426,7 @@ NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
 
 		int map_status;
 		map_status = NaClElfFileMapSegmentServiceRuntime(nap, ndp, php->p_flags,
-																			 offset, php->p_memsz, paddr);
+																			 php->p_offset, php->p_memsz, paddr);
 		/*
 		 * NB: -Werror=switch-enum forces us to not use a switch.
 		 */
