@@ -385,6 +385,10 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     size =  0x10000 # NACL_TRAMPOLINE_SIZE
     areas.append(MemoryArea('trampoline', size=size,
                             flags=PAGEINFO_R|PAGEINFO_X|PAGEINFO_REG, addr = addr_base + addr_tramp_start))
+
+    size = 0x1000000 # stack size
+    areas.append(MemoryArea('nacl stack', size=size,
+                            flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_base + 0xfeff0000))
     
     hole_start = 0x1f0000000;
     stack_start = 0x1ff000000;
