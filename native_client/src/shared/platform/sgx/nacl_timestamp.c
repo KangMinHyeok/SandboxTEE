@@ -10,15 +10,14 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/shared/platform/nacl_timestamp.h"
 
-#if NACL_SGX == 1
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
-#include "native_client/src/trusted/stdlib/api.h"
+// #include "native_client/src/trusted/stdlib/api.h"
 #include "native_client/src/shared/platform/sgx/linux_types.h"
-#endif
 
 char  *NaClTimeStampString(char   *buffer,
                            size_t buffer_size) {
