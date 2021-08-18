@@ -16,7 +16,7 @@
 #include "native_client/src/trusted/service_runtime/arch/x86_64/sel_rt_64.h"
 #include "native_client/src/trusted/service_runtime/arch/x86_64/tramp_64.h"
 #include "native_client/src/trusted/service_runtime/sgx_interface.h"
-
+/*
 static uintptr_t AddDispatchAddr(uintptr_t *next_addr,
                                  uintptr_t target_routine) {
   uintptr_t addr = *next_addr;
@@ -24,12 +24,12 @@ static uintptr_t AddDispatchAddr(uintptr_t *next_addr,
   *next_addr += sizeof(uintptr_t);
   return addr;
 }
-
+*/
 int NaClMakeDispatchAddrs(struct NaClApp *nap) {
   int                   retval = 0;  /* fail */
   int                   error;
   void                  *page_addr = NULL;
-  uintptr_t             next_addr;
+  // uintptr_t             next_addr;
   uintptr_t             nacl_syscall_addr = 0;
   uintptr_t             get_tls_fast_path1_addr = 0;
   uintptr_t             get_tls_fast_path2_addr = 0;
@@ -67,14 +67,16 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
     goto cleanup;
   }
 
-  next_addr = (uintptr_t) page_addr;
-  nacl_syscall_addr =
-      AddDispatchAddr(&next_addr, (uintptr_t) &NaClSyscallSeg);
-  get_tls_fast_path1_addr =
-      AddDispatchAddr(&next_addr, (uintptr_t) &NaClGetTlsFastPath1);
-  get_tls_fast_path2_addr =
-      AddDispatchAddr(&next_addr, (uintptr_t) &NaClGetTlsFastPath2);
+  // TODO
+  // next_addr = (uintptr_t) page_addr;
+  nacl_syscall_addr = 0xc30005000;
+      // AddDispatchAddr(&next_addr, (uintptr_t) &NaClSyscallSeg);
+  get_tls_fast_path1_addr = nacl_syscall_addr + 0x40;
+      // AddDispatchAddr(&next_addr, (uintptr_t) &NaClGetTlsFastPath1);
+  get_tls_fast_path2_addr = nacl_syscall_addr + 0x80;
+      // AddDispatchAddr(&next_addr, (uintptr_t) &NaClGetTlsFastPath2);
   
+  /*
   if (0 != (error = NaClMprotect(page_addr, NACL_MAP_PAGESIZE, PROT_READ))) {
     NaClLog(LOG_INFO,
             "NaClMakeDispatchAddrs::NaClMprotect read-only failed, errno %d\n",
@@ -82,6 +84,7 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
     retval = 0;
     goto cleanup;
   }
+*/
   
   retval = 1;
  cleanup:
@@ -102,7 +105,8 @@ int NaClMakeDispatchAddrs(struct NaClApp *nap) {
  * Install a syscall trampoline at target_addr.  NB: Thread-safe.
  */
 void  NaClPatchOneTrampolineCall(uintptr_t  call_target_addr,
-                                 uintptr_t  target_addr) {
+                                 uintptr_t  target_addr,
+                                uintptr_t memory_target_addr) {
   struct NaClPatchInfo  patch_info;
   struct NaClPatch      tramp_addr;
   struct NaClPatch      call_target;
@@ -126,7 +130,7 @@ void  NaClPatchOneTrampolineCall(uintptr_t  call_target_addr,
   patch_info.abs32 = &tramp_addr;
   patch_info.num_abs32 = 1;
 
-  patch_info.dst = target_addr;
+  patch_info.dst = memory_target_addr;
   patch_info.src = (uintptr_t) &NaCl_trampoline_code;
   patch_info.nbytes = ((uintptr_t) &NaCl_trampoline_code_end
                        - (uintptr_t) &NaCl_trampoline_code);
@@ -136,18 +140,6 @@ void  NaClPatchOneTrampolineCall(uintptr_t  call_target_addr,
   
 }
 
-void NaClPatchOneTrampoline(struct NaClApp *nap, uintptr_t target_addr) {
-  
-  //int ret;
-
-	// TODO (mhkang)
-
-  NaClPatchOneTrampolineCall(nap->nacl_syscall_addr,  target_addr);
-  //ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)target_addr, (void *)target_addr_tmp, NACL_SYSCALL_BLOCK_SIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE|PROT_EXEC, false, "patch tramp");
-
-	//if (ret < 0)
-	//	exit(1);
-}
 
 void NaClFillMemoryRegionWithHalt(void *start, size_t size) {
   CHECK(!(size % NACL_HALT_LEN));

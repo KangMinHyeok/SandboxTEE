@@ -15,13 +15,24 @@
 #include "native_client/src/trusted/service_runtime/nacl_thread_nice.h"
 #include "native_client/src/trusted/service_runtime/nacl_tls.h"
 #include "native_client/src/trusted/service_runtime/nacl_stack_safety.h"
+#if NACL_SGX
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
+#endif
 
 void  NaClAllModulesInit(void) {
+#if NACL_SGX == 1
   NaClNrdAllModulesInit();
   NaClFaultInjectionModuleInit();
   NaClGlobalModuleInit();  /* various global variables */
   NaClTlsInit();
   // NaClThreadNiceInit(); 
+#else
+  NaClNrdAllModulesInit();
+  NaClFaultInjectionModuleInit();
+  NaClGlobalModuleInit();  /* various global variables */
+  NaClTlsInit();
+  NaClThreadNiceInit(); 
+#endif
 }
 
 

@@ -2848,10 +2848,11 @@ def MakeSgxEnv():
     CCFLAGS = common_flags + [
         ] + sgx_include, 
     CFLAGS = [
-        #'-nostdinc'
+        # '-nostdinc'
         '-std=c99',
         ] + sgx_include,
     CXXFLAGS = [
+        # '-nostdinc++',
         '-std=c++98',
         ],
     )

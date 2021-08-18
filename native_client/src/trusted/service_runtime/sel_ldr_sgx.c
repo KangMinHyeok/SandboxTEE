@@ -59,11 +59,13 @@
 #include "native_client/src/trusted/service_runtime/sgx_interface.h"
 #include "native_client/src/trusted/stdlib/fileio.h"
 #endif
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
+// TODO(mkpark): uncomment below code
 static int IsEnvironmentVariableSet(char const *env_name) {
   return NULL != getenv(env_name);
 }
-
+/*
 static int ShouldEnableDyncodeSyscalls(void) {
   return !IsEnvironmentVariableSet("NACL_DISABLE_DYNCODE_SYSCALLS");
 }
@@ -71,7 +73,7 @@ static int ShouldEnableDyncodeSyscalls(void) {
 static int ShouldEnableDynamicLoading(void) {
   return !IsEnvironmentVariableSet("NACL_DISABLE_DYNAMIC_LOADING");
 }
-
+*/
 int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   struct NaClDescEffectorLdr  *effp;
   int i;
@@ -82,15 +84,18 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   /* The validation cache will be injected later, if it exists. */
   nap->validation_cache = NULL;
 
-  nap->validator = NaClCreateValidator();
+  // TODO
+
+  // nap->validator = NaClCreateValidator();
 
   /* Get the set of features that the CPU we're running on supports. */
-  nap->cpu_features = (NaClCPUFeatures *) malloc(
+/*  nap->cpu_features = (NaClCPUFeatures *) malloc(
       nap->validator->CPUFeatureSize);
   if (NULL == nap->cpu_features) {
     goto cleanup_none;
   }
   nap->validator->GetCurrentCPUFeatures(nap->cpu_features);
+*/
 
   nap->addr_bits = NACL_MAX_ADDR_BITS;
 
@@ -127,10 +132,11 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   if (!DynArrayCtor(&nap->desc_tbl, 2)) {
     goto cleanup_threads;
   }
+/*
   if (!NaClVmmapCtor(&nap->mem_map)) {
     goto cleanup_desc_tbl;
   }
-
+*/
   nap->mem_io_regions = (struct NaClIntervalMultiset *) malloc(
       sizeof(struct NaClIntervalRangeTree));
   if (NULL == nap->mem_io_regions) {
@@ -148,6 +154,8 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   if (NULL == effp) {
     goto cleanup_mem_io_regions;
   }
+  // TODO
+/*
   if (!NaClDescEffectorLdrCtor(effp, nap)) {
     goto cleanup_effp_free;
   }
@@ -169,7 +177,7 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   nap->dynamic_mapcache_offset = 0;
   nap->dynamic_mapcache_size = 0;
   nap->dynamic_mapcache_ret = 0;
-
+*/
   nap->main_exe_prevalidated = 0;
 
   if (!NaClResourceNaClAppInit(&nap->resources, nap)) {
@@ -263,7 +271,7 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
    * responsibility of the caller to replace this with a sane value
    * after the Ctor returns.
    */
-  nap->sc_nprocessors_onln = sysconf(_SC_NPROCESSORS_ONLN);
+  // nap->sc_nprocessors_onln = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 
 #if !NACL_LINUX
@@ -290,20 +298,20 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   NaClMutexDtor(&nap->mu);
  cleanup_dynamic_load_mutex:
   NaClMutexDtor(&nap->dynamic_load_mutex);
- cleanup_effp_free:
+ //cleanup_effp_free:
   free(nap->effp);
  cleanup_mem_io_regions:
   NaClIntervalMultisetDelete(nap->mem_io_regions);
   nap->mem_io_regions = NULL;
  cleanup_mem_map:
-  NaClVmmapDtor(&nap->mem_map);
- cleanup_desc_tbl:
+//  NaClVmmapDtor(&nap->mem_map);
+ //cleanup_desc_tbl:
   DynArrayDtor(&nap->desc_tbl);
  cleanup_threads:
   DynArrayDtor(&nap->threads);
  cleanup_cpu_features:
   free(nap->cpu_features);
- cleanup_none:
+ //cleanup_none:
   return 0;
 }
 
@@ -321,7 +329,7 @@ struct NaClApp *NaClAppCreate(void) {
   if (!NaClAppCtor(nap))
     NaClLog(LOG_FATAL, "NaClAppCtor() failed\n");
 
-#if NACL_SGX == 1 || NACL_USGX == 1
+#if NACL_SGX == 1 
 	nap->sgx = malloc(sizeof(struct NaClSGX));
 	if (nap->sgx == NULL)
 		NaClLog(LOG_FATAL, "Failed to allocated NaClSGX\n");
@@ -542,7 +550,7 @@ void NaClAppInitialDescriptorHookup(struct NaClApp *nap) {
       /*
        * Environment not set or redirect failed -- handle default inheritance.
        */
-      NaClAddHostDescriptor(nap, DUP(g_nacl_redir_control[ix].d),
+      NaClAddHostDescriptor(nap, (g_nacl_redir_control[ix].d),
                             g_nacl_redir_control[ix].nacl_flags, (int) ix);
     }
   }

@@ -132,6 +132,7 @@ void NaClTlsSetTlsValue2(struct NaClAppThread *natp, uint32_t value) {
 }
 
 uint32_t NaClTlsGetTlsValue1(struct NaClAppThread *natp) {
+  printf("%lx\n", natp->user.tls_value1);
   return natp->user.tls_value1;
 }
 
@@ -251,6 +252,45 @@ struct NaClAppThread *NaClTlsGetCurrentThread(void) {
   struct NaClThreadContext *ntcp = pthread_getspecific(nacl_thread_info_key);
   return NaClAppThreadFromThreadContext(ntcp);
 }
+
+#elif NACL_SGX 
+
+#include "native_client/src/trusted/service_runtime/sgx/sgx_tls.h"
+
+int NaClTlsInit(void) {
+  NaClThreadStartupCheck();
+
+  if (!NaClThreadIdxInit()) {
+    return 0;
+  }
+  return 1;
+}
+
+void NaClTlsFini(void) {
+  NaClThreadIdxFini();
+}
+
+/*
+ * On x86-64, we must avoid using segment registers since Windows
+ * Vista 64, Windows 7 64, etc do not permit user code to create LDT
+ * entries.  The sandboxing scheme reserves %r15 for the base of the
+ * NaCl app's 4G address space, but does not reserve any additional
+ * registers for thread identity.  This reduces additional register
+ * pressure, but implies that we have to figure out the thread
+ * identity in some other way -- we use TLS (or TSD, see below) to do
+ * so, and on context switch we must access the TLS variable in order
+ * to determine where to save the user register context.
+ */
+void NaClTlsSetCurrentThread(struct NaClAppThread *natp) {
+  // nacl_current_thread = &natp->user;
+  SET_ENCLAVE_TLS(nacl_current_thread, &natp->user);
+}
+
+struct NaClAppThread *NaClTlsGetCurrentThread(void) {
+  return NaClAppThreadFromThreadContext(GET_ENCLAVE_TLS(nacl_current_thread));
+}
+
+
 
 #elif NACL_LINUX || NACL_WINDOWS
 

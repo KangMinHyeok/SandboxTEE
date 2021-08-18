@@ -161,7 +161,7 @@ void NaClAppThreadTeardown(struct NaClAppThread *natp) {
   NaClLog(3, " unlocking thread table\n");
   NaClXMutexUnlock(&nap->threads_mu);
   NaClLog(3, " unregistering signal stack\n");
-  NaClSignalStackUnregister();
+  // NaClSignalStackUnregister();
   NaClLog(3, " freeing thread object\n");
   NaClAppThreadDelete(natp);
   NaClLog(3, " NaClThreadExit\n");
@@ -179,7 +179,8 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
                                         uint32_t       user_tls2) {
   struct NaClAppThread *natp;
 
-  natp = NaClAlignedMalloc(sizeof *natp, __alignof(struct NaClAppThread));
+  // natp = NaClAlignedMalloc(sizeof *natp, __alignof(struct NaClAppThread));
+  natp = malloc(sizeof *natp); 
   if (natp == NULL) {
     return NULL;
   }
@@ -262,6 +263,11 @@ int NaClAppThreadSpawn(struct NaClApp *nap,
    * NaClThreadCtor() will succeed.
    */
   natp->host_thread_is_defined = 1;
+  
+  // TODO: check here
+  NaClAppThreadLauncher((void *) natp);
+
+  // NEVER REACH HERE
   if (!NaClThreadCtor(&natp->host_thread, NaClAppThreadLauncher, (void *) natp,
                       NACL_KERN_STACK_SIZE)) {
     /*

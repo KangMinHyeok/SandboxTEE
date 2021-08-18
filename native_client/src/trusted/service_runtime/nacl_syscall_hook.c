@@ -89,6 +89,7 @@ static void HandleStackContext(struct NaClAppThread *natp,
 }
 
 struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
+
   struct NaClAppThread      *natp = NaClAppThreadFromThreadContext(ntcp);
   struct NaClApp            *nap;
   uint32_t                  tramp_ret;
@@ -103,7 +104,6 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
   NaClStackSafetyNowOnTrustedStack();
 
   HandleStackContext(natp, &tramp_ret, &sp_user);
-
   /*
    * Before this call, the thread could be suspended, so we should not
    * lock any mutexes before this, otherwise it could cause a
@@ -146,8 +146,10 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
     sysret = (uint32_t) -NACL_ABI_EINVAL;
     NaClCopyDropLock(nap);
   } else {
+  printf("%s %d %d\n", __func__, __LINE__, sysnum);
     sysret = (*(nap->syscall_table[sysnum].handler))(natp);
     /* Implicitly drops lock */
+  printf("%s %d %d\n", __func__, __LINE__, sysnum);
   }
   NaClLog(4,
           ("Returning from syscall %"NACL_PRIuS": return value %"NACL_PRId32

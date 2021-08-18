@@ -16,10 +16,11 @@
 #ifndef NATIVE_CLIENT_SRC_INCLUDE_PORTABILITY_H_
 #define NATIVE_CLIENT_SRC_INCLUDE_PORTABILITY_H_ 1
 
-#include <stdlib.h>
-
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/include/nacl_base.h"
+
+#include <stdlib.h>
+
 #ifdef __native_client__
 #include <bits/wordsize.h>
 #else

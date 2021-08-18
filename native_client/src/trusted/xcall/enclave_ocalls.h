@@ -1,6 +1,8 @@
 #ifndef __ENCLAVE_OCALLS__
 #define __ENCLAVE_OCALLS__
 
+#if NACL_SGX == 1
+
 #include <unistd.h>
 #include <time.h>
 #include <stdint.h>
@@ -111,4 +113,5 @@ int ocall_debugp (int val);
 void ocall_exit(int status);
 
 
+#endif
 #endif

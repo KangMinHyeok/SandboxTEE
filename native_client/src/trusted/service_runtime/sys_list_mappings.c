@@ -108,8 +108,10 @@ static void NaClSysListMappingsVisit(void *statev,
       /* vmmap_type= */ vmep->desc != NULL);
 }
 
+#if NACL_SGX != 1
 static void NaClSysListMappingsDyncodeVisit(void *statev,
                                             struct NaClDynamicRegion *rg) {
+
   struct NaClSysListMappingsState *state =
       (struct NaClSysListMappingsState *) statev;
 
@@ -121,6 +123,7 @@ static void NaClSysListMappingsDyncodeVisit(void *statev,
       /* max_prot= */ NACL_ABI_PROT_READ | NACL_ABI_PROT_EXEC,
       /* vmmap_type= */ 0);
 }
+#endif
 
 int32_t NaClSysListMappings(struct NaClAppThread *natp,
                             uint32_t regions,
@@ -140,7 +143,9 @@ int32_t NaClSysListMappings(struct NaClAppThread *natp,
 
   NaClXMutexLock(&nap->mu);
   NaClVmmapVisit(&nap->mem_map, NaClSysListMappingsVisit, &state);
+#if NACL_SGX != 1 // TODO (uncomment)
   NaClDyncodeVisit(nap, NaClSysListMappingsDyncodeVisit, &state);
+#endif
   NaClXMutexUnlock(&nap->mu);
 
   if (state.out_of_memory) {

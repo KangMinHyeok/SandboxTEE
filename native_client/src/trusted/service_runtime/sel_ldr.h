@@ -653,7 +653,11 @@ int NaClMakePcrelThunk(struct NaClApp *nap, enum NaClAslrMode aslr_mode);
 int NaClMakeDispatchAddrs(struct NaClApp *nap);
 
 void NaClPatchOneTrampolineCall(uintptr_t call_target_addr,
+#if NACL_USGX
+                                uintptr_t target_addr, uintptr_t memory_target_addr);
+#else
                                 uintptr_t target_addr);
+#endif
 
 #endif
 

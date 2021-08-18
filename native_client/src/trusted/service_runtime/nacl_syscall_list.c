@@ -36,11 +36,14 @@ NACL_DEFINE_SYSCALL_2(NaClSysFstat)
 NACL_DEFINE_SYSCALL_2(NaClSysStat)
 NACL_DEFINE_SYSCALL_3(NaClSysGetdents)
 NACL_DEFINE_SYSCALL_1(NaClSysIsatty)
+// TODO: uncomment below
+#if NACL_SGX != 1
 NACL_DEFINE_SYSCALL_1(NaClSysBrk)
 NACL_DEFINE_SYSCALL_6(NaClSysMmap)
 NACL_DEFINE_SYSCALL_3(NaClSysMprotect)
 NACL_DEFINE_SYSCALL_2(NaClSysListMappings)
 NACL_DEFINE_SYSCALL_2(NaClSysMunmap)
+#endif
 NACL_DEFINE_SYSCALL_1(NaClSysExit)
 NACL_DEFINE_SYSCALL_0(NaClSysGetpid)
 NACL_DEFINE_SYSCALL_1(NaClSysThreadExit)
@@ -70,12 +73,14 @@ NACL_DEFINE_SYSCALL_3(NaClSysReadlink)
 NACL_DEFINE_SYSCALL_2(NaClSysUtimes)
 NACL_DEFINE_SYSCALL_4(NaClSysPRead)
 NACL_DEFINE_SYSCALL_4(NaClSysPWrite)
+/*
 NACL_DEFINE_SYSCALL_1(NaClSysImcMakeBoundSock)
 NACL_DEFINE_SYSCALL_1(NaClSysImcAccept)
 NACL_DEFINE_SYSCALL_1(NaClSysImcConnect)
 NACL_DEFINE_SYSCALL_3(NaClSysImcSendmsg)
 NACL_DEFINE_SYSCALL_3(NaClSysImcRecvmsg)
 NACL_DEFINE_SYSCALL_1(NaClSysImcMemObjCreate)
+*/
 NACL_DEFINE_SYSCALL_1(NaClSysTlsInit)
 NACL_DEFINE_SYSCALL_4(NaClSysThreadCreate)
 NACL_DEFINE_SYSCALL_0(NaClSysTlsGet)
@@ -89,16 +94,18 @@ NACL_DEFINE_SYSCALL_2(NaClSysCondWait)
 NACL_DEFINE_SYSCALL_1(NaClSysCondSignal)
 NACL_DEFINE_SYSCALL_1(NaClSysCondBroadcast)
 NACL_DEFINE_SYSCALL_3(NaClSysCondTimedWaitAbs)
-NACL_DEFINE_SYSCALL_1(NaClSysImcSocketPair)
+// NACL_DEFINE_SYSCALL_1(NaClSysImcSocketPair)
 NACL_DEFINE_SYSCALL_1(NaClSysSemCreate)
 NACL_DEFINE_SYSCALL_1(NaClSysSemWait)
 NACL_DEFINE_SYSCALL_1(NaClSysSemPost)
 NACL_DEFINE_SYSCALL_1(NaClSysSemGetValue)
 NACL_DEFINE_SYSCALL_0(NaClSysSchedYield)
 NACL_DEFINE_SYSCALL_2(NaClSysSysconf)
+/*
 NACL_DEFINE_SYSCALL_3(NaClSysDyncodeCreate)
 NACL_DEFINE_SYSCALL_3(NaClSysDyncodeModify)
 NACL_DEFINE_SYSCALL_2(NaClSysDyncodeDelete)
+*/
 NACL_DEFINE_SYSCALL_1(NaClSysSecondTlsSet)
 NACL_DEFINE_SYSCALL_0(NaClSysSecondTlsGet)
 NACL_DEFINE_SYSCALL_2(NaClSysExceptionHandler)
@@ -106,8 +113,11 @@ NACL_DEFINE_SYSCALL_2(NaClSysExceptionStack)
 NACL_DEFINE_SYSCALL_0(NaClSysExceptionClearFlag)
 NACL_DEFINE_SYSCALL_0(NaClSysTestInfoLeak)
 NACL_DEFINE_SYSCALL_1(NaClSysTestCrash)
+// TODO uncomment below
+/*
 NACL_DEFINE_SYSCALL_3(NaClSysFutexWaitAbs)
 NACL_DEFINE_SYSCALL_2(NaClSysFutexWake)
+*/
 NACL_DEFINE_SYSCALL_2(NaClSysGetRandomBytes)
 
 void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
@@ -123,11 +133,14 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysStat, NACL_sys_stat);
   NACL_REGISTER_SYSCALL(nap, NaClSysGetdents, NACL_sys_getdents);
   NACL_REGISTER_SYSCALL(nap, NaClSysIsatty, NACL_sys_isatty);
+// TODO: uncomment below
+#if NACL_SGX != 1
   NACL_REGISTER_SYSCALL(nap, NaClSysBrk, NACL_sys_brk);
   NACL_REGISTER_SYSCALL(nap, NaClSysMmap, NACL_sys_mmap);
   NACL_REGISTER_SYSCALL(nap, NaClSysMprotect, NACL_sys_mprotect);
   NACL_REGISTER_SYSCALL(nap, NaClSysListMappings, NACL_sys_list_mappings);
   NACL_REGISTER_SYSCALL(nap, NaClSysMunmap, NACL_sys_munmap);
+#endif
   NACL_REGISTER_SYSCALL(nap, NaClSysExit, NACL_sys_exit);
   NACL_REGISTER_SYSCALL(nap, NaClSysGetpid, NACL_sys_getpid);
   NACL_REGISTER_SYSCALL(nap, NaClSysThreadExit, NACL_sys_thread_exit);
@@ -157,6 +170,7 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysUtimes, NACL_sys_utimes);
   NACL_REGISTER_SYSCALL(nap, NaClSysPRead, NACL_sys_pread);
   NACL_REGISTER_SYSCALL(nap, NaClSysPWrite, NACL_sys_pwrite);
+/*
   NACL_REGISTER_SYSCALL(nap, NaClSysImcMakeBoundSock,
                         NACL_sys_imc_makeboundsock);
   NACL_REGISTER_SYSCALL(nap, NaClSysImcAccept, NACL_sys_imc_accept);
@@ -165,6 +179,7 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysImcRecvmsg, NACL_sys_imc_recvmsg);
   NACL_REGISTER_SYSCALL(nap, NaClSysImcMemObjCreate,
                         NACL_sys_imc_mem_obj_create);
+*/
   NACL_REGISTER_SYSCALL(nap, NaClSysTlsInit, NACL_sys_tls_init);
   NACL_REGISTER_SYSCALL(nap, NaClSysThreadCreate, NACL_sys_thread_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysTlsGet, NACL_sys_tls_get);
@@ -179,16 +194,19 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysCondBroadcast, NACL_sys_cond_broadcast);
   NACL_REGISTER_SYSCALL(nap, NaClSysCondTimedWaitAbs,
                         NACL_sys_cond_timed_wait_abs);
-  NACL_REGISTER_SYSCALL(nap, NaClSysImcSocketPair, NACL_sys_imc_socketpair);
+//  NACL_REGISTER_SYSCALL(nap, NaClSysImcSocketPair, NACL_sys_imc_socketpair);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemCreate, NACL_sys_sem_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemWait, NACL_sys_sem_wait);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemPost, NACL_sys_sem_post);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemGetValue, NACL_sys_sem_get_value);
   NACL_REGISTER_SYSCALL(nap, NaClSysSchedYield, NACL_sys_sched_yield);
   NACL_REGISTER_SYSCALL(nap, NaClSysSysconf, NACL_sys_sysconf);
+// TODO
+/*
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeCreate, NACL_sys_dyncode_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeModify, NACL_sys_dyncode_modify);
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeDelete, NACL_sys_dyncode_delete);
+*/
   NACL_REGISTER_SYSCALL(nap, NaClSysSecondTlsSet, NACL_sys_second_tls_set);
   NACL_REGISTER_SYSCALL(nap, NaClSysSecondTlsGet, NACL_sys_second_tls_get);
   NACL_REGISTER_SYSCALL(nap, NaClSysExceptionHandler,
@@ -198,7 +216,10 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
                         NACL_sys_exception_clear_flag);
   NACL_REGISTER_SYSCALL(nap, NaClSysTestInfoLeak, NACL_sys_test_infoleak);
   NACL_REGISTER_SYSCALL(nap, NaClSysTestCrash, NACL_sys_test_crash);
+// TODO uncomment below
+/*
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWaitAbs, NACL_sys_futex_wait_abs);
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWake, NACL_sys_futex_wake);
+*/
   NACL_REGISTER_SYSCALL(nap, NaClSysGetRandomBytes, NACL_sys_get_random_bytes);
 }

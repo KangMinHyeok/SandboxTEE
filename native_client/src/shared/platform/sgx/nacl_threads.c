@@ -54,6 +54,7 @@ static int NaClThreadCreate(struct NaClThread  *ntp,
 
   NaClLog(LOG_FATAL,
             "nacl_thread: not provide multithreading\n");
+  
   /*
   if (0 != (code = sgx_thread_create(&ntp->tid,
                                   &attr,

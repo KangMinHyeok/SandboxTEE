@@ -213,7 +213,14 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 	// start of heap:       0x40000000
 
 	// stack & heap size TODO(check baseaddr)
-	// int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(/* nap->sgx->enclave_secs->baseaddr + */ 0xC0000000), NULL, 0x40000000, SGX_PAGE_REG, PROT_READ|PROT_WRITE, false, "patch tramp all");
+  uintptr_t stack_ptr;
+  nap->mem_start = 0x100000000;
+
+  stack_ptr = NaClRoundAllocPage (NaClGetInitialStackTop(nap) - nap->stack_size);
+  
+	int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + 0x100000000 + stack_ptr), NULL, NaClRoundAllocPage(nap->stack_size), SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "nacl stack");
+  if (ret < 0)
+    NaClLog(LOG_FATAL, "load nacl stack error\n");
 
 	// load service_runtime 
 #define SGX_RUNTIME_FILENAME "./scons-out/sgx-linux-x86-64/staging/libsgx_nacl.so"
@@ -286,6 +293,9 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 
 	add_pages_to_enclave(nap->sgx->enclave_secs, ssa_addr, data, 
 			SSAFRAMESIZE*SSAFRAMENUM, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "ssa"); 
+
+	add_pages_to_enclave(nap->sgx->enclave_secs, (void *) ( (uint64_t) ssa_addr + SSAFRAMESIZE*SSAFRAMENUM), NULL, 
+			NACL_PAGESIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "dummy"); 
 
 	init_enclave(nap);	
 
