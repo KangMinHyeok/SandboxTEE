@@ -498,6 +498,7 @@ void  NaClLoadTrampoline(struct NaClApp *nap, enum NaClAslrMode aslr_mode) {
 
   NaClLog(2, "num_syscalls = %d (0x%x)\n", num_syscalls, num_syscalls);
   
+// TODO: fix here
 #if NACL_USGX == 1
   size_t temp_size = NACL_SYSCALL_BLOCK_SIZE * num_syscalls;
   size_t rem = temp_size % PRESET_PAGESIZE;
@@ -506,25 +507,37 @@ void  NaClLoadTrampoline(struct NaClApp *nap, enum NaClAslrMode aslr_mode) {
 	}
 
 	uint8_t * temp_addr = (uint8_t *)malloc(temp_size);
-  addr = (uintptr_t) temp_addr;
+  memset(temp_addr, 0xf4, temp_size);
+  uintptr_t tp = (uintptr_t) temp_addr;
 
-#else
-	addr = nap->mem_start + NACL_SYSCALL_START_ADDR;
-#endif
-
+  nap->mem_start = 0x100000000;
+  addr = nap->mem_start + NACL_SYSCALL_START_ADDR;
+  
+  for (i = 0;
+       i < num_syscalls;
+       ++i, addr += NACL_SYSCALL_BLOCK_SIZE, tp += NACL_SYSCALL_BLOCK_SIZE) {
+    NaClPatchOneTrampolineCall(nap->nacl_syscall_addr, addr, tp);
+  }
+#else 
+  
+  addr = nap->mem_start + NACL_SYSCALL_START_ADDR;
+  
   for (i = 0;
        i < num_syscalls;
        ++i, addr += NACL_SYSCALL_BLOCK_SIZE) {
     NaClPatchOneTrampoline(nap, addr);
   }
+#endif
+
 #if NACL_USGX == 1
+
   int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + 0x100000000 + NACL_SYSCALL_START_ADDR), (void *)temp_addr, temp_size, SGX_PAGE_REG, PROT_READ | PROT_EXEC, true, "patch tramp all");
   if (ret < 0)
   	exit(1);
   free(temp_addr);
 #endif
   
-#if NACL_ARCH(NACL_BUILD_ARCH) == NACL_x86 && NACL_BUILD_SUBARCH == 64
+#if NACL_ARCH(NACL_BUILD_ARCH) == NACL_x86 && NACL_BUILD_SUBARCH == 64 && NACL_USGX != 1
   NaClPatchOneTrampolineCall(nap->get_tls_fast_path1_addr,
                              nap->mem_start + NACL_SYSCALL_START_ADDR
                              + NACL_SYSCALL_BLOCK_SIZE * NACL_sys_tls_get);

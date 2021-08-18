@@ -132,6 +132,7 @@ void NaClTlsSetTlsValue2(struct NaClAppThread *natp, uint32_t value) {
 }
 
 uint32_t NaClTlsGetTlsValue1(struct NaClAppThread *natp) {
+  printf("%lx\n", natp->user.tls_value1);
   return natp->user.tls_value1;
 }
 

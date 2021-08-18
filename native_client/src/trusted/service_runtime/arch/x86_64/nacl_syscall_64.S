@@ -40,8 +40,9 @@
          * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
          */
 #if NACL_SGX
-        // TODO: need to check the number
-        movq %gs:(92), %rdx
+        // TODO fix the below 96 to def or something
+        // mkpark 96 = index of nacl_current_thread in enclave_tls
+        movq %gs:(96), %rdx
 #elif NACL_LINUX
         /*
          * Linux uses TLS.

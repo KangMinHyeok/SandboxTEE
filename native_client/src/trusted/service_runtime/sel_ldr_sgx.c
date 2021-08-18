@@ -318,7 +318,7 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
 int NaClAppCtor(struct NaClApp *nap) {
   if (!NaClAppWithEmptySyscallTableCtor(nap))
     return 0;
-  // NaClAppRegisterDefaultSyscalls(nap);
+  NaClAppRegisterDefaultSyscalls(nap);
   return 1;
 }
 

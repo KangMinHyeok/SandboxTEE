@@ -250,7 +250,8 @@ int32_t NaClSysThreadCreate(struct NaClAppThread *natp,
     goto cleanup;
   }
 
-  NaClVmHoleWaitToStartThread(nap);
+  // TODO
+  // NaClVmHoleWaitToStartThread(nap);
 
   retval = NaClCreateAdditionalThread(nap,
                                       prog_ctr,
@@ -288,7 +289,12 @@ int NaClSysThreadNice(struct NaClAppThread *natp,
                       const int            nice) {
   /* Note: implementation of nacl_thread_nice is OS dependent. */
   UNREFERENCED_PARAMETER(natp);
+#if NACL_SGX == 1
+  UNREFERENCED_PARAMETER(nice);
+  return -1;
+#else 
   return nacl_thread_nice(nice);
+#endif
 }
 
 int32_t NaClSysMutexCreate(struct NaClAppThread *natp) {
