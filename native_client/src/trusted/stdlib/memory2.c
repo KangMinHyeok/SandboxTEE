@@ -1,5 +1,6 @@
 #include "native_client/src/trusted/stdlib/memory.h"
 #include "native_client/src/include/build_config.h"
+#include "native_client/src/trusted/stdlib/api.h"
 
 #if NACL_SGX == 1
 #include "native_client/src/trusted/stdlib/stddef.h"

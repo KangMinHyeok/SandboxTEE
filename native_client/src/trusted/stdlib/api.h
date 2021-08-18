@@ -142,6 +142,7 @@ void * memcpy (void *dstpp, const void *srcpp, size_t len);
 void * memmove (void *dstpp, const void *srcpp, size_t len);
 void * memset (void *dstpp, int c, size_t len);
 int memcmp (const void *s1, const void *s2, size_t len);
+void *memalign(size_t align, size_t len);
 
 /* Libc memory allocation functions. stdlib.h. */
 void *malloc(size_t size);
