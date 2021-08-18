@@ -46,6 +46,7 @@
 
 #include "native_client/src/trusted/stdlib/fileio.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
+#include "native_client/src/trusted/service_runtime/arch/x86_64/tramp_64.h"
 //#include "native_client/src/trusted/stdlib/stdio.h"
 /*
 static void VmentryPrinter(void           *state,
@@ -215,6 +216,12 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
     }
   }
   */
+  
+  // Dispatch address
+  *((uintptr_t *) nap->nacl_syscall_addr) = (uintptr_t) &NaClSyscallSeg;
+  *((uintptr_t *) nap->get_tls_fast_path1_addr) = (uintptr_t) &NaClGetTlsFastPath1;
+  *((uintptr_t *) nap->get_tls_fast_path2_addr) = (uintptr_t) &NaClGetTlsFastPath2;
+  
   
   // TODO(mkpark): check the below
   //NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass

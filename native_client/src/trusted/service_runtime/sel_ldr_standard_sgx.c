@@ -295,8 +295,11 @@ int NaClCreateMainThread(struct NaClApp     *nap,
   NaClLog(2, "system stack ptr : %016"NACL_PRIxPTR"\n", stack_ptr);
   NaClLog(2, "  user stack ptr : %016"NACL_PRIxPTR"\n",
           NaClSysToUserStackAddr(nap, stack_ptr));
+  
+  
+  // TODO: position of the below
+  NaClInitSwitchToApp(nap);
 
-  printf("%s %d\n", __func__, __LINE__);
   /* e_entry is user addr */
   retval = NaClAppThreadSpawn(nap,
                               nap->initial_entry_pt,

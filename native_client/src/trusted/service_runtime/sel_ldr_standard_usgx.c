@@ -294,6 +294,9 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
 	add_pages_to_enclave(nap->sgx->enclave_secs, ssa_addr, data, 
 			SSAFRAMESIZE*SSAFRAMENUM, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "ssa"); 
 
+	add_pages_to_enclave(nap->sgx->enclave_secs, (void *) ( (uint64_t) ssa_addr + SSAFRAMESIZE*SSAFRAMENUM), NULL, 
+			NACL_PAGESIZE, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "dummy"); 
+
 	init_enclave(nap);	
 
 	NaClDescUnref(nd);

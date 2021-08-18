@@ -41,6 +41,10 @@ int32_t NaClSysClock(struct NaClAppThread *natp) {
    */
   if (NACL_WINDOWS) {
     return 1000 * clock();
+  } else if (NACL_SGX) {
+    // TODO uncomment below
+    // return clock();
+    return 0;
   } else {
     return clock();
   }
