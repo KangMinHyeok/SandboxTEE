@@ -47,7 +47,7 @@ SECTIONS
 
   /* now adjust the address for the data segment */
   /* . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE)); */
-  . = SEGMENT_START("data-segment", 0xC00020000);
+  . = SEGMENT_START("data-segment", 0xC00050000);
  __data_start = .; 
   .tdata         :
   {

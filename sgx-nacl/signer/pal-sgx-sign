@@ -435,6 +435,9 @@ def get_memory_areas(attr, args): # manifest, attr, args):
                             flags = PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
     addr_index += size
 
+    areas.append(MemoryArea('dummy', size = PAGESIZE, 
+                            flags = PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
+
     # 
     #     areas.append(MemoryArea('stack', size=ENCLAVE_STACK_SIZE,
     #                             flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG))
