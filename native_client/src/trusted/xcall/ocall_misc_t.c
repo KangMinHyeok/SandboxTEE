@@ -98,6 +98,7 @@ int ocall_fprint_string (FILE *fp, const char * str, unsigned int length){
     return ret;
 }
 
+// note that timeout is microsecond
 int ocall_futex (int * futex, int op, int val, const uint64_t * timeout, int * uaddr2, int val3) {
 	int retval = 0;
 	ms_ocall_futex_t * ms; 

@@ -4,15 +4,17 @@
  * found in the LICENSE file.
  */
 
+#include <time.h>
+#include <errno.h>
+
 #include "native_client/src/shared/platform/nacl_clock.h"
 
 #include "native_client/src/include/nacl_macros.h"
-#include "native_client/src/shared/platform/nacl_log.h"
 #include "native_client/src/shared/platform/nacl_host_desc.h"
+#include "native_client/src/shared/platform/nacl_log.h"
 #include "native_client/src/trusted/service_runtime/include/sys/errno.h"
 
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
-#include "native_client/src/trusted/stdlib/errno.h"
 
 /*
  * Linux is POSIX.1-2001 compliant, so the clock functions are trivial
@@ -21,13 +23,9 @@
  */
 static int g_NaClClock_is_initialized = 0;
 
-int NaClClockInit(void) { 
-  g_NaClClock_is_initialized = 1; 
-  return 1; 
-}
+int NaClClockInit(void) { g_NaClClock_is_initialized = 1; return 1; }
 void NaClClockFini(void) {}
 
-/*
 int NaClClockGetRes(nacl_clockid_t            clk_id,
                     struct nacl_abi_timespec  *res) {
   int             rv = -NACL_ABI_EINVAL;
@@ -57,7 +55,7 @@ int NaClClockGetRes(nacl_clockid_t            clk_id,
       break;
   }
   if (0 == rv) {
-    if (0 != clock_getres(host_clk_id, &host_res)) {
+    if (0 != ocall_clock_getres(host_clk_id, &host_res)) {
       rv = -NaClXlateErrno(errno);
     }
   }
@@ -67,7 +65,6 @@ int NaClClockGetRes(nacl_clockid_t            clk_id,
   }
   return rv;
 }
-*/
 
 int NaClClockGetTime(nacl_clockid_t            clk_id,
                      struct nacl_abi_timespec  *tp) {
@@ -80,6 +77,12 @@ int NaClClockGetTime(nacl_clockid_t            clk_id,
   }
   switch (clk_id) {
     case NACL_CLOCK_REALTIME:
+      if (0 != ocall_clock_gettime(clk_id, &host_time)) {
+        rv = -NaClXlateErrno(errno);
+      } else {
+        rv = 0;
+      }
+      break;
     case NACL_CLOCK_MONOTONIC:
       if (0 != ocall_clock_gettime(clk_id, &host_time)) {
         rv = -NaClXlateErrno(errno);
@@ -88,11 +91,25 @@ int NaClClockGetTime(nacl_clockid_t            clk_id,
       }
       break;
     case NACL_CLOCK_PROCESS_CPUTIME_ID:
+      /*
+       * This will include the time spent in an TCB-private service thread
+       * as well as the actual user threads. This not a major issue given
+       * all the trade-offs of implementing the proper semantics, but it is
+       * worth noting that the return value might be somewhat different from
+       * what this would be in a real POSIX OS.
+       */
+      if (0 != ocall_clock_gettime(clk_id, &host_time)) {
+        rv = -NaClXlateErrno(errno);
+      } else {
+        rv = 0;
+      }
+      break;
     case NACL_CLOCK_THREAD_CPUTIME_ID:
-    default:
-    NaClLog(LOG_FATAL,
-            "PAVE does not support other types of time (only NACL_CLOCK_REATIME) \n");
-
+      if (0 != ocall_clock_gettime(clk_id, &host_time)) {
+        rv = -NaClXlateErrno(errno);
+      } else {
+        rv = 0;
+      }
       break;
   }
   if (0 == rv) {

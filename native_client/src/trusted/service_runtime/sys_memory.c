@@ -59,8 +59,10 @@ int32_t NaClSysBrk(struct NaClAppThread *natp,
   uintptr_t             usr_new_last_data_page;
   uintptr_t             last_internal_data_addr;
   uintptr_t             last_internal_page;
+#if NACL_SGX != 1
   uintptr_t             start_new_region;
   uintptr_t             region_size;
+#endif
 
   /*
    * The sysbrk() IRT interface is deprecated and is not enabled for
@@ -159,10 +161,16 @@ int32_t NaClSysBrk(struct NaClAppThread *natp,
               "npages 0x%"NACL_PRIxS"\n",
               ent->page_num, ent->npages);
       /* go ahead and extend ent to cover, and make pages accessible */
+#if NACL_SGX != 1
       start_new_region = (ent->page_num + ent->npages) << NACL_PAGESHIFT;
+#endif
       ent->npages = (last_internal_page - ent->page_num + 1);
+      
+// note that; it is impossible to change mprotect inside enclave
+#if NACL_SGX != 1
       region_size = (((last_internal_page + 1) << NACL_PAGESHIFT)
                      - start_new_region);
+      
       if (0 != NaClMprotect((void *) NaClUserToSys(nap, start_new_region),
                             region_size,
                             PROT_READ | PROT_WRITE)) {
@@ -173,6 +181,7 @@ int32_t NaClSysBrk(struct NaClAppThread *natp,
                 start_new_region,
                 region_size);
       }
+#endif
       NaClLog(4, "segment now: page_num 0x%08"NACL_PRIxPTR", "
               "npages 0x%"NACL_PRIxS"\n",
               ent->page_num, ent->npages);
@@ -757,8 +766,11 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
          * code simpler (releasing a created region is more code).
          */
         NaClXMutexLock(&nap->dynamic_load_mutex);
+        ret = 0;
+#if NACL_SGX != 1 // TODO(mkpark)
         ret = NaClDynamicRegionCreate(nap, NaClUserToSys(nap, usraddr), length,
                                       1);
+#endif
         NaClXMutexUnlock(&nap->dynamic_load_mutex);
         if (!ret) {
           NaClLog(3, "NaClSysMmap: PROT_EXEC region"
@@ -814,11 +826,15 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
        * Fallback implementation.  Use the mapped memory as source for
        * the dynamic code insertion interface.
        */
+      // TODO: mkpark
+      sys_ret = 0;
+#if NACL_SGX != 1
       sys_ret = NaClTextDyncodeCreate(nap,
                                       (uint32_t) usraddr,
                                       (uint8_t *) image_sys_addr,
                                       (uint32_t) length,
                                       NULL);
+#endif
       if (sys_ret < 0) {
         map_result = sys_ret;
       } else {
@@ -1030,6 +1046,36 @@ static int32_t MunmapInternal(struct NaClApp *nap,
   }
   return 0;
 }
+#elif NACL_SGX
+static int32_t MunmapInternal(struct NaClApp *nap,
+                              uintptr_t sysaddr, size_t length) {
+  UNREFERENCED_PARAMETER(nap);
+  NaClLog(3, "MunmapInternal(0x%08"NACL_PRIxPTR", 0x%"NACL_PRIxS")\n",
+          (uintptr_t) sysaddr, length);
+  /*
+   * Overwrite current mapping with inaccessible, anonymous
+   * zero-filled pages, which should be copy-on-write and thus
+   * relatively cheap.  Do not open up an address space hole.
+   */
+  /* 
+  if (MAP_FAILED == mmap((void *) sysaddr,
+                         length,
+                         PROT_NONE,
+                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED,
+                         -1,
+                         (off_t) 0)) {
+    NaClLog(4, "mmap to put in anonymous memory failed, errno = %d\n", errno);
+    return -NaClXlateErrno(errno);
+  }
+  */
+  // mkpark: is it enough to zero-fill pages in SGX?
+  memset((void *) sysaddr, 0, length);
+
+  NaClVmmapRemove(&nap->mem_map,
+                  NaClSysToUser(nap, (uintptr_t) sysaddr) >> NACL_PAGESHIFT,
+                  length >> NACL_PAGESHIFT);
+  return 0;
+}
 #else
 static int32_t MunmapInternal(struct NaClApp *nap,
                               uintptr_t sysaddr, size_t length) {
@@ -1231,6 +1277,14 @@ static int32_t MprotectInternal(struct NaClApp *nap,
 #else
 static int32_t MprotectInternal(struct NaClApp *nap,
                                 uintptr_t sysaddr, size_t length, int prot) {
+
+  UNREFERENCED_PARAMETER(nap);
+  UNREFERENCED_PARAMETER(sysaddr);
+  UNREFERENCED_PARAMETER(length);
+  UNREFERENCED_PARAMETER(prot);
+
+// note that; it is impossible to change mprotect inside enclave
+#if NACL_SGX != 1
   uintptr_t               usraddr;
   uintptr_t               last_page_num;
   int                     host_prot;
@@ -1288,6 +1342,7 @@ static int32_t MprotectInternal(struct NaClApp *nap,
   }
 
   CHECK((entry->page_num + entry->npages) == last_page_num);
+#endif
 
   return 0;
 }

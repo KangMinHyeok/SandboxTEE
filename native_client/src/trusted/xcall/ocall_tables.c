@@ -18,6 +18,9 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_STAT] = sgx_ocall_stat,
 	[OCALL_LSTAT] = sgx_ocall_lstat,
 	[OCALL_FSTAT] = sgx_ocall_fstat,
+	[OCALL_STAT64] = sgx_ocall_stat64,
+	[OCALL_LSTAT64] = sgx_ocall_lstat64,
+	[OCALL_FSTAT64] = sgx_ocall_fstat64,
 	[OCALL_FSETNONBLOCK] = sgx_ocall_fsetnonblock,
 	[OCALL_FCHMOD] = sgx_ocall_fchmod,
 	[OCALL_FCHDIR] = sgx_ocall_fchdir,
@@ -54,6 +57,7 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_SOCK_SHUTDOWN] = sgx_ocall_sock_shutdown,
 
 	[OCALL_GETTIMEOFDAY] = sgx_ocall_gettimeofday,
+	[OCALL_CLOCK_GETRES] = sgx_ocall_clock_getres,
 	[OCALL_CLOCK_GETTIME] = sgx_ocall_clock_gettime,
 	[OCALL_SLEEP] = sgx_ocall_sleep,
 	[OCALL_NSLEEP] = sgx_ocall_nsleep,

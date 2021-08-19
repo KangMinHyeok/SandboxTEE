@@ -53,6 +53,27 @@ int sgx_ocall_fstat(void * pms) {
 	return ret;
 }
 
+int sgx_ocall_stat64(void * pms) {
+	ms_ocall_stat64_t * ms = (ms_ocall_stat64_t *) pms;
+	int ret = 0;
+	ret = stat64(ms->ms_path, ms->ms_stat);
+	return ret;
+}
+
+int sgx_ocall_lstat64(void * pms) {
+	ms_ocall_lstat64_t * ms = (ms_ocall_lstat64_t *) pms;
+	int ret = 0;
+	ret = lstat64(ms->ms_path, ms->ms_stat);
+	return ret;
+}
+
+int sgx_ocall_fstat64(void * pms) {
+	ms_ocall_fstat64_t * ms = (ms_ocall_fstat64_t *) pms;
+	int ret = 0;
+	ret = fstat64(ms->ms_fd, ms->ms_stat);
+	return ret;
+}
+
 int sgx_ocall_fsetnonblock(void * pms) {
 	ms_ocall_fsetnonblock_t * ms = (ms_ocall_fsetnonblock_t *) pms;
 	int ret = 0;
