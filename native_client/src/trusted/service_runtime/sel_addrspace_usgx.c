@@ -35,6 +35,7 @@ NaClErrorCode NaClAllocAddrSpaceAslr(struct NaClApp *nap,
           NACL_PRIxS")\n",
           ((size_t) 1 << nap->addr_bits));
 
+  // done
   rv = NaClAllocateSpaceAslr(&mem, (uintptr_t) 1U << nap->addr_bits,
                              aslr_mode);
   if (LOAD_OK != rv) {
@@ -91,16 +92,14 @@ NaClErrorCode NaClAllocAddrSpaceAslr(struct NaClApp *nap,
     NaClLog(2,
             "mprotecting 0x%08"NACL_PRIxPTR", 0x%08"NACL_PRIxS", PROT_NONE\n",
             nap->mem_start + hole_start, hole_size);
-// TODO
-/*
     if (0 != NaClMprotect((void *) (nap->mem_start + hole_start),
                           hole_size,
                           PROT_NONE)) {
       NaClLog(1, "mprotect, errno %d\n", errno);
       return LOAD_MPROTECT_FAIL;
     }
-*/
   }
+
   return LOAD_OK;
 }
 
@@ -147,8 +146,6 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
            " size 0x%08"NACL_PRIxS", end 0x%08"NACL_PRIxPTR"\n"),
           start_addr, region_size,
           start_addr + region_size);
-  /*
-// TODO
   if (0 != (err = NaClMprotect((void *) start_addr,
                                region_size,
                                PROT_READ | PROT_EXEC))) {
@@ -161,7 +158,6 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
             err);
     return LOAD_MPROTECT_FAIL;
   }
-*/
   NaClVmmapAdd(&nap->mem_map,
                NaClSysToUser(nap, start_addr) >> NACL_PAGESHIFT,
                region_size >> NACL_PAGESHIFT,
@@ -220,8 +216,6 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
              " end 0x%08"NACL_PRIxPTR"\n"),
             start_addr, region_size,
             start_addr + region_size);
-/*
-// TODO
     if (0 != (err = NaClMprotect((void *) start_addr,
                                  region_size,
                                  PROT_READ))) {
@@ -233,7 +227,7 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
               start_addr, region_size, PROT_READ,
               err);
       return LOAD_MPROTECT_FAIL;
-    } */
+    }
     NaClVmmapAdd(&nap->mem_map,
                  NaClSysToUser(nap, start_addr) >> NACL_PAGESHIFT,
                  region_size >> NACL_PAGESHIFT,
@@ -258,8 +252,6 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
              " end 0x%08"NACL_PRIxPTR"\n"),
             start_addr, region_size,
             start_addr + region_size);
-/*
-// TODO
     if (0 != (err = NaClMprotect((void *) start_addr,
                                  region_size,
                                  PROT_READ | PROT_WRITE))) {
@@ -272,7 +264,6 @@ NaClErrorCode NaClMemoryProtection(struct NaClApp *nap) {
               err);
       return LOAD_MPROTECT_FAIL;
     }
-*/
     NaClVmmapAdd(&nap->mem_map,
                  NaClSysToUser(nap, start_addr) >> NACL_PAGESHIFT,
                  region_size >> NACL_PAGESHIFT,

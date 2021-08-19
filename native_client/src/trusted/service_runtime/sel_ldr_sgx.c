@@ -129,14 +129,17 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   if (!DynArrayCtor(&nap->threads, 2)) {
     goto cleanup_cpu_features;
   }
-  if (!DynArrayCtor(&nap->desc_tbl, 2)) {
+  if (!DynArrayCtor(&nap->desc_tbl, 10)) {
     goto cleanup_threads;
   }
+
 /*
+//TODO
   if (!NaClVmmapCtor(&nap->mem_map)) {
     goto cleanup_desc_tbl;
   }
 */
+
   nap->mem_io_regions = (struct NaClIntervalMultiset *) malloc(
       sizeof(struct NaClIntervalRangeTree));
   if (NULL == nap->mem_io_regions) {
@@ -304,7 +307,7 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   NaClIntervalMultisetDelete(nap->mem_io_regions);
   nap->mem_io_regions = NULL;
  cleanup_mem_map:
-//  NaClVmmapDtor(&nap->mem_map);
+  NaClVmmapDtor(&nap->mem_map);
  //cleanup_desc_tbl:
   DynArrayDtor(&nap->desc_tbl);
  cleanup_threads:

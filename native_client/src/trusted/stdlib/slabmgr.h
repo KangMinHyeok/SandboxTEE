@@ -26,7 +26,8 @@
 #include "native_client/src/trusted/stdlib/api.h"
 #include <errno.h>
 #include <sys/mman.h>
-#include "native_client/src/trusted/stdlib/assert.h"
+#include <assert.h>
+//#include "native_client/src/trusted/stdlib/assert.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 // Before calling any of `system_malloc` and `system_free` this library will
@@ -442,7 +443,9 @@ static inline size_t slab_get_buf_size(SLAB_MGR mgr, const void * ptr)
 
     if (level >= SLAB_LEVEL) {
         printf("Heap corruption detected: invalid heap level %u\n", level);
-        __abort();
+        //__abort();
+        //abort();
+        __builtin_trap();
     }
 
 #ifdef SLAB_CANARY
@@ -478,7 +481,9 @@ static inline void slab_free (SLAB_MGR mgr, void * obj)
      * so a level of 0 in the header would no longer be a valid level. */
     if (level >= SLAB_LEVEL) {
         //TODO crhamm printf("Heap corruption detected: invalid heap level %d\n", level);
-        __abort();
+        //abort();
+        __builtin_trap();
+        //__abort();
     }
 
 #ifdef SLAB_CANARY

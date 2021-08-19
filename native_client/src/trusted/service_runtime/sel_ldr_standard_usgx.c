@@ -216,9 +216,9 @@ void NaClLoadSGXSpecific(struct NaClApp *nap) {
   uintptr_t stack_ptr;
   nap->mem_start = 0x100000000;
 
-  stack_ptr = NaClRoundAllocPage (NaClGetInitialStackTop(nap) - nap->stack_size);
+  stack_ptr = 0xf0000000; // NaClRoundAllocPage (NaClGetInitialStackTop(nap) - nap->stack_size);
   
-	int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + 0x100000000 + stack_ptr), NULL, NaClRoundAllocPage(nap->stack_size), SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "nacl stack");
+	int ret = add_pages_to_enclave(nap->sgx->enclave_secs, (void *)(nap->sgx->enclave_secs->baseaddr + 0x100000000 + stack_ptr), NULL, /* NaClRoundAllocPage(nap->stack_size)*/ 0x10000000, SGX_PAGE_REG, PROT_READ|PROT_WRITE, true, "nacl stack");
   if (ret < 0)
     NaClLog(LOG_FATAL, "load nacl stack error\n");
 

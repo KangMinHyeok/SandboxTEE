@@ -18,7 +18,6 @@
     'thread_suspension_common.c',
     'thread_suspension_unwind.c',
     #'elf_util.c',
-    'sel_addrspace.c',
     'arch/x86/nacl_ldt_x86.c',
     'arch/x86_64/nacl_app_64.c',
     'arch/x86_64/sel_ldr_x86_64.c',
@@ -71,7 +70,8 @@ if env.Bit('sgx'):
     'sel_mem.c',
     'sel_main_sgx.c',
     'sel_main_common.c',
-    'sel_ldr_filename.cc',
+    'sel_addrspace_sgx.c',
+    'sel_ldr_filename.c',
     'sel_ldr_sgx.c',
     'sel_ldr_standard_sgx.c',
     'sys_clock.c',
@@ -152,8 +152,8 @@ obj_inputs = [
 
 if env.Bit('usgx'):
 	obj_inputs += [
-    'elf_util_sgx.c',
-    'sel_addrspace_sgx.c',
+    'elf_util_usgx.c',
+    'sel_addrspace_usgx.c',
     'sel_ldr_standard_usgx.c',
 ]
 

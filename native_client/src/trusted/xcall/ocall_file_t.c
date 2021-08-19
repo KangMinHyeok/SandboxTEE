@@ -222,7 +222,7 @@ int ocall_fstat64 (int fd, struct stat64 * buf) {
 
 	retval = sgx_ocall(OCALL_FSTAT64, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat64));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
