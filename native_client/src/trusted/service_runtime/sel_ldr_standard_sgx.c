@@ -43,6 +43,7 @@
 #include "native_client/src/trusted/service_runtime/sel_addrspace.h"
 
 #include "native_client/src/trusted/stdlib/string.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 int NaClReportExitStatus(struct NaClApp *nap, int exit_status) {
   NaClXMutexLock(&nap->mu);
@@ -299,6 +300,14 @@ int NaClCreateMainThread(struct NaClApp     *nap,
   
   // TODO: position of the below
   NaClInitSwitchToApp(nap);
+  NaClXMutexLock(&nap->mu);
+  retval = NaClMemoryProtection(nap);
+  NaClXMutexUnlock(&nap->mu);
+  if (retval != LOAD_OK){
+    // TODO: printf -> NaClLog Fatal
+    printf("%s %d error\n", __func__, __LINE__);
+    ocall_exit(1);
+  }
 
   /* e_entry is user addr */
   retval = NaClAppThreadSpawn(nap,
