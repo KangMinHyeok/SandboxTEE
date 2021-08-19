@@ -443,13 +443,9 @@ static inline size_t slab_get_buf_size(SLAB_MGR mgr, const void * ptr)
 
     if (level >= SLAB_LEVEL) {
         printf("Heap corruption detected: invalid heap level %u\n", level);
-<<<<<<< HEAD
-        ocall_exit(1);
-=======
         //__abort();
         //abort();
         __builtin_trap();
->>>>>>> 36c0c588d7503018c97a392075673713a221395f
     }
 
 #ifdef SLAB_CANARY
@@ -485,13 +481,9 @@ static inline void slab_free (SLAB_MGR mgr, void * obj)
      * so a level of 0 in the header would no longer be a valid level. */
     if (level >= SLAB_LEVEL) {
         //TODO crhamm printf("Heap corruption detected: invalid heap level %d\n", level);
-<<<<<<< HEAD
-        ocall_exit(1);
-=======
         //abort();
         __builtin_trap();
         //__abort();
->>>>>>> 36c0c588d7503018c97a392075673713a221395f
     }
 
 #ifdef SLAB_CANARY
