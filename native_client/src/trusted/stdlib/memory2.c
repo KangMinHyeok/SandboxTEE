@@ -4,6 +4,7 @@
 
 #include "native_client/src/trusted/stdlib/stddef.h"
 #include "native_client/src/trusted/stdlib/errno.h"
+//#include "native_client/src/trusted/stdlib/assert.h"
 #include <assert.h>
 #include <stdint.h>
 
