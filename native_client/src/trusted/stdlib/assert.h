@@ -8,9 +8,9 @@
  * and libOS.
  *
  */
-/*
 #ifndef ASSERT_H
 #define ASSERT_H
+/*
 
 #define COMPILE_TIME_ASSERT(pred) switch(0){case 0:case pred:;}
 */
