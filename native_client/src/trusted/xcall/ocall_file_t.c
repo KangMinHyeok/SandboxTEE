@@ -213,10 +213,11 @@ int ocall_fstat64 (int fd, struct stat64 * buf) {
 	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
 
 	ms->ms_fd = fd;
+  ms->ms_stat = sgx_alloc_on_ustack(sizeof(struct stat64));
 
 	retval = sgx_ocall(OCALL_FSTAT64, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat64));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
