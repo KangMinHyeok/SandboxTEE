@@ -18,6 +18,17 @@ int sgx_ocall_gettimeofday(void * pms) {
 	return ret;
 }
 
+int sgx_ocall_clock_getres(void * pms) {
+	ms_ocall_clock_getres_t * ms = (ms_ocall_clock_getres_t *) pms;
+	struct timespec ts;
+	int ret = 0;
+
+	ret = clock_getres(ms->ms_clk_id, &ts);
+	ms->ms_tp_sec = ts.tv_sec;
+	ms->ms_tp_nsec = ts.tv_nsec;
+	return ret;
+}
+
 int sgx_ocall_clock_gettime(void * pms) {
 
 	ms_ocall_clock_gettime_t * ms = (ms_ocall_clock_gettime_t *) pms;

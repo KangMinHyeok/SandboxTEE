@@ -22,6 +22,22 @@ int ocall_gettimeofday (struct timeval *tv) {
     return retval;
 }
 
+int ocall_clock_getres(int clk_id, struct timespec *tp) {
+	int retval = 0;
+	ms_ocall_clock_getres_t * ms;
+	void * old_ustack = sgx_prepare_ustack();
+	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
+	ms->ms_clk_id = clk_id;
+
+	retval = sgx_ocall(OCALL_CLOCK_GETRES, ms);
+	if (!retval) {
+		tp->tv_sec = ms->ms_tp_sec;
+		tp->tv_nsec = ms->ms_tp_nsec;
+	}
+	sgx_reset_ustack(old_ustack);
+	return retval;
+}
+
 int ocall_clock_gettime (int clk_id, struct timespec *tp) {
 	int retval = 0;
 	ms_ocall_clock_gettime_t * ms;

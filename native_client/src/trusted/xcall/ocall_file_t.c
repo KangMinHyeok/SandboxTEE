@@ -174,6 +174,53 @@ int ocall_fstat (int fd, struct stat * buf) {
 	return retval;
 }
 
+int ocall_stat64 (const char * path, struct stat64 * buf) {
+	int retval = 0;
+	ms_ocall_stat64_t * ms;
+	int len = path ? strlen(path) + 1 : 0;
+	void * old_ustack = sgx_prepare_ustack();
+	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
+
+	ms->ms_path = sgx_copy_to_ustack(path, len);
+
+	retval = sgx_ocall(OCALL_STAT64, ms);
+	if (!retval)
+		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+	sgx_reset_ustack(old_ustack);
+	return retval;
+}
+
+int ocall_lstat64 (const char * path, struct stat64 * buf) {
+	int retval = 0;
+	ms_ocall_lstat64_t * ms;
+	int len = path ? strlen(path) + 1 : 0;
+	void * old_ustack = sgx_prepare_ustack();
+	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
+
+	ms->ms_path = sgx_copy_to_ustack(path, len);
+
+	retval = sgx_ocall(OCALL_LSTAT64, ms);
+	if (!retval)
+		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+	sgx_reset_ustack(old_ustack);
+	return retval;
+}
+
+int ocall_fstat64 (int fd, struct stat64 * buf) {
+	int retval = 0;
+	ms_ocall_fstat64_t * ms;
+	void * old_ustack = sgx_prepare_ustack();
+	ms = sgx_alloc_on_ustack_aligned(sizeof(*ms), alignof(*ms));
+
+	ms->ms_fd = fd;
+
+	retval = sgx_ocall(OCALL_FSTAT64, ms);
+	if (!retval)
+		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+	sgx_reset_ustack(old_ustack);
+	return retval;
+}
+
 int ocall_fsetnonblock (int fd, int nonblocking) {
 	int retval = 0; 
 	ms_ocall_fsetnonblock_t * ms;

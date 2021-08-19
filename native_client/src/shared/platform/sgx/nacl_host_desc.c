@@ -594,7 +594,7 @@ ssize_t NaClHostDescPWrite(struct NaClHostDesc *d,
 int NaClHostDescFstat(struct NaClHostDesc  *d,
                       nacl_host_stat_t     *nhsp) {
   NaClHostDescCheckValidity("NaClHostDescFstat", d);
-  if (NACL_HOST_FSTAT64(d->d, nhsp) == -1) {
+  if (ocall_fstat64(d->d, nhsp) == -1) {
     return -NaClXlateErrno(errno);
   }
 
@@ -628,7 +628,7 @@ int NaClHostDescClose(struct NaClHostDesc *d) {
  */
 int NaClHostDescStat(char const *path, nacl_host_stat_t *nhsp) {
 
-  if (NACL_HOST_STAT64(path, nhsp) == -1) {
+  if (ocall_stat64(path, nhsp) == -1) {
     return -NaClXlateErrno(errno);
   }
 
@@ -672,7 +672,7 @@ int NaClHostDescTruncate(char const *path, nacl_abi_off_t length) {
 }
 
 int NaClHostDescLstat(char const *path, nacl_host_stat_t *nhsp) {
-  if (NACL_HOST_LSTAT64(path, nhsp) == -1)
+  if (ocall_lstat64(path, nhsp) == -1)
     return -NaClXlateErrno(errno);
   return 0;
 }

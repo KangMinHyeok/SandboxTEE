@@ -30,6 +30,9 @@ enum {
 	OCALL_STAT,							// File
 	OCALL_LSTAT,						// File
 	OCALL_FSTAT,						// File
+	OCALL_STAT64,							// File
+	OCALL_LSTAT64,						// File
+	OCALL_FSTAT64,						// File
 	OCALL_FSETNONBLOCK,			// File
 	OCALL_FCHMOD, 					// File
 	OCALL_FCHDIR, 					// File 
@@ -66,6 +69,7 @@ enum {
 	OCALL_SOCK_SHUTDOWN,		// Socket
 	//
 	OCALL_GETTIMEOFDAY, 		// Time
+	OCALL_CLOCK_GETRES,
 	OCALL_CLOCK_GETTIME, 		// Time
 	OCALL_SLEEP, 						// Time
 	OCALL_NSLEEP, 					// Time
@@ -150,6 +154,21 @@ typedef struct {
 	int ms_fd;
 	struct stat * ms_stat;
 } ms_ocall_fstat_t;
+
+typedef struct {
+	const void * ms_path;
+	struct stat64 * ms_stat;
+} ms_ocall_stat64_t;
+
+typedef struct {
+	const void * ms_path;
+	struct stat64 * ms_stat;
+} ms_ocall_lstat64_t;
+
+typedef struct {
+	int ms_fd;
+	struct stat64 * ms_stat;
+} ms_ocall_fstat64_t;
 
 typedef struct {
 	int ms_fd;
@@ -341,6 +360,12 @@ typedef struct {
 	int ms_clk_id;
 	long ms_tp_sec;
 	long ms_tp_nsec;
+} ms_ocall_clock_getres_t;
+
+typedef struct {
+	int ms_clk_id;
+	long ms_tp_sec;
+	long ms_tp_nsec;
 } ms_ocall_clock_gettime_t;
 
 typedef struct {
@@ -395,6 +420,9 @@ int sgx_ocall_write(void * pms);
 int sgx_ocall_stat(void * pms);
 int sgx_ocall_lstat(void * pms);
 int sgx_ocall_fstat(void * pms);
+int sgx_ocall_stat64(void * pms);
+int sgx_ocall_lstat64(void * pms);
+int sgx_ocall_fstat64(void * pms);
 int sgx_ocall_fsetnonblock(void * pms);
 int sgx_ocall_fchmod(void * pms);
 int sgx_ocall_fchdir(void * pms);
@@ -440,6 +468,7 @@ int sgx_ocall_sock_shutdown(void * pms);
 
 // Time
 int sgx_ocall_gettimeofday(void * pms);
+int sgx_ocall_clock_getres(void * pms);
 int sgx_ocall_clock_gettime(void * pms);
 int sgx_ocall_sleep(void * pms);
 int sgx_ocall_nsleep(void * pms);

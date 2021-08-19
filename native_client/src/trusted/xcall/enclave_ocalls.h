@@ -31,6 +31,9 @@ int ocall_write (int fd, const void * buf, unsigned int count);
 int ocall_stat (const char *path, struct stat * buf);
 int ocall_lstat (const char *path, struct stat * buf);
 int ocall_fstat (int fd, struct stat * buf);
+int ocall_stat64 (const char *path, struct stat64 * buf);
+int ocall_lstat64 (const char *path, struct stat64 * buf);
+int ocall_fstat64 (int fd, struct stat64 * buf);
 int ocall_fsetnonblock (int fd, int nonblocking);
 int ocall_fchmod (int fd, unsigned short mode);
 int ocall_fchdir (int fd);
@@ -98,6 +101,7 @@ int ocall_sock_shutdown (int sockfd, int how);
 // TODO: impl
 int ocall_gettime (struct timeval *tv);
 int ocall_gettimeofday (struct timeval *tv);
+int ocall_clock_getres (int clk_id, struct timespec *tp);
 int ocall_clock_gettime (int clk_id, struct timespec *tp);
 int ocall_sleep(unsigned long * microsec);
 int ocall_nsleep(struct timespec *rqtp, struct timespec *rmtp);
