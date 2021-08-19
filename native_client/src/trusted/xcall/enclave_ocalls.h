@@ -1,6 +1,9 @@
 #ifndef __ENCLAVE_OCALLS__
 #define __ENCLAVE_OCALLS__
 
+
+#include "native_client/src/include/build_config.h"
+
 #if NACL_SGX == 1
 
 #include <unistd.h>

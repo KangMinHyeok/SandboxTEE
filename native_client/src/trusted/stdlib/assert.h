@@ -8,12 +8,12 @@
  * and libOS.
  *
  */
-
+/*
 #ifndef ASSERT_H
 #define ASSERT_H
 
 #define COMPILE_TIME_ASSERT(pred) switch(0){case 0:case pred:;}
-
+*/
 /* All environments should implement warn, which prints a non-optional debug
  * message. All environments should also implement __abort, which
  * terminates the process.
@@ -23,6 +23,7 @@ void warn (const char *format, ...);
 void __abort(void);
 //# ifdef assert
 //# undef assert
+/*
 # define assert(test)                                                   \
     ({                                                                  \
         long _val = (long) (test);                                      \
@@ -34,7 +35,7 @@ void __abort(void);
             : (void) 0;                                                 \
     })
 //##else
-
+*/
 
 /*void
 __assert_fail_base (const char *fmt, const char *assertion, const char *file,

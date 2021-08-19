@@ -36,14 +36,11 @@ NACL_DEFINE_SYSCALL_2(NaClSysFstat)
 NACL_DEFINE_SYSCALL_2(NaClSysStat)
 NACL_DEFINE_SYSCALL_3(NaClSysGetdents)
 NACL_DEFINE_SYSCALL_1(NaClSysIsatty)
-// TODO: uncomment below
-#if NACL_SGX != 1
 NACL_DEFINE_SYSCALL_1(NaClSysBrk)
 NACL_DEFINE_SYSCALL_6(NaClSysMmap)
 NACL_DEFINE_SYSCALL_3(NaClSysMprotect)
 NACL_DEFINE_SYSCALL_2(NaClSysListMappings)
 NACL_DEFINE_SYSCALL_2(NaClSysMunmap)
-#endif
 NACL_DEFINE_SYSCALL_1(NaClSysExit)
 NACL_DEFINE_SYSCALL_0(NaClSysGetpid)
 NACL_DEFINE_SYSCALL_1(NaClSysThreadExit)
@@ -113,11 +110,8 @@ NACL_DEFINE_SYSCALL_2(NaClSysExceptionStack)
 NACL_DEFINE_SYSCALL_0(NaClSysExceptionClearFlag)
 NACL_DEFINE_SYSCALL_0(NaClSysTestInfoLeak)
 NACL_DEFINE_SYSCALL_1(NaClSysTestCrash)
-// TODO uncomment below
-/*
 NACL_DEFINE_SYSCALL_3(NaClSysFutexWaitAbs)
 NACL_DEFINE_SYSCALL_2(NaClSysFutexWake)
-*/
 NACL_DEFINE_SYSCALL_2(NaClSysGetRandomBytes)
 
 void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
@@ -133,14 +127,11 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysStat, NACL_sys_stat);
   NACL_REGISTER_SYSCALL(nap, NaClSysGetdents, NACL_sys_getdents);
   NACL_REGISTER_SYSCALL(nap, NaClSysIsatty, NACL_sys_isatty);
-// TODO: uncomment below
-#if NACL_SGX != 1
   NACL_REGISTER_SYSCALL(nap, NaClSysBrk, NACL_sys_brk);
   NACL_REGISTER_SYSCALL(nap, NaClSysMmap, NACL_sys_mmap);
   NACL_REGISTER_SYSCALL(nap, NaClSysMprotect, NACL_sys_mprotect);
   NACL_REGISTER_SYSCALL(nap, NaClSysListMappings, NACL_sys_list_mappings);
   NACL_REGISTER_SYSCALL(nap, NaClSysMunmap, NACL_sys_munmap);
-#endif
   NACL_REGISTER_SYSCALL(nap, NaClSysExit, NACL_sys_exit);
   NACL_REGISTER_SYSCALL(nap, NaClSysGetpid, NACL_sys_getpid);
   NACL_REGISTER_SYSCALL(nap, NaClSysThreadExit, NACL_sys_thread_exit);
@@ -216,10 +207,7 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
                         NACL_sys_exception_clear_flag);
   NACL_REGISTER_SYSCALL(nap, NaClSysTestInfoLeak, NACL_sys_test_infoleak);
   NACL_REGISTER_SYSCALL(nap, NaClSysTestCrash, NACL_sys_test_crash);
-// TODO uncomment below
-/*
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWaitAbs, NACL_sys_futex_wait_abs);
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWake, NACL_sys_futex_wake);
-*/
   NACL_REGISTER_SYSCALL(nap, NaClSysGetRandomBytes, NACL_sys_get_random_bytes);
 }

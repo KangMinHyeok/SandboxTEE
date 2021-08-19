@@ -80,7 +80,7 @@ if env.Bit('sgx'):
     'sys_filename.c',
     'sys_futex.c',
     'sys_list_mappings.c',
-    #'sys_memory.c',
+    'sys_memory.c',
     'sys_parallel_io.c',
     'sys_random.c',
     'nacl_all_modules.c',
@@ -92,6 +92,7 @@ if env.Bit('sgx'):
     'arch/x86_64/nacl_switch_to_app_64.c',
     'arch/x86_64/nacl_tls_64.c',
     'arch/x86_64/sel_rt_64.c',
+    'generic/vm_hole.c',
     	]
 	ldr_inputs = []
 	#ldr_inputs += [env.ComponentObject('linux/nacl_signal.c')]	
