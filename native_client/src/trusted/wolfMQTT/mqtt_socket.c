@@ -21,7 +21,7 @@
 
 /* Include the autoconf generated config.h */
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+    #include "config.h"
 #endif
 
 #ifdef WOLFMQTT_NONBLOCK
@@ -32,8 +32,8 @@
     #include <errno.h>
 #endif
 
-#include "wolfmqtt/mqtt_client.h"
-#include "wolfmqtt/mqtt_socket.h"
+#include "mqtt_client.h"
+#include "mqtt_socket.h"
 
 /* Options */
 #ifdef WOLFMQTT_NO_STDIO
