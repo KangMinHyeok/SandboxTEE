@@ -21,11 +21,11 @@
 
 /* Include the autoconf generated config.h */
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+    #include "config.h"
 #endif
 
-#include "wolfmqtt/mqtt_packet.h"
-#include "wolfmqtt/mqtt_client.h"
+#include "mqtt_packet.h"
+#include "mqtt_client.h"
 
 #ifdef WOLFMQTT_V5
 struct MqttPropMatrix {

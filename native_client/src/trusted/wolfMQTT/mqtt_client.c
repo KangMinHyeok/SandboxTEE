@@ -21,10 +21,10 @@
 
 /* Include the autoconf generated config.h */
 #ifdef HAVE_CONFIG_H
-    #include <config.h>
+    #include "config.h"
 #endif
 
-#include "wolfmqtt/mqtt_client.h"
+#include "mqtt_client.h"
 
 /* Options */
 #ifdef WOLFMQTT_NO_STDIO
