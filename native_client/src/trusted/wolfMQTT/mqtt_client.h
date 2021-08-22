@@ -34,11 +34,11 @@
 #if !defined(WOLFMQTT_USER_SETTINGS) && !defined(USE_WINDOWS_API)
     /* If options.h is missing use the "./configure" script. Otherwise, copy
      * the template "wolfmqtt/options.h.in" into "wolfmqtt/options.h" */
-    #include <wolfmqtt/options.h>
+    #include "options.h"
 #endif
-#include "wolfmqtt/mqtt_types.h"
-#include "wolfmqtt/mqtt_packet.h"
-#include "wolfmqtt/mqtt_socket.h"
+#include "mqtt_types.h"
+#include "mqtt_packet.h"
+#include "mqtt_socket.h"
 
 #if defined(WOLFMQTT_PROPERTY_CB) && !defined(WOLFMQTT_V5)
     #error "WOLFMQTT_V5 must be defined to use WOLFMQTT_PROPERTY_CB"
@@ -200,7 +200,8 @@ typedef struct _MqttClient {
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_BAD_ARG
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Init(
+//WOLFMQTT_API 
+int MqttClient_Init(
     MqttClient *client,
     MqttNet *net,
     MqttMsgCb msg_cb,
@@ -212,7 +213,8 @@ WOLFMQTT_API int MqttClient_Init(
  *  \param      client      Pointer to MqttClient structure
  *  \return     none
  */
-WOLFMQTT_API void MqttClient_DeInit(MqttClient *client);
+//WOLFMQTT_API 
+void MqttClient_DeInit(MqttClient *client);
 
 #ifdef WOLFMQTT_DISCONNECT_CB
 /*! \brief      Sets a disconnect callback with custom context
@@ -223,7 +225,8 @@ WOLFMQTT_API void MqttClient_DeInit(MqttClient *client);
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_BAD_ARG
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_SetDisconnectCallback(
+//WOLFMQTT_API 
+int MqttClient_SetDisconnectCallback(
     MqttClient *client,
     MqttDisconnectCb discb,
     void* ctx);
@@ -238,7 +241,8 @@ WOLFMQTT_API int MqttClient_SetDisconnectCallback(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_BAD_ARG
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_SetPropertyCallback(
+//WOLFMQTT_API 
+int MqttClient_SetPropertyCallback(
     MqttClient *client,
     MqttPropertyCb propCb,
     void* ctx);
@@ -253,7 +257,8 @@ WOLFMQTT_API int MqttClient_SetPropertyCallback(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Connect(
+//WOLFMQTT_API 
+int MqttClient_Connect(
     MqttClient *client,
     MqttConnect *connect);
 
@@ -274,7 +279,8 @@ WOLFMQTT_API int MqttClient_Connect(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Publish(
+//WOLFMQTT_API 
+int MqttClient_Publish(
     MqttClient *client,
     MqttPublish *publish);
 
@@ -295,7 +301,8 @@ WOLFMQTT_API int MqttClient_Publish(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Publish_ex(
+//WOLFMQTT_API 
+int MqttClient_Publish_ex(
     MqttClient *client,
     MqttPublish *publish,
     MqttPublishCb pubCb);
@@ -309,7 +316,8 @@ WOLFMQTT_API int MqttClient_Publish_ex(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Subscribe(
+//WOLFMQTT_API 
+int MqttClient_Subscribe(
     MqttClient *client,
     MqttSubscribe *subscribe);
 
@@ -322,7 +330,8 @@ WOLFMQTT_API int MqttClient_Subscribe(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Unsubscribe(
+//WOLFMQTT_API 
+int MqttClient_Unsubscribe(
     MqttClient *client,
     MqttUnsubscribe *unsubscribe);
 
@@ -333,7 +342,8 @@ WOLFMQTT_API int MqttClient_Unsubscribe(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Ping(
+//WOLFMQTT_API 
+int MqttClient_Ping(
     MqttClient *client);
 
 /*! \brief      Encodes and sends the MQTT Ping Request packet and waits for the
@@ -344,7 +354,8 @@ WOLFMQTT_API int MqttClient_Ping(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Ping_ex(MqttClient *client, MqttPing* ping);
+//WOLFMQTT_API 
+int MqttClient_Ping_ex(MqttClient *client, MqttPing* ping);
 
 #ifdef WOLFMQTT_V5
 /*! \brief      Encodes and sends the MQTT Authentication Request packet and
@@ -355,7 +366,8 @@ WOLFMQTT_API int MqttClient_Ping_ex(MqttClient *client, MqttPing* ping);
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Auth(
+//WOLFMQTT_API 
+int MqttClient_Auth(
     MqttClient *client,
 	MqttAuth *auth);
 
@@ -366,7 +378,8 @@ WOLFMQTT_API int MqttClient_Auth(
  *  \param      head        Pointer-pointer to a property structure
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_BAD_ARG
  */
-WOLFMQTT_API MqttProp* MqttClient_PropsAdd(
+//WOLFMQTT_API 
+MqttProp* MqttClient_PropsAdd(
     MqttProp **head);
 
 /*! \brief      Free property list
@@ -375,7 +388,8 @@ WOLFMQTT_API MqttProp* MqttClient_PropsAdd(
  *  \param      head        Pointer-pointer to a property structure
  *  \return     MQTT_CODE_SUCCESS or -1 on error (and sets errno)
  */
-WOLFMQTT_API int MqttClient_PropsFree(
+//WOLFMQTT_API 
+int MqttClient_PropsFree(
     MqttProp *head);
 #endif
 
@@ -387,7 +401,8 @@ WOLFMQTT_API int MqttClient_PropsFree(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Disconnect(
+//WOLFMQTT_API 
+int MqttClient_Disconnect(
     MqttClient *client);
 
 
@@ -399,7 +414,8 @@ WOLFMQTT_API int MqttClient_Disconnect(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_Disconnect_ex(
+//WOLFMQTT_API 
+int MqttClient_Disconnect_ex(
     MqttClient *client,
     MqttDisconnect *disconnect);
 
@@ -412,7 +428,8 @@ WOLFMQTT_API int MqttClient_Disconnect_ex(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_WaitMessage(
+//WOLFMQTT_API 
+int MqttClient_WaitMessage(
     MqttClient *client,
     int timeout_ms);
 
@@ -425,7 +442,8 @@ WOLFMQTT_API int MqttClient_WaitMessage(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_WaitMessage_ex(
+//WOLFMQTT_API 
+int MqttClient_WaitMessage_ex(
     MqttClient *client,
     MqttObject* msg,
     int timeout_ms);
@@ -443,7 +461,8 @@ WOLFMQTT_API int MqttClient_WaitMessage_ex(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_NetConnect(
+//WOLFMQTT_API 
+int MqttClient_NetConnect(
     MqttClient *client,
     const char *host,
     word16 port,
@@ -456,27 +475,31 @@ WOLFMQTT_API int MqttClient_NetConnect(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int MqttClient_NetDisconnect(
+//WOLFMQTT_API 
+int MqttClient_NetDisconnect(
     MqttClient *client);
 
 /*! \brief      Gets number version of connected protocol version
  *  \param      client      Pointer to MqttClient structure
  *  \return     4 (v3.1.1) or 5 (v5)
  */
-WOLFMQTT_API int MqttClient_GetProtocolVersion(MqttClient *client);
+//WOLFMQTT_API 
+int MqttClient_GetProtocolVersion(MqttClient *client);
 
 /*! \brief      Gets string version of connected protocol version
  *  \param      client      Pointer to MqttClient structure
  *  \return     String v3.1.1 or v5
  */
-WOLFMQTT_API const char* MqttClient_GetProtocolVersionString(MqttClient *client);
+//WOLFMQTT_API 
+const char* MqttClient_GetProtocolVersionString(MqttClient *client);
 
 #ifndef WOLFMQTT_NO_ERROR_STRINGS
 /*! \brief      Performs lookup of the WOLFMQTT_API return values
  *  \param      return_code The return value from a WOLFMQTT_API function
  *  \return     String representation of the return code
  */
-WOLFMQTT_API const char* MqttClient_ReturnCodeToString(
+//WOLFMQTT_API 
+const char* MqttClient_ReturnCodeToString(
     int return_code);
 #else
     #define MqttClient_ReturnCodeToString(x) \
@@ -493,7 +516,8 @@ WOLFMQTT_API const char* MqttClient_ReturnCodeToString(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_SearchGW(
+//WOLFMQTT_API 
+int SN_Client_SearchGW(
         MqttClient *client,
         SN_SearchGw *search);
 
@@ -509,7 +533,8 @@ WOLFMQTT_API int SN_Client_SearchGW(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Connect(
+//WOLFMQTT_API 
+int SN_Client_Connect(
     MqttClient *client,
     SN_Connect *connect);
 
@@ -523,7 +548,8 @@ WOLFMQTT_API int SN_Client_Connect(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_WillTopicUpdate(MqttClient *client, SN_Will *will);
+//WOLFMQTT_API 
+int SN_Client_WillTopicUpdate(MqttClient *client, SN_Will *will);
 
 /*! \brief      Encodes and sends the MQTT-SN Will Message Update packet.
  *  \discussion This is a blocking function that will wait for MqttNet.read
@@ -533,7 +559,8 @@ WOLFMQTT_API int SN_Client_WillTopicUpdate(MqttClient *client, SN_Will *will);
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_WillMsgUpdate(MqttClient *client, SN_Will *will);
+//WOLFMQTT_API 
+int SN_Client_WillMsgUpdate(MqttClient *client, SN_Will *will);
 
 /*! \brief      Encodes and sends the MQTT-SN Register packet and waits for the
                 Register Acknowledge packet. The Register packet is sent by a
@@ -546,7 +573,8 @@ WOLFMQTT_API int SN_Client_WillMsgUpdate(MqttClient *client, SN_Will *will);
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Register(
+//WOLFMQTT_API 
+int SN_Client_Register(
     MqttClient *client,
     SN_Register *regist);
 
@@ -558,7 +586,8 @@ WOLFMQTT_API int SN_Client_Register(
  *  \param      ctx         Pointer to your own context
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_BAD_ARG
  */
-WOLFMQTT_API int SN_Client_SetRegisterCallback(
+//WOLFMQTT_API 
+int SN_Client_SetRegisterCallback(
     MqttClient *client,
     SN_ClientRegisterCb regCb,
     void* ctx);
@@ -578,7 +607,8 @@ WOLFMQTT_API int SN_Client_SetRegisterCallback(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Publish(
+//WOLFMQTT_API 
+int SN_Client_Publish(
     MqttClient *client,
     SN_Publish *publish);
 
@@ -592,7 +622,8 @@ WOLFMQTT_API int SN_Client_Publish(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Subscribe(
+//WOLFMQTT_API 
+int SN_Client_Subscribe(
     MqttClient *client,
     SN_Subscribe *subscribe);
 
@@ -605,7 +636,8 @@ WOLFMQTT_API int SN_Client_Subscribe(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Unsubscribe(
+//WOLFMQTT_API 
+int SN_Client_Unsubscribe(
     MqttClient *client,
     SN_Unsubscribe *unsubscribe);
 
@@ -618,7 +650,8 @@ WOLFMQTT_API int SN_Client_Unsubscribe(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Disconnect(
+//WOLFMQTT_API 
+int SN_Client_Disconnect(
     MqttClient *client);
 
 /*! \brief      Encodes and sends the MQTT-SN Disconnect packet. Client may
@@ -631,7 +664,8 @@ WOLFMQTT_API int SN_Client_Disconnect(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Disconnect_ex(
+//WOLFMQTT_API 
+int SN_Client_Disconnect_ex(
     MqttClient *client,
     SN_Disconnect *disconnect);
 
@@ -647,7 +681,8 @@ WOLFMQTT_API int SN_Client_Disconnect_ex(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_Ping(
+//WOLFMQTT_API 
+int SN_Client_Ping(
     MqttClient *client,
     SN_PingReq *ping);
 
@@ -659,11 +694,13 @@ WOLFMQTT_API int SN_Client_Ping(
  *  \return     MQTT_CODE_SUCCESS or MQTT_CODE_ERROR_*
                 (see enum MqttPacketResponseCodes)
  */
-WOLFMQTT_API int SN_Client_WaitMessage(
+//WOLFMQTT_API 
+int SN_Client_WaitMessage(
     MqttClient *client,
     int timeout_ms);
 
-WOLFMQTT_API int SN_Client_WaitMessage_ex(MqttClient *client, SN_Object* packet_obj,
+//WOLFMQTT_API 
+int SN_Client_WaitMessage_ex(MqttClient *client, SN_Object* packet_obj,
     int timeout_ms);
 
 #endif /* WOLFMQTT_SN */
