@@ -31,7 +31,8 @@
 #include "aes.h"
 #include "cpuid.h"
 
-#include "native_client/src/trusted/stdlib/api.h"
+#include <memory.h>
+//#include "native_client/src/trusted/stdlib/api.h"
 
 /* fips wrapper calls, user can call direct */
 #ifdef HAVE_FIPS

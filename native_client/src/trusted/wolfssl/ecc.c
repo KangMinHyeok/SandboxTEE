@@ -27,7 +27,7 @@
 
 /* in case user set HAVE_ECC there */
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 /*
 Possible ECC enable options:
  * HAVE_ECC:            Overall control of ECC                  default: on

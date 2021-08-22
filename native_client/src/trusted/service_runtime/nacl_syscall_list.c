@@ -92,10 +92,10 @@ NACL_DEFINE_SYSCALL_1(NaClSysCondSignal)
 NACL_DEFINE_SYSCALL_1(NaClSysCondBroadcast)
 NACL_DEFINE_SYSCALL_3(NaClSysCondTimedWaitAbs)
 // NACL_DEFINE_SYSCALL_1(NaClSysImcSocketPair)
-NACL_DEFINE_SYSCALL_1(NaClSysSemCreate)
-NACL_DEFINE_SYSCALL_1(NaClSysSemWait)
-NACL_DEFINE_SYSCALL_1(NaClSysSemPost)
-NACL_DEFINE_SYSCALL_1(NaClSysSemGetValue)
+//NACL_DEFINE_SYSCALL_1(NaClSysSemCreate)
+//NACL_DEFINE_SYSCALL_1(NaClSysSemWait)
+//NACL_DEFINE_SYSCALL_1(NaClSysSemPost)
+//NACL_DEFINE_SYSCALL_1(NaClSysSemGetValue)
 NACL_DEFINE_SYSCALL_0(NaClSysSchedYield)
 NACL_DEFINE_SYSCALL_2(NaClSysSysconf)
 /*
@@ -186,10 +186,10 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysCondTimedWaitAbs,
                         NACL_sys_cond_timed_wait_abs);
 //  NACL_REGISTER_SYSCALL(nap, NaClSysImcSocketPair, NACL_sys_imc_socketpair);
-  NACL_REGISTER_SYSCALL(nap, NaClSysSemCreate, NACL_sys_sem_create);
-  NACL_REGISTER_SYSCALL(nap, NaClSysSemWait, NACL_sys_sem_wait);
-  NACL_REGISTER_SYSCALL(nap, NaClSysSemPost, NACL_sys_sem_post);
-  NACL_REGISTER_SYSCALL(nap, NaClSysSemGetValue, NACL_sys_sem_get_value);
+//  NACL_REGISTER_SYSCALL(nap, NaClSysSemCreate, NACL_sys_sem_create);
+//  NACL_REGISTER_SYSCALL(nap, NaClSysSemWait, NACL_sys_sem_wait);
+//  NACL_REGISTER_SYSCALL(nap, NaClSysSemPost, NACL_sys_sem_post);
+//  NACL_REGISTER_SYSCALL(nap, NaClSysSemGetValue, NACL_sys_sem_get_value);
   NACL_REGISTER_SYSCALL(nap, NaClSysSchedYield, NACL_sys_sched_yield);
   NACL_REGISTER_SYSCALL(nap, NaClSysSysconf, NACL_sys_sysconf);
 // TODO

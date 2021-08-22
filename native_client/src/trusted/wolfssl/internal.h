@@ -113,7 +113,7 @@
     #include <signal.h>
 #endif
 
-#ifdef  defined(THREADX)
+#if defined(THREADX)
     #ifndef SINGLE_THREADED
         #include "tx_api.h"
     #endif
@@ -656,9 +656,7 @@
     #endif
 #endif
 
-			// mkpark
-//#if defined(BUILD_SSL_RSA_WITH_RC4_128_SHA) || \
-    defined(BUILD_SSL_RSA_WITH_RC4_128_MD5)
+//#if defined(BUILD_SSL_RSA_WITH_RC4_128_SHA) || defined(BUILD_SSL_RSA_WITH_RC4_128_MD5)
 //    #define BUILD_ARC4
 //#endif
 
@@ -3656,7 +3654,7 @@ WOLFSSL_LOCAL int ReceiveData(WOLFSSL*, byte*, int, int);
 WOLFSSL_LOCAL int SendFinished(WOLFSSL*);
 WOLFSSL_LOCAL int SendAlert(WOLFSSL*, int, int);
 WOLFSSL_LOCAL int ProcessReply(WOLFSSL*);
-WOLFSSL_LOCAL int ProcessReply2(struct shim_handle *hdl);
+//WOLFSSL_LOCAL int ProcessReply2(struct shim_handle *hdl);
 
 WOLFSSL_LOCAL int SetCipherSpecs(WOLFSSL*);
 WOLFSSL_LOCAL int MakeMasterSecret(WOLFSSL*);

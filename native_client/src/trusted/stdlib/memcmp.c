@@ -31,8 +31,8 @@
 
 
 //# include <sysdeps/generic/memcopy.h>
-# include <memcopy.h>
-# include <host_endian.h>
+# include "native_client/src/trusted/stdlib/memcopy.h"
+//# include <host_endian.h>
 
 # if __BYTE_ORDER == __BIG_ENDIAN
 #  define WORDS_BIGENDIAN
@@ -305,6 +305,7 @@ int memcmp (const __ptr_t s1, const __ptr_t s2, size_t len)
 
     return 0;
 }
+
 
 int strncmp (const char *s1, const char *s2, int n)
 {

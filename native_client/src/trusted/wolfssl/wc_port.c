@@ -23,6 +23,7 @@
 #ifdef HAVE_CONFIG_H
     #include <config.h>
 #endif
+/*
 struct tm {
   int tm_sec;
   int tm_min;
@@ -34,8 +35,9 @@ struct tm {
   int tm_yday;
   int tm_isdst;
 };
-#include "native_client/src/trusted/stdlib/api.h"
-#include "native_client/src/trusted/stdlib/linux_types.h"
+*/
+//#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/linux_types.h"
 #include "settings.h"
 #include "types.h"
 #include "error-crypt.h"

@@ -44,7 +44,7 @@
     #include <stdio.h>
 #endif
 
-#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 /* Set these to default values initially. */
 static wolfSSL_Malloc_cb  malloc_function = 0;

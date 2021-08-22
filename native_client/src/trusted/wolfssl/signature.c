@@ -24,7 +24,7 @@
     #include <config.h>
 #endif
 
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #include "settings.h"
 #include "signature.h"
 #include "error-crypt.h"

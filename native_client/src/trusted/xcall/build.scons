@@ -41,11 +41,12 @@ elif env.Bit('sgx'):
 
 	# check site_scons/site_tools/library_deps.py
 	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=[
-    'sel', 
+	'sel', 
 	'env_cleanser', 
 	'nrd_xfer',
 	'platform',
-    'sgx_stdlib',
+	'sgx_stdlib',
+	'wolflib',
 	#'debug_stub',
 	])
 

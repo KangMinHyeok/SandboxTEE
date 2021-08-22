@@ -1769,5 +1769,6 @@ __asm__(                          \
     #include "fp_mul_comba_64.i"
 #endif
 
+typedef int tmp;
 /* end fp_mul_comba.c asm */
 

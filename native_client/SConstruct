@@ -2777,7 +2777,7 @@ def MakeSgxEnv():
       'build/package_version/build.scons',
       'pynacl/build.scons',
       
-      #'src/trusted/wolfssl/build.scons',
+      'src/trusted/wolfssl/build.scons',
       'src/trusted/wolfMQTT/build.scons', 
 
       'src/trusted/xcall/build.scons',

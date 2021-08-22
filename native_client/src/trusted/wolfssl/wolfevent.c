@@ -24,7 +24,7 @@
 #endif
 
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 
 #ifdef HAVE_WOLF_EVENT
 

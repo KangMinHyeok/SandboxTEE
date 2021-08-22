@@ -144,7 +144,7 @@
 	        #define INLINE
 	    #endif
 	#else
-	    #define INLINE
+			#define INLINE __inline__
 	#endif
 	#endif
 

@@ -26,8 +26,8 @@
 #endif
 
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
-#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
+//#include "native_client/src/trusted/stdlib/api.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 #include "native_client/src/shared/platform/nacl_check.h"
 #include "native_client/src/shared/platform/nacl_exit.h"
