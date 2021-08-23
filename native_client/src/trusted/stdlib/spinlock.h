@@ -7,9 +7,7 @@
 #ifndef _SPINLOCK_H
 #define _SPINLOCK_H
 
-#include "native_client/src/trusted/stdlib/api.h"
-#include "native_client/src/trusted/stdlib/cpu.h"
-// #include <cpu.h>
+#include "native_client/src/trusted/stdlib/memheader.h"
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 //#include "atomic.h"
 //#include "native_client/src/trusted/stdlib/memory.h"

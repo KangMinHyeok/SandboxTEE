@@ -23,7 +23,7 @@
 #ifndef SLABMGR_H
 #define SLABMGR_H
 
-#include "native_client/src/trusted/stdlib/api.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 #include <errno.h>
 #include <sys/mman.h>
 #include <assert.h>
