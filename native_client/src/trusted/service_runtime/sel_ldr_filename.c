@@ -5,7 +5,7 @@
  */
 #include "native_client/src/trusted/service_runtime/sel_ldr_filename.h"
 #include <errno.h>
-#include "native_client/src/trusted/stdlib/api.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 #include "native_client/src/trusted/stdlib/string.h"
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/shared/platform/nacl_check.h"
