@@ -9,7 +9,7 @@
 
 #if NACL_SGX == 1
 
-#include "native_client/src/trusted/stdlib/memory.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 
 void *NaClAlignedMalloc(size_t size, size_t alignment) {
   /*
