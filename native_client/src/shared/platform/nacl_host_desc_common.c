@@ -9,6 +9,7 @@
  * mapping using descriptors.
  */
 #include <errno.h>
+#include <stdio.h>
 
 #include "native_client/src/include/nacl_platform.h"
 #include "native_client/src/include/portability.h"

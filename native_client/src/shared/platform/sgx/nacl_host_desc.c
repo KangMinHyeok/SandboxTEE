@@ -49,7 +49,7 @@
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #include "native_client/src/trusted/stdlib/errno.h"
 #include <sys/mman.h>
-#include "native_client/src/trusted/stdlib/api.h"
+#include <stdio.h>
 
 // # include "native_client/src/shared/platform/posix/nacl_file_lock.h"
 # if NACL_ANDROID
@@ -384,8 +384,6 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 	WOLFSSL_CTX* ctx;
 	WOLFSSL_METHOD* method;
 
-	ocall_debugp(1234);
-
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;             
 	servAddr.sin_port   = (((port & 0xff) << 8) | (port >> 8)); 
@@ -481,8 +479,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   }
  
 	ip = "147.46.244.108";
-	port = 6379;
- 	ocall_debugp(11111);
+	port = 6380;
 	// get redis key
 	ret = ssl_handshake(ip, port, ssl);
 	if (ret < 0) {
@@ -775,7 +772,6 @@ int NaClHostDescStat(char const *path, nacl_host_stat_t *nhsp) {
   if (ocall_stat64(path, nhsp) == -1) {
     return -NaClXlateErrno(errno);
   }
-
   return 0;
 }
 

@@ -15,7 +15,9 @@
    <http://www.gnu.org/licenses/>.  */
 
 #include "native_client/src/trusted/stdlib/errno.h"
+#include <stdio.h>
 
+int errno;
 
 int *
 __errno_location (void)

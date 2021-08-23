@@ -42,6 +42,7 @@ int32_t NaClSysOpen(struct NaClAppThread  *natp,
   if (!NaClFileAccessEnabled()) {
     return -NACL_ABI_EACCES;
   }
+	
 
   retval = CopyHostPathInFromUser(nap, path, sizeof path, pathname);
   if (0 != retval)
