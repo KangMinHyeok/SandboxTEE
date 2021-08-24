@@ -5,7 +5,7 @@
 // #include "native_client/src/trusted/sgxlib/pal_security.h"
 //#include "native_client/src/trusted/sgxlib/pal_linux_defs.h"
 #include "native_client/src/trusted/stdlib/pal_defs.h"
-#include "api.h"
+#include "memheader.h"
 #include "enclave_pages.h"
 
 #include "spinlock.h"

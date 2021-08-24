@@ -26,7 +26,7 @@
 
 #include "settings.h"
 #include "error-crypt.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #ifndef NO_RSA
 
 #include "rsa.h"

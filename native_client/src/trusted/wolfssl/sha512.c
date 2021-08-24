@@ -25,7 +25,7 @@
 #endif
 
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #ifdef WOLFSSL_SHA512
 #include "sha512.h"
 #include "error-crypt.h"

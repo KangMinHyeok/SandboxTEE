@@ -23,7 +23,7 @@
  * This files contains APIs that allocate, free or protect virtual memory.
  */
 
-#include "api.h"
+#include "memheader.h"
 #include "pal_defs.h"
 //#include "native_client/src/trusted/sgxlib/pal_linux_defs.h"
 #include "pal_internal.h"

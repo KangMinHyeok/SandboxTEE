@@ -33,7 +33,7 @@
 #endif
 
 // #include <shim_internal.h>
-#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 enum  CYA_Log_Levels {
     ERROR_LOG = 0,

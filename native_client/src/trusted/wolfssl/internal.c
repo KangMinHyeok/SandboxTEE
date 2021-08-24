@@ -27,7 +27,7 @@
 
 // #include <shim_handle.h>
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #include "native_client/src/shared/platform/nacl_check.h"
 #include "native_client/src/shared/platform/nacl_exit.h"
 #include "native_client/src/shared/platform/nacl_log.h"
@@ -1406,7 +1406,7 @@ int InitSSL_Ctx(WOLFSSL_CTX* ctx, WOLFSSL_METHOD* method, void* heap)
             #endif
         #endif
     #endif /* MICRIUM */
-#endif  WOLFSSL_USER_IO 
+#endif  //WOLFSSL_USER_IO 
 
 #ifdef HAVE_NETX
     ctx->CBIORecv = NetX_Receive;
@@ -7348,7 +7348,7 @@ int MatchDomainName(const char* pattern, int len, const char* str)
             }
         }
         else {
-            if (p != (char)XTOLOWER((unsigned char) *str))
+            if (p != ((char)XTOLOWER((unsigned char) *str)))
                 return 0;
         }
 

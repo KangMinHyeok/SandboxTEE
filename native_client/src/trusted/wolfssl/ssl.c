@@ -32,8 +32,8 @@
 
 
 
-#include "native_client/src/trusted/stdlib/api.h"
-#include "native_client/src/trusted/stdlib/linux_types.h"
+//#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/linux_types.h"
 #include "settings.h"
 
 #ifndef WOLFCRYPT_ONLY

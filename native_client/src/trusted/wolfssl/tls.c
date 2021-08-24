@@ -26,7 +26,7 @@
 #endif
 
 // #include <shim_internal.h>
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #include "settings.h"
 
 #ifndef WOLFCRYPT_ONLY

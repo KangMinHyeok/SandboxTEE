@@ -10,6 +10,5 @@ Import('env')
 # trusted
 wolf_objs = Glob('*.c')
 
-env.DualLibrary('ssl', wolf_objs) 
-
+env.DualLibrary('wolflib', wolf_objs) 
 

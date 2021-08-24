@@ -26,7 +26,7 @@
 
 #include "settings.h"
 // #include <shim_table.h>
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 
 #include "native_client/src/shared/platform/nacl_check.h"
 #include "native_client/src/shared/platform/nacl_exit.h"
@@ -35,21 +35,22 @@
 #include "native_client/src/shared/platform/nacl_sync_checked.h"
 
 
-#include "native_client/src/trusted/sgxlib/enclave_ocalls.h"
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
-struct tm {
-        int  tm_sec;     /* seconds after the minute [0-60] */
-        int  tm_min;     /* minutes after the hour [0-59] */
-        int  tm_hour;    /* hours since midnight [0-23] */
-        int  tm_mday;    /* day of the month [1-31] */
-        int  tm_mon;     /* months since January [0-11] */
-        int  tm_year;    /* years since 1900 */
-        int  tm_wday;    /* days since Sunday [0-6] */
-        int  tm_yday;    /* days since January 1 [0-365] */
-        int  tm_isdst;   /* Daylight Savings Time flag */
+
+//struct tm {
+//        int  tm_sec;     /* seconds after the minute [0-60] */
+//        int  tm_min;     /* minutes after the hour [0-59] */
+//        int  tm_hour;    /* hours since midnight [0-23] */
+//        int  tm_mday;    /* day of the month [1-31] */
+//        int  tm_mon;     /* months since January [0-11] */
+//        int  tm_year;    /* years since 1900 */
+//        int  tm_wday;    /* days since Sunday [0-6] */
+//        int  tm_yday;    /* days since January 1 [0-365] */
+//        int  tm_isdst;   /* Daylight Savings Time flag */
         // long tm_gmtoff;  /* offset from CUT in seconds */
         // char *tm_zone;    timezone abbreviation 
-    };
+//    };
 
 /*
 ASN Options:
@@ -4554,8 +4555,8 @@ static int MatchBaseName(int type, const char* name, int nameSz,
     }
 
     while (nameSz > 0) {
-        if (XTOLOWER((unsigned char)*name++) !=
-                                               XTOLOWER((unsigned char)*base++))
+        if ((XTOLOWER((unsigned char)*name++)) !=
+                                               (XTOLOWER((unsigned char)*base++)))
             return 0;
         nameSz--;
     }
@@ -7649,7 +7650,7 @@ static int SetExtKeyUsage(byte* output, word32 outSz, byte input)
 static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
 {
     word32 val, idx = 0, nb_val;
-    char *token, *str, *ptr;
+    char *token, *str;//, *ptr;
     word32 len;
 
     if (out == NULL || outSz == NULL || *outSz < 2 || in == NULL)
@@ -7667,7 +7668,8 @@ static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
     nb_val = 0;
 
     /* parse value, and set corresponding Policy OID value */
-    token = XSTRTOK(str, ".", &ptr);
+    //token = XSTRTOK(str, ".", &ptr);
+    token = XSTRTOK(str, ".");
     while (token != NULL)
     {
         val = (word32)atoi(token);
@@ -7716,7 +7718,8 @@ static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
                 out[idx++] = oid[i--];
         }
 
-        token = XSTRTOK(NULL, ".", &ptr);
+        //token = XSTRTOK(NULL, ".", &ptr);
+    		token = XSTRTOK(str, ".");
         nb_val++;
     }
 
@@ -9376,7 +9379,7 @@ int wc_SetAuthKeyId(Cert *cert, const char* file)
 int wc_SetKeyUsage(Cert *cert, const char *value)
 {
     int ret = 0;
-    char *token, *str, *ptr;
+    char *token, *str;//, *ptr;
     word32 len;
 
     if (cert == NULL || value == NULL)
@@ -9392,7 +9395,8 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
     XSTRNCPY(str, value, XSTRLEN(value));
 
     /* parse value, and set corresponding Key Usage value */
-    if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
+    //if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
+    if ((token = XSTRTOK(str, ",")) == NULL) {
         XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
         return KEYUSAGE_E;
     }
@@ -9424,7 +9428,8 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
             break;
         }
 
-        token = XSTRTOK(NULL, ",", &ptr);
+        //token = XSTRTOK(NULL, ",", &ptr);
+        token = XSTRTOK(NULL, ",");
     }
 
     XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
@@ -9435,7 +9440,7 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
 int wc_SetExtKeyUsage(Cert *cert, const char *value)
 {
     int ret = 0;
-    char *token, *str, *ptr;
+    char *token, *str;//, *ptr;
     word32 len;
 
     if (cert == NULL || value == NULL)
@@ -9451,8 +9456,9 @@ int wc_SetExtKeyUsage(Cert *cert, const char *value)
     XSTRNCPY(str, value, XSTRLEN(value));
 
     /* parse value, and set corresponding Key Usage value */
-    if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
-        XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
+    //if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
+    if ((token = XSTRTOK(str, ",")) == NULL) {
+    		XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
         return EXTKEYUSAGE_E;
     }
 
@@ -9479,7 +9485,8 @@ int wc_SetExtKeyUsage(Cert *cert, const char *value)
             break;
         }
 
-        token = XSTRTOK(NULL, ",", &ptr);
+        //token = XSTRTOK(NULL, ",", &ptr);
+        token = XSTRTOK(NULL, ",");
     }
 
     XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);

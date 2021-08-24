@@ -164,6 +164,8 @@ extern "C" {
 // #define WOLFSSL_SGX
 //#define WOLFSSL_SGX_ATTESTATION
 
+#include <string.h>
+#include <stdlib.h>
 #include "visibility.h"
 
 #ifdef WOLFSSL_USER_SETTINGS
@@ -1725,6 +1727,9 @@ kk #define XMALLOC(s, h, type)  pvPortMalloc((s))
 #define XSTRNCAT strncat
 #define XMEMMEM memmem
 #define XSTRTOK strtok
+#define XSTRNCASECMP strncasecmp
+#define XSTRSTR strstr
+#define XSTRNSTR mystrnstr
 
 // TODO (fix below)
 #define WC_NO_HARDEN

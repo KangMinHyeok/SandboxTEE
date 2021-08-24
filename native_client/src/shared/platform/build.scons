@@ -101,7 +101,7 @@ if env.Bit('sgx'):
   ]
   envt = env.Clone()
   envt.Append(CCFLAGS=['-Wno-pointer-arith'])
- 
+
 elif env.Bit('posix'):
   platform_inputs += [
     'posix/aligned_malloc.c',

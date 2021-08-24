@@ -22,7 +22,7 @@
  */
 
 #include "native_client/src/trusted/stdlib/pal_internal.h"
-#include "native_client/src/trusted/stdlib/api.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 
 #ifndef NO_INTERNAL_ALLOC
 #include "native_client/src/trusted/stdlib/list.h"
@@ -30,8 +30,6 @@
 #include "native_client/src/trusted/stdlib/pal_error.h"
 #include "native_client/src/trusted/stdlib/spinlock.h"
 #include <string.h>
-
-//#include "native_client/src/trusted/xcall/enclave_ocalls.h"
 
 #define PRESET_PAGESIZE (1 << 12)
 #define PRINT_ENCLAVE_STAT  (0)

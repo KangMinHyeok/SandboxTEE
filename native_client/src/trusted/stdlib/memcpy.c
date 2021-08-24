@@ -19,7 +19,7 @@
          Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
          02111-1307 USA.  */
 
-#include "api.h"
+#include "memheader.h"
 //#include <sysdeps/generic/memcopy.h>
 #include "memcopy.h"
 int printf  (const char  *fmt, ...);

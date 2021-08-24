@@ -25,7 +25,7 @@
 #endif
 
 #include "settings.h"
-#include "native_client/src/trusted/stdlib/api.h"
+//#include "native_client/src/trusted/stdlib/api.h"
 #if !defined(NO_SHA)
 
 #include "sha.h"
