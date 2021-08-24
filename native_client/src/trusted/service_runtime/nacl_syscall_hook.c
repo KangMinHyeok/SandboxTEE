@@ -149,7 +149,6 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
   printf("%s %d %d\n", __func__, __LINE__, sysnum);
     sysret = (*(nap->syscall_table[sysnum].handler))(natp);
     /* Implicitly drops lock */
-  printf("%s %d %d\n", __func__, __LINE__, sysnum);
   }
   NaClLog(4,
           ("Returning from syscall %"NACL_PRIuS": return value %"NACL_PRId32
@@ -168,5 +167,6 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
   /*
    * The caller switches back to untrusted code after this return.
    */
+  printf("%s %d %d %lx %lx\n", __func__, __LINE__, sysnum, natp->user.new_prog_ctr, sysret);
   return ntcp;
 }

@@ -16,6 +16,10 @@
 #include "native_client/src/trusted/stdlib/filestruct.h"
 #include "native_client/src/trusted/stdlib/stddef.h"
 
+// included in 
+// /home/mkpark/iitp/native_client/src/include/portability_sockets.h:23,
+//  /home/mkpark/iitp/native_client/src/trusted/service_runtime/nacl_debug_init.h:11,
+
 struct sockaddr;
 // Mem
 int ocall_alloc_untrusted (uint64_t size, void ** mem);

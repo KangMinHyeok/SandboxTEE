@@ -93,6 +93,9 @@ enum NaClDescTypeTag {
   NACL_DESC_IMC_SOCKET,
   NACL_DESC_QUOTA,
   NACL_DESC_CUSTOM,
+#if NACL_SGX
+  NACL_DESC_HOST_SOCKET,
+#endif
   NACL_DESC_NULL
   /*
    * Add new NaClDesc subclasses here.
@@ -399,6 +402,12 @@ struct NaClDescVtbl {
    * properly extended -- even when -Wmissing-field-initializers was
    * omitted.
    */
+#if NACL_SGX
+  int32_t (*Bind)(struct NaClDesc *self, uintptr_t myaddr, int addrlen);
+  int32_t (*Listen)(struct NaClDesc *self, int backlog);
+  int32_t (*Accept)(struct NaClDesc *self, uintptr_t addr, size_t addrlen, struct NaClDesc **peer);
+  int32_t (*Connect)(struct NaClDesc *self, uintptr_t addr, int addrlen);
+#endif
   enum NaClDescTypeTag typeTag;
 };
 
@@ -481,6 +490,13 @@ void NaClDescSetFlags(struct NaClDesc *self,
 uint32_t NaClDescGetFlags(struct NaClDesc *self);
 
 int32_t NaClDescIsattyNotImplemented(struct NaClDesc *vself);
+
+#if NACL_SGX
+int32_t NaClDescBindNotImplemented(struct NaClDesc *vself, uintptr_t addr, int addrlen);
+int32_t NaClDescListenNotImplemented(struct NaClDesc *vself, int backlog);
+int32_t NaClDescAcceptNotImplemented(struct NaClDesc *vself, uintptr_t addr, size_t addrlen, struct NaClDesc **peer);
+int32_t NaClDescConnectNotImplemented(struct NaClDesc *vself, uintptr_t addr, int addrlen);
+#endif
 
 /*
  * Base class externalize functions; all subclass externalize

@@ -89,6 +89,12 @@ static struct NaClDescVtbl const kNaClDescInvalidVtbl = {
   NaClDescSetFlags,
   NaClDescGetFlags,
   NaClDescIsattyNotImplemented,
+#if NACL_SGX
+  NaClDescBindNotImplemented,
+  NaClDescListenNotImplemented,
+  NaClDescAcceptNotImplemented,
+  NaClDescConnectNotImplemented,
+#endif
   NACL_DESC_INVALID,
 };
 
