@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -374,15 +375,18 @@ int cert_verify_callback(int preverify, WOLFSSL_X509_STORE_CTX* store) {
 	return 1;
 }
 
-int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
+WOLFSSL *ssl_handshake(char *ip, int port, WOLFSSL_CTX* ctx) {
 
 	int sockfd;
 	int ret = 0;
 
 	struct sockaddr_in servAddr;
 
-	WOLFSSL_CTX* ctx;
+	WOLFSSL *ssl;
+	//WOLFSSL_CTX* ctx;
 	WOLFSSL_METHOD* method;
+
+  NaClLog(3, "ssl_handshake");
 
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;             
@@ -390,13 +394,6 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 
 	if (my_inet_pton(ip, &servAddr.sin_addr) != 1) {
 		printf("ERROR: invalid address\n");
-		ret = -1;
-		goto end;
-	}
-
-	/* Connect to the server */
-	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
-		printf("ERROR: failed to connect\n");
 		ret = -1;
 		goto end;
 	}
@@ -418,18 +415,24 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 		goto end;
 	}
 
-	
-	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_PEM)) != SSL_SUCCESS) {
+	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
 		printf("ERROR: failed to load cert, please check the file.\n");
 		goto ctx_cleanup;
 	}
 
-	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, cert_verify_callback);
+	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, cert_verify_callback);
 
 	if ((ssl = wolfSSL_new(ctx)) == NULL) {
 		printf("ERROR: failed to create WOLFSSL object\n");
 		ret = -1;
 		goto ctx_cleanup;
+	}
+	
+	/* Connect to the server */
+	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
+		printf("ERROR: failed to connect\n");
+		ret = -1;
+		goto cleanup;
 	}
 
 	if ((ret = wolfSSL_set_fd(ssl, sockfd)) != WOLFSSL_SUCCESS) {
@@ -442,12 +445,47 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 		goto cleanup;
 	}
 
+	return ssl;
+
 cleanup:
 	wolfSSL_free(ssl);
 ctx_cleanup:
 	wolfSSL_CTX_free(ctx);
 	wolfSSL_Cleanup();
 end:
+	return ssl;
+}
+
+char* set_get_key_msg() {
+	//char *id = get_id();
+	//char *pw = get_pw();
+	char *get_key_msg =  "*2\r\n$4\r\nGET\r\n$9\r\nmmlab:1234\r\n";
+
+	return get_key_msg;
+}
+
+int redis_get_key(WOLFSSL *ssl) {
+	char buff[512];
+	int ret = 0;
+	int len;
+	//char *key;
+	char *get_key_msg = set_get_key_msg();
+
+	// SEND (ID+PW  w/ Get Key)? - send ["GET", ["mmlab", "1234"]]
+	len = strlen(get_key_msg);
+	if ((ret = wolfSSL_write(ssl, get_key_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		printf("%d bytes of %d bytes were sent", ret, (int) len);
+		return ret;
+	}
+
+	// GET Key - recv ["a1b2c3dd"]
+	memset(buff, 0, sizeof(buff));
+	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+		printf("ERROR: failed to read\n");
+	}
+	printf("[GET KEY] READ: %s\n", buff);
+	
 	return ret;
 }
 
@@ -469,24 +507,36 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   int posix_flags;
 	char *ip;
 	int port;
-	int ret;
-	WOLFSSL *ssl = NULL;
+	WOLFSSL *ssl;
+	WOLFSSL_CTX *ctx = NULL;
+	//int ret = 0;
+	//char buff[256];
 
+	printf("%s %d\n", __func__, __LINE__);
   NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
           (uintptr_t) d, path, flags, mode);
   if (NULL == d) {
     NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   }
  
-	ip = "147.46.244.108";
+	//ip = "147.46.244.108";
+	ip = "147.46.114.86";
 	port = 6380;
 	// get redis key
-	ret = ssl_handshake(ip, port, ssl);
-	if (ret < 0) {
-		printf("ERROR: ssl_handshake fail\n");
-		return ret;
-	}
+	ssl = ssl_handshake(ip, port, ctx);
+	printf("%s %d\n", __func__, __LINE__);
 
+	//ret = redis_get_key(ssl);
+	//if (ret < 0) {
+	//	printf("redis_get_key error - %d\n", ret);
+	//}
+
+	wolfSSL_free(ssl);
+	wolfSSL_CTX_free(ctx);
+	wolfSSL_Cleanup();
+
+  UNREFERENCED_PARAMETER(ssl);
+  
   /*
    * Sanitize access flags.
    */

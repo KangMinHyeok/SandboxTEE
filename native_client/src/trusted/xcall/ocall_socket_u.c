@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h> 
@@ -137,7 +138,6 @@ int sgx_ocall_sock_recv(void * pms)  {
 	socklen_t addrlen = ms->ms_addr ? ms->ms_addrlen : 0; 
 
 	ret = recvfrom(ms->ms_sockfd, ms->ms_buf, ms->ms_count, 0, addr, addr ? &addrlen : NULL);
-
 	if ((ret < 0) && addr)
 		ms->ms_addrlen = addrlen;
 

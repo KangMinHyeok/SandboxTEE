@@ -2,7 +2,6 @@
 #include "native_client/src/trusted/xcall/ocall_types.h"
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 
-// TODO(mkpark): below struct should be changed
 #include <errno.h>
 #include <time.h>
 
