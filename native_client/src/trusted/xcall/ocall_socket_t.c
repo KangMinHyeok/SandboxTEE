@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "native_client/src/trusted/xcall/ocall_types.h"
 #include "native_client/src/trusted/xcall/enclave_framework.h"
 #include "native_client/src/trusted/xcall/ecall_types.h"
@@ -135,16 +136,16 @@ int ocall_sock_recv (int sockfd, void * buf, unsigned int count, struct sockaddr
 
 	retval = sgx_ocall(OCALL_SOCK_RECV, ms);
 	if (retval >= 0) {
-		if (len && (sgx_is_completely_within_enclave(ms->ms_addr, len) ||
-					ms->ms_addrlen > len)) {
+		if (len && (sgx_is_completely_within_enclave(ms->ms_addr, len) || ms->ms_addrlen > len)) {
 			sgx_reset_ustack(old_ustack);
 			return -1;
 		}
-
+		
 		sgx_copy_to_enclave(buf, count, ms->ms_buf, retval);
-		sgx_copy_to_enclave(addr, *addrlen, ms->ms_addr, ms->ms_addrlen);
-		if (addrlen)
+		if (addr != NULL && addrlen != NULL) {
+			sgx_copy_to_enclave(addr, *addrlen, ms->ms_addr, ms->ms_addrlen);
 			*addrlen = ms->ms_addrlen;
+		}
 	}
 	sgx_reset_ustack(old_ustack);
 	return retval;
