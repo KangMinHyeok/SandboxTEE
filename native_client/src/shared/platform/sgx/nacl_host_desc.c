@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+//#include <sys/time.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -51,6 +52,10 @@
 #include <sys/mman.h>
 #include <stdio.h>
 
+#include "native_client/src/shared/platform/tracelog.h"
+#include "native_client/src/shared/platform/nacl_time.h"
+#include "native_client/src/trusted/stdlib/time.h"
+
 // # include "native_client/src/shared/platform/posix/nacl_file_lock.h"
 # if NACL_ANDROID
 #  define PREAD pread
@@ -59,7 +64,6 @@
 #  define PREAD ocall_pread64
 #  define PWRITE ocall_pwrite64
 # endif
-
 
 /*
  * Map our ABI to the host OS's ABI.
@@ -374,11 +378,12 @@ int cert_verify_callback(int preverify, WOLFSSL_X509_STORE_CTX* store) {
 	return 1;
 }
 
-int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
+WOLFSSL * ssl_handshake(char *ip, int port) {
 
 	int sockfd;
 	int ret = 0;
-
+    WOLFSSL *ssl = NULL;
+    
 	struct sockaddr_in servAddr;
 
 	WOLFSSL_CTX* ctx;
@@ -442,13 +447,57 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 		goto cleanup;
 	}
 
+    return ssl;
+
 cleanup:
 	wolfSSL_free(ssl);
 ctx_cleanup:
 	wolfSSL_CTX_free(ctx);
 	wolfSSL_Cleanup();
 end:
-	return ret;
+	return ssl;
+}
+
+/*int copy_buffer(struct TraceLog *log) {
+    char buff[log->total_len];
+
+    sprintf(buff, "%d%d%s%d%s%d%s%d%s%d%s%d%d",
+            log->total_len, log->msg_type, log->timestamp,
+            log->svc_id_len, log->svc_id, log->agent_id_len, log->agent_id,
+            log->device_id_len, log->device_id, log->file_name_len, log->file_name,
+            log->io_mode, loglog->result); 
+
+    return 0;
+}*/
+
+int send_tracelog(WOLFSSL *ssl, char *buff) {
+    int ret;
+    int total_len = (int) buff[0];
+    char reply[total_len];
+    /* Send the message to the server */
+    if ((ret = wolfSSL_write(ssl, buff, total_len)) != total_len) {
+        fprintf(stderr, "ERROR: failed to write entire message\n");
+        //fprintf(stderr, "%d bytes of %d bytes were sent", ret, (int) len);
+        wolfSSL_free(ssl);
+    }
+
+    /* Read the server data */
+    memset(reply, 0, sizeof(reply));
+    if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+        fprintf(stderr, "ERROR: failed to read\n");
+        wolfSSL_free(ssl);
+    }
+
+    /* check result */
+    if(((int) reply[total_len - 1]) == 0) {
+        printf("trace log successfully sent\n");
+    } else {
+        printf("trace log cannot be sent. try again.\n");
+    }
+
+    //need to close connection
+    return 0;
+
 }
 
 static int NaClHostDescCtor(struct NaClHostDesc  *d,
@@ -469,9 +518,10 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   int posix_flags;
 	char *ip;
 	int port;
-	int ret;
+	int ret = 0;
 	WOLFSSL *ssl = NULL;
 
+    
   NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
           (uintptr_t) d, path, flags, mode);
   if (NULL == d) {
@@ -481,11 +531,123 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 	ip = "147.46.244.108";
 	port = 6380;
 	// get redis key
-	ret = ssl_handshake(ip, port, ssl);
+	ssl = ssl_handshake(ip, port);
 	if (ret < 0) {
 		printf("ERROR: ssl_handshake fail\n");
 		return ret;
 	}
+
+    //send trace log
+    // 1. Declare TraceLog 
+
+    struct TraceLog *log = &trace_log;
+
+    /*time_t rawtime;
+    struct tm * timeinfo;
+    char * now = "";
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    snprintf(now, 19, "%d-%02d-%02d %02d:%02d:%02d",
+            timeinfo->tm_year+1900,
+            timeinfo->tm_mon,
+            timeinfo->tm_mday,
+            timeinfo->tm_hour,
+            timeinfo->tm_min,
+            timeinfo->tm_sec);
+    */
+
+
+    // 2. Assign values
+     
+    char timestamp[19];
+    int retval;
+    struct nacl_abi_timeval now;
+
+    memset(&now, 0, sizeof(now));
+    retval = NaClGetTimeOfDay(&now);
+    if (0 != retval) {
+        return retval;
+    }
+
+    timestamp_t unix_timestamp = retval;
+	datetime_t datetime;
+	utc_timestamp_to_date(unix_timestamp , &datetime);
+	printf("unix time : %d\n", unix_timestamp );
+	printf("datetime : %d-%d-%d %d:%d:%d\n",
+            datetime.year, 
+            datetime.month, 
+            datetime.day, 
+            datetime.hour, 
+            datetime.minute, 
+            datetime.second);
+
+    snprintf(timestamp, 19, "%04d-%02d-%02d %02d:%02d:%02d",
+            datetime.year,
+            datetime.month,
+            datetime.day,
+            datetime.hour,
+            datetime.minute,
+            datetime.second);
+
+    log->msg_type = 0;
+    log->timestamp = "2021-08-26 12:55:20";
+    //log->timestamp = timestamp; 
+    log->svc_id = "ecg_app";
+    log->svc_id_len = strlen(log->svc_id);
+    log->agent_id = "io_agent_1";
+    log->agent_id_len = strlen(log->agent_id);
+    log->device_id = "user_device";
+    log->device_id_len = strlen(log->device_id);
+    log->file_name = path;
+    log->file_name_len = strlen(log->file_name);
+    log->io_mode = mode; //flag? need to check
+    log->result = 0;
+    log->total_len = sizeof(log->msg_type) + 
+                     sizeof(log->timestamp) +
+                     log->svc_id_len + 
+                     sizeof(log->svc_id_len) +
+                     log->agent_id_len + 
+                     sizeof(log->agent_id_len) +
+                     log->device_id_len + 
+                     sizeof(log->device_id_len) +
+                     log->file_name_len + 
+                     sizeof(log->file_name_len) +
+                     sizeof(log->io_mode) + 
+                     sizeof(log->result) + 
+                     sizeof(log->total_len);
+
+    char buff[log->total_len];
+
+    snprintf(buff, log->total_len, "%d%d%s%d%s%d%s%d%s%d%s%d%d",
+                log->total_len, 
+                log->msg_type, 
+                log->timestamp,
+                log->svc_id_len, 
+                log->svc_id, 
+                log->agent_id_len, 
+                log->agent_id,
+                log->device_id_len, 
+                log->device_id, 
+                log->file_name_len, 
+                log->file_name,
+                log->io_mode, 
+                log->result);
+    
+    // 3. TLS CONNECTION OPEN & SEND TRACELOG
+
+    ip = "147.46.244.108";
+    port = 6380;
+    ssl = ssl_handshake(ip, port);
+    if (ret < 0) {
+        printf("ERROR: ssl_handshake fail\n");
+        return ret;
+    } 
+
+    send_tracelog(ssl, buff);
+
+    
+    
 
   /*
    * Sanitize access flags.
