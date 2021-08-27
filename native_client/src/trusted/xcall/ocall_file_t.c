@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -139,7 +140,7 @@ int ocall_stat (const char * path, struct stat * buf) {
 
 	retval = sgx_ocall(OCALL_STAT, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
@@ -156,7 +157,7 @@ int ocall_lstat (const char * path, struct stat * buf) {
 
 	retval = sgx_ocall(OCALL_LSTAT, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
@@ -172,7 +173,7 @@ int ocall_fstat (int fd, struct stat * buf) {
 
 	retval = sgx_ocall(OCALL_FSTAT, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
@@ -188,8 +189,9 @@ int ocall_stat64 (const char * path, struct stat64 * buf) {
 	ms->ms_stat = sgx_alloc_on_ustack_aligned(sizeof(struct stat64), alignof(struct stat64));
 
 	retval = sgx_ocall(OCALL_STAT64, ms);
-	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+	if (!retval) {
+		memcpy(buf, ms->ms_stat, sizeof(struct stat64));
+	}
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }
@@ -206,7 +208,7 @@ int ocall_lstat64 (const char * path, struct stat64 * buf) {
 
 	retval = sgx_ocall(OCALL_LSTAT64, ms);
 	if (!retval)
-		memcpy(buf, &ms->ms_stat, sizeof(struct stat64));
+		memcpy(buf, ms->ms_stat, sizeof(struct stat64));
 	sgx_reset_ustack(old_ustack);
 	return retval;
 }

@@ -64,9 +64,11 @@ int NaClGetTimeOfDay(struct nacl_abi_timeval *tv) {
 
   // retval = gettimeofday(&sys_tv, NULL);
   retval = ocall_gettimeofday(&sys_tv);
+  
   if (0 == retval) {
     tv->nacl_abi_tv_sec = sys_tv.tv_sec;
     tv->nacl_abi_tv_usec = sys_tv.tv_usec;
+  	printf("%s %d %ld\n", __func__, sys_tv.tv_sec, sys_tv.tv_usec);
   }
 
   retval = NaClXlateSysRet(retval);

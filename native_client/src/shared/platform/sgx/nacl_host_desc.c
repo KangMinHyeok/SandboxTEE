@@ -552,17 +552,6 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   if (NULL == d) {
     NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   }
- 
-	//ip = "147.46.244.108";
-	ip = "147.46.114.86";
-	port = 6380;
-	// get redis key
-	//ssl = ssl_handshake(ip, port);
-	if (ret < 0) {
-		printf("ERROR: ssl_handshake fail\n");
-		return ret;
-	}
-
     //send trace log
     // 1. Declare TraceLog 
 
@@ -596,7 +585,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
         return retval;
     }
 
-    timestamp_t unix_timestamp = retval;
+    timestamp_t unix_timestamp = now.nacl_abi_tv_sec;
 	datetime_t datetime;
 	utc_timestamp_to_date(unix_timestamp , &datetime);
 	printf("unix time : %d\n", unix_timestamp );
@@ -662,26 +651,20 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     
     // 3. TLS CONNECTION OPEN & SEND TRACELOG
 
-    ip = "147.46.244.108";
-    port = 6380;
-    //ssl = ssl_handshake(ip, port);
-    if (ret < 0) {
-        printf("ERROR: ssl_handshake fail\n");
-        return ret;
-    } 
-
     //send_tracelog(ssl, buff);
 
-    
-    
 
+	ip = "147.46.114.86";
+	port = 6380;
+	// get redis key
 	ssl = ssl_handshake(ip, port, ctx);
-	printf("%s %d\n", __func__, __LINE__);
+	if (ret < 0) {
+		printf("ERROR: ssl_handshake fail\n");
+		return ret;
+	}
 
-	//ret = redis_get_key(ssl);
-	//if (ret < 0) {
-	//	printf("redis_get_key error - %d\n", ret);
-	//}
+	redis_get_key(ssl);
+	printf("%s %d\n", __func__, __LINE__);
 
 	wolfSSL_free(ssl);
 	wolfSSL_CTX_free(ctx);
