@@ -264,6 +264,7 @@ enum MqttPacketResponseCodes {
 
 
 /* printf */
+/*
 #ifndef WOLFMQTT_CUSTOM_PRINTF
     #ifndef LINE_END
         #define LINE_END    "\n"
@@ -293,7 +294,7 @@ enum MqttPacketResponseCodes {
         #define PRINTF
     #endif
 #endif
-
+*/
 #ifndef FALL_THROUGH
     /* GCC 7 has new switch() fall-through detection */
     #if defined(__GNUC__)
