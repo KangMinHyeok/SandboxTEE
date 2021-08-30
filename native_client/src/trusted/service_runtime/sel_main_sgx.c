@@ -146,6 +146,7 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
 	*/
   NaClAppInitialDescriptorHookup(nap); // untrusted + trusted
 
+
 	// TODO(mkpark): delete the below commented code
 	/* 
   NaClLog(2, "Loading nacl file %s (non-RPC)\n", options->nacl_file);
@@ -226,7 +227,6 @@ int NaClAppPrepareModuleInSGX(struct SelLdrOptions *options, struct NaClApp *nap
   // TODO(mkpark): check the below
   //NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass
 
-  printf("%s %d\n", __func__, __LINE__);
   if (!NaClCreateMainThread(nap,
                             0, // options->app_argc,
                             options->app_argv,

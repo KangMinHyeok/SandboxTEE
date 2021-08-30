@@ -1,13 +1,15 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+//#include <sys/types.h>
+//#include <sys/socket.h>
+#include "native_client/src/public/socket_types.h"
+#include "native_client/src/public/socket_syscalls.h"
+// #include <netinet/in.h>
+//#include <netdb.h>
 #include <string.h>
 #include <unistd.h>
-#include "mqtt_types.h"
-#include "mqtt_socket.h"
-#include "mqtt_packet.h"
-#include "mqtt_client.h"
+#include "native_client/src/tests/wolfMQTT/mqtt_types.h"
+#include "native_client/src/tests/wolfMQTT/mqtt_socket.h"
+#include "native_client/src/tests/wolfMQTT/mqtt_packet.h"
+#include "native_client/src/tests/wolfMQTT/mqtt_client.h"
 
 #define MQTT_HOST               "127.0.0.1"
 #define MQTT_QOS                MQTT_QOS_0

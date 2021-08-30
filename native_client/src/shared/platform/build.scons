@@ -89,7 +89,6 @@ if env.Bit('sgx'):
     'sgx/nacl_fast_mutex.c',
     'sgx/nacl_find_addrsp.c',
     #'sgx/nacl_host_desc_origin.c',
-    'sgx/nacl_host_ifc.c',
     'sgx/nacl_threads.c',
     'sgx/nacl_timestamp.c',
     'sgx/lock.c',

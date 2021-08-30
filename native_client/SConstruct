@@ -3507,6 +3507,7 @@ nonvariant_tests = [
     'tests/trusted_crash/osx_crash_filter/nacl.scons',
     'tests/trusted_crash/osx_crash_forwarding/nacl.scons',
     'tests/unittests/shared/imc/nacl.scons',
+    'tests/wolfMQTT/nacl.scons',
     #### ALPHABETICALLY SORTED ####
 ]
 

@@ -29,8 +29,7 @@ nrd_lib_inputs = [
     'nacl_desc_custom.c',
     'nacl_desc_dir.c',
     'nacl_desc_effector_trusted_mem.c',
-    'nacl_desc_imc.c',
-    'nacl_desc_imc_shm.c',
+    'nacl_desc_socket.c',
     'nacl_desc_invalid.c',
     'nacl_desc_io.c',
     'nacl_desc_mutex.c',
@@ -42,6 +41,11 @@ nrd_lib_inputs = [
     'nrd_all_modules.c',
     nrd_xfer_obj,
 ]
+
+if not env.Bit('sgx'):
+  nrd_lib_inputs += [
+    'nacl_desc_imc.c',
+    'nacl_desc_imc_shm.c']
 
 if env.Bit('windows'):
   nrd_lib_inputs += ['win/nacl_desc.c']
@@ -59,6 +63,9 @@ if env.Bit('windows'):
       'nacl_desc_imc_bound_desc.c',
       'nacl_makeboundsock.c',
       ]
+if env.Bit('sgx'):
+  nrd_lib_inputs += [
+      'posix/nacl_desc_conn_cap.c']
 else:
   nrd_lib_inputs += [
       'posix/nacl_desc_conn_cap.c',

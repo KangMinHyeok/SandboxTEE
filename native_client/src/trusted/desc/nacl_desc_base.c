@@ -232,6 +232,9 @@ char const *NaClDescTypeString(enum NaClDescTypeTag type_tag) {
     MAP(NACL_DESC_IMC_SOCKET);
     MAP(NACL_DESC_QUOTA);
     MAP(NACL_DESC_CUSTOM);
+#if NACL_SGX 
+    MAP(NACL_DESC_HOST_SOCKET);
+#endif
     MAP(NACL_DESC_NULL);
   }
   return "BAD TYPE TAG";
@@ -715,6 +718,62 @@ int32_t NaClDescIsattyNotImplemented(struct NaClDesc *vself) {
   return -NACL_ABI_ENOTTY;
 }
 
+#if NACL_SGX
+int32_t NaClDescBindNotImplemented(struct NaClDesc *vself, uintptr_t addr, int addrlen) {
+
+  UNREFERENCED_PARAMETER(vself);
+  UNREFERENCED_PARAMETER(addr);
+  UNREFERENCED_PARAMETER(addrlen);
+
+  NaClLog(LOG_ERROR,
+          "Bind method is not implemented for object of type %s\n",
+          NaClDescTypeString(((struct NaClDescVtbl const *)
+                              vself->base.vtbl)->typeTag));
+
+  return -NACL_ABI_EINVAL;
+}
+
+int32_t NaClDescListenNotImplemented(struct NaClDesc *vself, int backlog){
+  UNREFERENCED_PARAMETER(vself);
+  UNREFERENCED_PARAMETER(backlog);
+
+  NaClLog(LOG_ERROR,
+          "Listen method is not implemented for object of type %s\n",
+          NaClDescTypeString(((struct NaClDescVtbl const *)
+                              vself->base.vtbl)->typeTag));
+  return -NACL_ABI_EINVAL;
+}
+
+int32_t NaClDescAcceptNotImplemented(struct NaClDesc *vself, uintptr_t addr, size_t addrlen, struct NaClDesc **peer) {
+
+  UNREFERENCED_PARAMETER(vself);
+  UNREFERENCED_PARAMETER(peer);
+  UNREFERENCED_PARAMETER(addr);
+  UNREFERENCED_PARAMETER(addrlen);
+
+  NaClLog(LOG_ERROR,
+          "Accept method is not implemented for object of type %s\n",
+          NaClDescTypeString(((struct NaClDescVtbl const *)
+                              vself->base.vtbl)->typeTag));
+  return -NACL_ABI_EINVAL;
+}
+
+
+int32_t NaClDescConnectNotImplemented(struct NaClDesc *vself, uintptr_t addr, int addrlen) {
+
+  UNREFERENCED_PARAMETER(vself);
+  UNREFERENCED_PARAMETER(addr);
+  UNREFERENCED_PARAMETER(addrlen);
+
+  NaClLog(LOG_ERROR,
+          "Connect method is not implemented for object of type %s\n",
+          NaClDescTypeString(((struct NaClDescVtbl const *)
+                              vself->base.vtbl)->typeTag));
+  return -NACL_ABI_EINVAL;
+}
+#endif
+
+
 struct NaClDescVtbl const kNaClDescVtbl = {
   {
     NaClDescDtor,
@@ -755,5 +814,11 @@ struct NaClDescVtbl const kNaClDescVtbl = {
   NaClDescSetFlags,
   NaClDescGetFlags,
   NaClDescIsattyNotImplemented,
+#if NACL_SGX
+  NaClDescBindNotImplemented,
+  NaClDescListenNotImplemented,
+  NaClDescAcceptNotImplemented,
+  NaClDescConnectNotImplemented,
+#endif
   (enum NaClDescTypeTag) -1,  /* NaClDesc is an abstract base class */
 };
