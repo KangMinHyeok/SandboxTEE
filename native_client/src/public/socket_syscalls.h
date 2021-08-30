@@ -1,6 +1,10 @@
 #ifndef _NATIVE_CLIENT_SRC_PUBLIC_SOCKET_SYSCALLS_H_
 #define _NATIVE_CLIENT_SRC_PUBLIC_SOCKET_SYSCALLS_H_
 
+#ifndef _NATIVE_CLIENT_SRC_PUBLIC_SOCKET_TYPES_H_
+#error "include socket_types.h first"
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {

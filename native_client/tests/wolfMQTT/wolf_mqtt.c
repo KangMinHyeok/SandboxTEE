@@ -1,9 +1,9 @@
 //#include <sys/types.h>
 //#include <sys/socket.h>
-#include "native_client/src/public/socket_syscalls.h"
 #include "native_client/src/public/socket_types.h"
-#include <netinet/in.h>
-#include <netdb.h>
+#include "native_client/src/public/socket_syscalls.h"
+// #include <netinet/in.h>
+//#include <netdb.h>
 #include <string.h>
 #include <unistd.h>
 #include "native_client/src/tests/wolfMQTT/mqtt_types.h"
