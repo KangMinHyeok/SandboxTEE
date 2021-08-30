@@ -66,12 +66,11 @@ struct addrinfo {
 /* msg->buffer_len: Payload buffer length */
 /* msg->buffer_pos: Payload buffer position */
 
-
+/*
 uint16_t
 htons (uint16_t x)
 {
   return x;
-/*
 #if BYTE_ORDER == BIG_ENDIAN
   return x;
 #elif BYTE_ORDER == LITTLE_ENDIAN
@@ -79,7 +78,11 @@ htons (uint16_t x)
 #else
 # error "What kind of system is this?"
 #endif
+}
 */
+
+uint16_t htons(uint16_t hostshort) {
+    return ((hostshort & 0xff) << 8) | (hostshort >> 8);
 }
 
 static int hexval(unsigned c)
@@ -243,6 +246,7 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
     struct addrinfo hints;
 
     if (pSockFd == NULL) {
+        printf("socket fd is NULL\n");
         return MQTT_CODE_ERROR_BAD_ARG;
     }
 
@@ -290,6 +294,7 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
 
     sockFd = socket(addr.sin_family, SOCK_STREAM, 0);
     if (sockFd < 0) {
+        printf("fail to create socket\n");
         return MQTT_CODE_ERROR_NETWORK;
     }
 
@@ -301,6 +306,7 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
             rc, socket_get_error(*pSockFd));
         */
         close(sockFd);
+        printf("fail to connect\n");
         return MQTT_CODE_ERROR_NETWORK;
     }
 
