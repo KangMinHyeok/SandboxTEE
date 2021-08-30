@@ -3,6 +3,7 @@
 
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/trusted/stdlib/stddef.h"
+#include "native_client/src/trusted/stdlib/nacl_error.h"
 
 #if NACL_SGX == 0
 #error "it should be included only with NACL_SGX == 1"

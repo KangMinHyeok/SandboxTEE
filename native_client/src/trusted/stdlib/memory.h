@@ -7,12 +7,11 @@
 #include <asm/fcntl.h>
 #include <errno.h>
 #include <stdio.h>
-//#include "pal_internal.h"
 
-#include "list.h"
-#include "spinlock.h"
-#include "pal_error.h"
-#include "atomic.h"
+#include "native_client/src/trusted/stdlib/list.h"
+#include "native_client/src/trusted/stdlib/spinlock.h"
+#include "native_client/src/trusted/stdlib/nacl_error.h"
+#include "native_client/src/trusted/stdlib/atomic.h"
 
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/trusted/xcall/enclave_exception.h"

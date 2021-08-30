@@ -16,18 +16,16 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /*
- * slab.c
+ * memory.c
  *
- * This file contains implementation of PAL's internal memory allocator.
+ * This file contains implementation of internal memory allocator.
  */
 
-#include "native_client/src/trusted/stdlib/pal_internal.h"
+#include "native_client/src/trusted/stdlib/nacl_internal.h"
 #include "native_client/src/trusted/stdlib/memheader.h"
 
 #ifndef NO_INTERNAL_ALLOC
 #include "native_client/src/trusted/stdlib/list.h"
-#include "native_client/src/trusted/stdlib/pal_defs.h"
-#include "native_client/src/trusted/stdlib/pal_error.h"
 #include "native_client/src/trusted/stdlib/spinlock.h"
 #include <string.h>
 
@@ -57,7 +55,7 @@ static inline void * __malloc (int size)
     }
 #endif
 
-    _DkVirtualMemoryAlloc(&addr, size, PAL_ALLOC_INTERNAL, PAL_PROT_READ|PAL_PROT_WRITE);
+    _DkVirtualMemoryAlloc(&addr, size, NACL_ALLOC_INTERNAL, NACL_PROT_READ | NACL_PROT_WRITE);
     return addr;
 }
 
@@ -90,7 +88,7 @@ void init_slab_mgr (int alignment)
     slab_alignment = alignment;
     slab_mgr = create_slab_mgr();
     if (!slab_mgr)
-        init_fail(PAL_ERROR_NOMEM, "cannot initialize slab manager");
+        init_fail(NACL_ERROR_NOMEM, "cannot initialize slab manager");
 }
 
 void * malloc (size_t size)
@@ -107,11 +105,11 @@ void * malloc (size_t size)
 
     if (!ptr) {
         /*
-         * Normally, the PAL should not run out of memory.
+         * Normally, the NACL should not run out of memory.
          * If malloc() failed internally, we cannot handle the
          * condition and must terminate the current process.
          */
-        printf("******** Out-of-memory in PAL ********\n");
+        printf("******** Out-of-memory in NACL ********\n");
 
 #if PRINT_ENCLAVE_STAT
         print_alloced_pages();
