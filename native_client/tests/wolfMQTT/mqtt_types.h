@@ -29,7 +29,7 @@
 
 /* configuration for Arduino */
 #ifdef ARDUINO
-    #include "wolfmqtt/options.h"
+    #include "native_client/tests/wolfMQTT/options.h"
 
     /* make sure arduino can see the wolfssl library directory */
     #ifdef ENABLE_MQTT_TLS
@@ -41,7 +41,7 @@
     extern "C" {
 #endif
 
-#include "wolfmqtt/visibility.h"
+#include "native_client/tests/wolfMQTT/visibility.h"
 
 #ifdef _WIN32
     #define USE_WINDOWS_API
@@ -57,7 +57,7 @@
     #endif
 
     /* Visual Studio build settings from wolfmqtt/vs_settings.h */
-    #include "wolfmqtt/vs_settings.h"
+    #include "native_client/tests/wolfMQTT/vs_settings.h"
 #endif
 
 #ifdef WOLFMQTT_USER_SETTINGS
