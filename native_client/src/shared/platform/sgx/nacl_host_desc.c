@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -51,6 +52,10 @@
 #include <sys/mman.h>
 #include <stdio.h>
 
+#include "native_client/src/shared/platform/tracelog.h"
+#include "native_client/src/shared/platform/nacl_time.h"
+#include "native_client/src/trusted/stdlib/time.h"
+
 // # include "native_client/src/shared/platform/posix/nacl_file_lock.h"
 # if NACL_ANDROID
 #  define PREAD pread
@@ -59,7 +64,6 @@
 #  define PREAD ocall_pread64
 #  define PWRITE ocall_pwrite64
 # endif
-
 
 /*
  * Map our ABI to the host OS's ABI.
@@ -374,15 +378,19 @@ int cert_verify_callback(int preverify, WOLFSSL_X509_STORE_CTX* store) {
 	return 1;
 }
 
-int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
+WOLFSSL *ssl_handshake(char *ip, int port, WOLFSSL_CTX* ctx) {
 
 	int sockfd;
 	int ret = 0;
-
+    //WOLFSSL *ssl = NULL;
+    
 	struct sockaddr_in servAddr;
 
-	WOLFSSL_CTX* ctx;
+	WOLFSSL *ssl;
+	//WOLFSSL_CTX* ctx;
 	WOLFSSL_METHOD* method;
+
+  NaClLog(3, "ssl_handshake");
 
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;             
@@ -390,13 +398,6 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 
 	if (my_inet_pton(ip, &servAddr.sin_addr) != 1) {
 		printf("ERROR: invalid address\n");
-		ret = -1;
-		goto end;
-	}
-
-	/* Connect to the server */
-	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
-		printf("ERROR: failed to connect\n");
 		ret = -1;
 		goto end;
 	}
@@ -418,18 +419,24 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 		goto end;
 	}
 
-	
-	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_PEM)) != SSL_SUCCESS) {
+	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
 		printf("ERROR: failed to load cert, please check the file.\n");
 		goto ctx_cleanup;
 	}
 
-	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, cert_verify_callback);
+	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, cert_verify_callback);
 
 	if ((ssl = wolfSSL_new(ctx)) == NULL) {
 		printf("ERROR: failed to create WOLFSSL object\n");
 		ret = -1;
 		goto ctx_cleanup;
+	}
+	
+	/* Connect to the server */
+	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
+		printf("ERROR: failed to connect\n");
+		ret = -1;
+		goto cleanup;
 	}
 
 	if ((ret = wolfSSL_set_fd(ssl, sockfd)) != WOLFSSL_SUCCESS) {
@@ -442,12 +449,76 @@ int ssl_handshake(char *ip, int port, WOLFSSL *ssl) {
 		goto cleanup;
 	}
 
+	return ssl;
+
 cleanup:
 	wolfSSL_free(ssl);
 ctx_cleanup:
 	wolfSSL_CTX_free(ctx);
 	wolfSSL_Cleanup();
 end:
+	return ssl;
+}
+
+int send_tracelog(WOLFSSL *ssl, char *buff) {
+    int ret;
+    int total_len = (int) buff[0];
+    char reply[total_len];
+    /* Send the message to the server */
+    if ((ret = wolfSSL_write(ssl, buff, total_len)) != total_len) {
+        fprintf(stderr, "ERROR: failed to write entire message\n");
+        //fprintf(stderr, "%d bytes of %d bytes were sent", ret, (int) len);
+        wolfSSL_free(ssl);
+    }
+
+    /* Read the server data */
+    memset(reply, 0, sizeof(reply));
+    if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+        fprintf(stderr, "ERROR: failed to read\n");
+        wolfSSL_free(ssl);
+    }
+
+    /* check result */
+    if(((int) reply[total_len - 1]) == 0) {
+        printf("trace log successfully sent\n");
+    } else {
+        printf("trace log cannot be sent. try again.\n");
+    }
+
+    //need to close connection
+    return 0;
+}
+
+char* set_get_key_msg() {
+	//char *id = get_id();
+	//char *pw = get_pw();
+	char *get_key_msg =  "*2\r\n$4\r\nGET\r\n$9\r\nmmlab:1234\r\n";
+
+	return get_key_msg;
+}
+
+int redis_get_key(WOLFSSL *ssl) {
+	char buff[512];
+	int ret = 0;
+	int len;
+	//char *key;
+	char *get_key_msg = set_get_key_msg();
+
+	// SEND (ID+PW  w/ Get Key)? - send ["GET", ["mmlab", "1234"]]
+	len = strlen(get_key_msg);
+	if ((ret = wolfSSL_write(ssl, get_key_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		printf("%d bytes of %d bytes were sent", ret, (int) len);
+		return ret;
+	}
+
+	// GET Key - recv ["a1b2c3dd"]
+	memset(buff, 0, sizeof(buff));
+	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+		printf("ERROR: failed to read\n");
+	}
+	printf("[GET KEY] READ: %s\n", buff);
+	
 	return ret;
 }
 
@@ -469,24 +540,138 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   int posix_flags;
 	char *ip;
 	int port;
-	int ret;
-	WOLFSSL *ssl = NULL;
+	int ret = 0;
+	WOLFSSL *ssl;
+	WOLFSSL_CTX *ctx = NULL;
+	//int ret = 0;
+	//char buff[256];
 
+	printf("%s %d\n", __func__, __LINE__);
   NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
           (uintptr_t) d, path, flags, mode);
   if (NULL == d) {
     NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   }
- 
-	ip = "147.46.244.108";
+    //send trace log
+    // 1. Declare TraceLog 
+
+    struct TraceLog *log = &trace_log;
+
+    /*time_t rawtime;
+    struct tm * timeinfo;
+    char * now = "";
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    snprintf(now, 19, "%d-%02d-%02d %02d:%02d:%02d",
+            timeinfo->tm_year+1900,
+            timeinfo->tm_mon,
+            timeinfo->tm_mday,
+            timeinfo->tm_hour,
+            timeinfo->tm_min,
+            timeinfo->tm_sec);
+    */
+
+
+    // 2. Assign values
+     
+    char timestamp[19];
+    int retval;
+    struct nacl_abi_timeval now;
+
+    memset(&now, 0, sizeof(now));
+    retval = NaClGetTimeOfDay(&now);
+    if (0 != retval) {
+        return retval;
+    }
+
+    timestamp_t unix_timestamp = now.nacl_abi_tv_sec;
+	datetime_t datetime;
+	utc_timestamp_to_date(unix_timestamp , &datetime);
+	printf("unix time : %d\n", unix_timestamp );
+	printf("datetime : %d-%d-%d %d:%d:%d\n",
+            datetime.year, 
+            datetime.month, 
+            datetime.day, 
+            datetime.hour, 
+            datetime.minute, 
+            datetime.second);
+
+    snprintf(timestamp, 19, "%04d-%02d-%02d %02d:%02d:%02d",
+            datetime.year,
+            datetime.month,
+            datetime.day,
+            datetime.hour,
+            datetime.minute,
+            datetime.second);
+
+    log->msg_type = 0;
+    log->timestamp = "2021-08-26 12:55:20";
+    //log->timestamp = timestamp; 
+    log->svc_id = "ecg_app";
+    log->svc_id_len = strlen(log->svc_id);
+    log->agent_id = "io_agent_1";
+    log->agent_id_len = strlen(log->agent_id);
+    log->device_id = "user_device";
+    log->device_id_len = strlen(log->device_id);
+    log->file_name = path;
+    log->file_name_len = strlen(log->file_name);
+    log->io_mode = mode; //flag? need to check
+    log->result = 0;
+    log->total_len = sizeof(log->msg_type) + 
+                     sizeof(log->timestamp) +
+                     log->svc_id_len + 
+                     sizeof(log->svc_id_len) +
+                     log->agent_id_len + 
+                     sizeof(log->agent_id_len) +
+                     log->device_id_len + 
+                     sizeof(log->device_id_len) +
+                     log->file_name_len + 
+                     sizeof(log->file_name_len) +
+                     sizeof(log->io_mode) + 
+                     sizeof(log->result) + 
+                     sizeof(log->total_len);
+
+    char buff[log->total_len];
+
+    snprintf(buff, log->total_len, "%d%d%s%d%s%d%s%d%s%d%s%d%d",
+                log->total_len, 
+                log->msg_type, 
+                log->timestamp,
+                log->svc_id_len, 
+                log->svc_id, 
+                log->agent_id_len, 
+                log->agent_id,
+                log->device_id_len, 
+                log->device_id, 
+                log->file_name_len, 
+                log->file_name,
+                log->io_mode, 
+                log->result);
+    
+    // 3. TLS CONNECTION OPEN & SEND TRACELOG
+
+    //send_tracelog(ssl, buff);
+
+
+	ip = "147.46.114.86";
 	port = 6380;
 	// get redis key
-	ret = ssl_handshake(ip, port, ssl);
+	ssl = ssl_handshake(ip, port, ctx);
 	if (ret < 0) {
 		printf("ERROR: ssl_handshake fail\n");
 		return ret;
 	}
 
+	redis_get_key(ssl);
+	printf("%s %d\n", __func__, __LINE__);
+
+	wolfSSL_free(ssl);
+	wolfSSL_CTX_free(ctx);
+	wolfSSL_Cleanup();
+
+  UNREFERENCED_PARAMETER(ssl);
+  
   /*
    * Sanitize access flags.
    */

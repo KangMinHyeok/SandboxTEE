@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -57,6 +58,9 @@ int sgx_ocall_stat64(void * pms) {
 	ms_ocall_stat64_t * ms = (ms_ocall_stat64_t *) pms;
 	int ret = 0;
 	ret = stat64(ms->ms_path, ms->ms_stat);
+	if (ret < 0) {
+		perror("test");
+	}
 	return ret;
 }
 
