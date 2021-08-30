@@ -135,12 +135,12 @@
 
 // socket/mqtt-related calls
 #define NACL_sys_socket                 160
-#define NACL_sys_bind                   160
-#define NACL_sys_listen                 160
-#define NACL_sys_accept                 160
-#define NACL_sys_connect                160
+#define NACL_sys_bind                   161
+#define NACL_sys_listen                 162
+#define NACL_sys_accept                 163
+#define NACL_sys_connect                164
 
 
-#define NACL_MAX_SYSCALLS               151
+#define NACL_MAX_SYSCALLS               165
 
 #endif

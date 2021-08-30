@@ -292,9 +292,10 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
     }
     */
 
-    sockFd = socket(addr.sin_family, SOCK_STREAM, 0);
+    // mkpark: socket always should have the parameters (below)
+    sockFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sockFd < 0) {
-        printf("fail to create socket\n");
+        printf("fail to create socket %d\n", sockFd);
         return MQTT_CODE_ERROR_NETWORK;
     }
 
