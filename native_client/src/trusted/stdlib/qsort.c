@@ -1,5 +1,5 @@
 
-#include "native_client/src/trusted/stdlib/api.h"
+#include <stddef.h>
 
 static __inline char  *med3(char *, char *, char *, int (*)(const void *, const void *));
 static __inline void   swapfunc(char *, char *, int, int);
