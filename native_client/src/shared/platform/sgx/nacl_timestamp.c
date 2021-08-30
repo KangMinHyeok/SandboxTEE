@@ -16,7 +16,6 @@
 #include "native_client/src/shared/platform/nacl_timestamp.h"
 
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
-// #include "native_client/src/trusted/stdlib/api.h"
 #include "native_client/src/shared/platform/sgx/linux_types.h"
 
 char  *NaClTimeStampString(char   *buffer,

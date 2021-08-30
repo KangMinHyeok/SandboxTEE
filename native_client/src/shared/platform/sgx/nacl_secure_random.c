@@ -8,17 +8,10 @@
  * NaCl Service Runtime.  Secure RNG implementation.
  */
 
-//#include <string.h>
-
-#include "native_client/src/include/build_config.h"
-#if NACL_SGX == 1
-#include "native_client/src/trusted/stdlib/api.h"
-#else
 #include <string.h>
-#endif
-
 #include <unistd.h>
 
+#include "native_client/src/include/build_config.h"
 #include "native_client/src/shared/platform/nacl_check.h"
 #include "native_client/src/shared/platform/nacl_log.h"
 #include "native_client/src/shared/platform/nacl_secure_random.h"
