@@ -23,11 +23,9 @@
  * This files contains APIs that allocate, free or protect virtual memory.
  */
 
-#include "memheader.h"
-#include "pal_defs.h"
-//#include "native_client/src/trusted/sgxlib/pal_linux_defs.h"
-#include "pal_internal.h"
-#include "pal_error.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
+#include "native_client/src/trusted/stdlib/nacl_internal.h"
+#include "native_client/src/trusted/stdlib/nacl_error.h"
 #include "spinlock.h"
 
 #include "native_client/src/trusted/xcall/enclave_framework.h"
@@ -36,7 +34,7 @@
 #include "enclave_pages.h"
 #include "native_client/src/trusted/xcall/ocall_types.h"
 
-#define PAL_VMA_MAX     64
+#define NACL_VMA_MAX     64
 /*int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
     int _DkVirtualMemoryFree (void * addr, uint64_t size);
     int _DkVirtualMemoryProtect (void * addr, uint64_t size, int prot);
@@ -44,20 +42,20 @@
 
 /*static struct pal_vma {
     void * top, * bottom;
-} pal_vmas[PAL_VMA_MAX];
+} pal_vmas[NACL_VMA_MAX];
 
 static unsigned int pal_nvmas = 0;
 static spinlock_t pal_vma_lock;
 */
 /*static inline int HOST_FLAGS (int alloc_type, int prot)
 {
-    return ((alloc_type & PAL_ALLOC_RESERVE) ? MAP_NORESERVE|MAP_UNINITIALIZED : 0) |
-           ((prot & PAL_PROT_WRITECOPY) ? MAP_PRIVATE : MAP_SHARED);
+    return ((alloc_type & NACL_ALLOC_RESERVE) ? MAP_NORESERVE|MAP_UNINITIALIZED : 0) |
+           ((prot & NACL_PROT_WRITECOPY) ? MAP_PRIVATE : MAP_SHARED);
 }*/
 
 static inline int HOST_PROT (int prot)
 {
-    return prot & (PAL_PROT_READ|PAL_PROT_WRITE|PAL_PROT_EXEC);
+    return prot & (NACL_PROT_READ | NACL_PROT_WRITE | NACL_PROT_EXEC);
 }
 
 #define ACCESS_R    4
@@ -95,34 +93,34 @@ int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int pro
     void * addr = *paddr;
      void * mem;
 
-    //int flags = HOST_FLAGS(alloc_type, prot|PAL_PROT_WRITECOPY);
+    //int flags = HOST_FLAGS(alloc_type, prot|NACL_PROT_WRITECOPY);
     //prot = HOST_PROT(prot);
     /* The memory should have MAP_PRIVATE and MAP_ANONYMOUS */
     //flags |= MAP_ANONYMOUS|(addr ? MAP_FIXED : 0);
     //mem = (void *) ARCH_MMAP(addr, size, prot, flags, -1, 0);
 
-    if ((alloc_type & PAL_ALLOC_INTERNAL) && addr)
-        return -PAL_ERROR_INVAL;
+    if ((alloc_type & NACL_ALLOC_INTERNAL) && addr)
+        return -NACL_ERROR_INVAL;
 
     if (size == 0)
         __asm__ volatile ("int $3");
 
     mem = get_reserved_pages(addr, size);
     if (!mem)
-        return addr ? -PAL_ERROR_DENIED : -PAL_ERROR_NOMEM;
+        return addr ? -NACL_ERROR_DENIED : -NACL_ERROR_NOMEM;
     if (addr && mem != addr) {
         // TODO: This case should be made impossible by fixing
         // `get_reserved_pages` semantics.
         free_pages(mem, size);
-        return -PAL_ERROR_INVAL; // `addr` was unaligned.
+        return -NACL_ERROR_INVAL; // `addr` was unaligned.
     }
 
    memset(mem, 0, size);
 /*
-    if (alloc_type & PAL_ALLOC_INTERNAL) {
+    if (alloc_type & NACL_ALLOC_INTERNAL) {
         SGX_DBG(DBG_M, "pal allocates %p-%p for internal use\n", mem, mem + size);
         _DkSpinLock(&pal_vma_lock);
-        assert(pal_nvmas < PAL_VMA_MAX);
+        assert(pal_nvmas < NACL_VMA_MAX);
         pal_vmas[pal_nvmas].bottom = mem;
         pal_vmas[pal_nvmas].top = mem + size;
         pal_nvmas++;

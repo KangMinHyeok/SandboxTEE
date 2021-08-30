@@ -1,12 +1,9 @@
 /* -*- mode:c; c-file-style:"k&r"; c-basic-offset: 4; tab-width:4; indent-tabs-mode:nil; mode:auto-fill; fill-column:78; -*- */
 /* vim: set ts=4 sw=4 et tw=78 fo=cqt wm=0: */
 
-#include "pal_internal.h"
-// #include "native_client/src/trusted/sgxlib/pal_security.h"
-//#include "native_client/src/trusted/sgxlib/pal_linux_defs.h"
-#include "native_client/src/trusted/stdlib/pal_defs.h"
-#include "memheader.h"
-#include "enclave_pages.h"
+#include "native_client/src/trusted/stdlib/nacl_internal.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
+#include "native_client/src/trusted/stdlib/enclave_pages.h"
 
 #include "spinlock.h"
 #include "list.h"
