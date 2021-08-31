@@ -15,6 +15,7 @@
 
 #include "native_client/src/public/nacl_desc.h"
 #include "native_client/src/trusted/desc/nacl_desc_base.h"
+#include "native_client/src/trusted/wolfssl/handshake.h"
 
 EXTERN_C_BEGIN
 
@@ -32,9 +33,16 @@ struct NaClDescSocketDesc {
 
   // race prevention is needed?
   
-  // in server mode
+
+  // for ssl
+	WOLFSSL_CTX* ctx;
+	WOLFSSL *ssl;
+
+
+  // in server mode;
   struct sockaddr *myaddr;
   socklen_t myaddrlen;
+
 };
 
 

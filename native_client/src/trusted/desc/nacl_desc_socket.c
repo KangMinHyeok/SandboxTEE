@@ -29,6 +29,10 @@
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #include "native_client/src/public/socket_types.h"
 
+#include "native_client/src/trusted/wolfssl/handshake.h"
+
+#define MQTT_TLS 1
+
 static struct NaClDescVtbl const kNaClDescSocketDescVtbl;
 
 static int NaClSetHostSockDesc(struct NaClHostDesc *hd, int sock_desc) {
@@ -69,6 +73,47 @@ static void NaClDescSocketDescDtor(struct NaClRefCount *vself) {
   (*vself->vtbl->Dtor)(vself);
 }
 
+static int NaClDescSocketMakeSSLContext(struct NaClDescSocketDesc *sdp) {
+
+  int ret = 0;
+	WOLFSSL_CTX* ctx;
+	WOLFSSL_METHOD* method;
+
+  method = wolfTLSv1_2_client_method();
+	if (method == NULL) {
+		goto cleanup;
+	}
+
+  sdp->ctx = wolfSSL_CTX_new(method);
+	if (sdp->ctx == NULL) {
+		printf("ERROR: wolfSSL_CTX_new failed\n");
+		goto cleanup;
+	}
+
+  ctx = sdp->ctx;
+  
+	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
+		printf("ERROR: failed to load cert, please check the file.\n");
+		goto cleanall;
+	}
+
+	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, cert_verify_callback);
+
+	if ((sdp->ssl = wolfSSL_new(ctx)) == NULL) {
+		printf("ERROR: failed to create WOLFSSL object\n");
+		ret = -1;
+		goto cleanall;
+	}
+
+  return 0;
+
+cleanall:
+	wolfSSL_CTX_free(sdp->ctx);
+	wolfSSL_Cleanup();
+cleanup:
+  return -1;
+}
+
 struct NaClDescSocketDesc *NaClDescSocketDescMake() {
   struct NaClDescSocketDesc *sdp = NULL;
   struct NaClHostDesc *hd = NULL;
@@ -95,10 +140,22 @@ struct NaClDescSocketDesc *NaClDescSocketDescMake() {
 
   if (!NaClDescSocketDescCtor(sdp, hd)) {
     NaClLog(LOG_FATAL, "%s (%d): failed", __func__, __LINE__);
-    free(sdp);
-    free(hd);
-    goto cleanup;
+    goto cleanall;
   }
+
+#if MQTT_TLS
+  if (!NaClDescSocketMakeSSLContext(sdp)){
+    NaClLog(LOG_FATAL, "%s (%d): failed", __func__, __LINE__);
+    goto cleanall;
+  }
+#endif
+
+cleanall:
+  free(sdp);
+  free(hd);
+
+  sdp = NULL;
+  hd = NULL;
 
 cleanup:
   return sdp;
@@ -106,7 +163,11 @@ cleanup:
 
 ssize_t NaClDescSocketDescRead(struct NaClDesc *vself, void *buf, size_t len) {
   struct NaClDescSocketDesc *self = (struct NaClDescSocketDesc *) vself;
+#if MQTT_TLS
+  return wolfSSL_read(self->ssl, buf, len);
+#else
   return ocall_read(self->hd->d, buf, len);
+#endif
 }
 
 ssize_t NaClDescSocketDescWrite(struct NaClDesc         *vself,
@@ -114,7 +175,11 @@ ssize_t NaClDescSocketDescWrite(struct NaClDesc         *vself,
                                     size_t                  len) {
 
   struct NaClDescSocketDesc *self = (struct NaClDescSocketDesc *) vself;
+#if MQTT_TLS
+  return wolfSSL_write(self->ssl, buf, len);
+#else
   return ocall_write(self->hd->d, buf, len);
+#endif
 }
 
 
@@ -180,6 +245,21 @@ int32_t NaClDescSocketConnect(struct NaClDesc *vself, uintptr_t addr, int addrle
   // retval = fd for mine?
   NaClSetHostSockDesc(self->hd, retval);
   retval = 0;
+
+#if MQTT_TLS
+  retval = wolfSSL_set_fd(self->ssl, self->hd->d);
+  if (retval != WOLFSSL_SUCCESS) {
+    printf("error: failed to set fdn");
+    goto cleanup;
+  }
+
+  retval = wolfSSL_connect(self->ssl);
+  if (retval != SSL_SUCCESS) {
+    printf("error: failed to connect to wolfSSL\n");
+    retval = -NACL_ABI_EINVAL;
+  }
+
+#endif
   
 cleanup:
   return retval;
