@@ -146,7 +146,7 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
     sysret = (uint32_t) -NACL_ABI_EINVAL;
     NaClCopyDropLock(nap);
   } else {
-  printf("%s %d %d\n", __func__, __LINE__, sysnum);
+  //printf("%s %d %d\n", __func__, __LINE__, sysnum);
     sysret = (*(nap->syscall_table[sysnum].handler))(natp);
     /* Implicitly drops lock */
   }
@@ -167,6 +167,6 @@ struct NaClThreadContext *NaClSyscallCSegHook(struct NaClThreadContext *ntcp) {
   /*
    * The caller switches back to untrusted code after this return.
    */
-  printf("%s %d %d %lx %lx\n", __func__, __LINE__, sysnum, natp->user.new_prog_ctr, sysret);
+  //printf("%s %d %d %lx %lx\n", __func__, __LINE__, sysnum, natp->user.new_prog_ctr, sysret);
   return ntcp;
 }

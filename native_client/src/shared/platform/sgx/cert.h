@@ -1,3 +1,6 @@
+#ifndef __PLATFORM_SGX_CERT__
+#define __PLATFORM_SGX_CERT__
+
 #define my_cert "/home/hmlee/iitp_cert.pem"
 #define my_key "/home/hmlee/iitp_key.pem"
 
@@ -30,3 +33,5 @@ D2bCiZE7fUmzP9R0RUJvpOGMIP9ZDCSYv+7iRIKP1zHDiZOjyqSmhQhDKdtWZE9u\n\
 jioLDtHvwuRvrxAkYnAKNkwvlqmE4UwNMAFWQR4iyT5yjKQqgVMf\n\
 -----END CERTIFICATE-----\n\n"};
 */
+
+#endif
