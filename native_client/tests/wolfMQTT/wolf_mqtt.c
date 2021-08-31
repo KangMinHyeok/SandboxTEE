@@ -7,6 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "native_client/tests/wolfMQTT/mqtt_types.h"
 #include "native_client/tests/wolfMQTT/mqtt_socket.h"
 #include "native_client/tests/wolfMQTT/mqtt_packet.h"
@@ -80,7 +81,7 @@ htons (uint16_t x)
 #endif
 }
 */
-
+static int fd;
 uint16_t htons(uint16_t hostshort) {
     return ((hostshort & 0xff) << 8) | (hostshort >> 8);
 }
@@ -207,6 +208,7 @@ static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
         msg->buffer_pos, msg->buffer_pos + len, buf);
 
     if (msg_done) {
+        write(fd, buf, len);
         updateQwave((char *)buf);
         printf("MQTT Message: Done");
     }
@@ -552,7 +554,7 @@ int mqtt_test(void)
 
     printf("MQTT Publish: Topic %s, Qos %d, Message %s\n",
         mqtt_obj.publish.topic_name, mqtt_obj.publish.qos, mqtt_obj.publish.buffer); 
-	
+    fd = open("mqtttest.txt", O_RDWR, 0);	
 	/* Wait for messages */
     while (1) {
         ret = MqttClient_WaitMessage_ex(&m_client, &mqtt_obj, MQTT_CMD_TIMEOUT_MS);
