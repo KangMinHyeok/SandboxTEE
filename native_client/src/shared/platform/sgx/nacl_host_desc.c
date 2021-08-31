@@ -374,7 +374,7 @@ int send_tracelog(WOLFSSL *ssl, char *buff) {
 char* set_get_key_msg() {
 	//char *id = get_id();
 	//char *pw = get_pw();
-	char *get_key_msg =  "*2\r\n$4\r\nGET\r\n$9\r\nmmlab:1234\r\n";
+	char *get_key_msg =  "*2\r\n$3\r\nGET\r\n$10\r\nmmlab:1234\r\n";
 
 	return get_key_msg;
 }
