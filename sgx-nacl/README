@@ -1,0 +1,12 @@
+
+- How to create measurement
+
+NOTE: NACL_HOME = ROOT_DIR_OF_YOUR_NACL_DIR/native_client/
+
+1) mkdir $NACL_HOME/signer
+2) update NACL_HOME variable in git:SandboxTEE/sgx-nacl/signer/scripts
+  NOTICE: never commit changes to this file
+3) ./script NACL_HOME/scons-out/nacl-x86-64/staging/target_app.nexe
+  ex) ./script NACL_HOME/scons-out/nacl-x86-64/staging/hello_world.nexe
+4) cd $NACL_HOME and build NaCl
+5) run target_app.nexe

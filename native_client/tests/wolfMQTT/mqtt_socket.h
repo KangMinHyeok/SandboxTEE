@@ -31,7 +31,7 @@
     extern "C" {
 #endif
 
-#include "wolfmqtt/mqtt_types.h"
+#include "native_client/tests/wolfMQTT/mqtt_types.h"
 #ifdef ENABLE_MQTT_TLS
     #ifndef WOLF_TLS_DHKEY_BITS_MIN /* allow define to be overridden */
         #ifdef WOLFSSL_MAX_STRENGTH

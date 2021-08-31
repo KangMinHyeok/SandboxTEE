@@ -5,11 +5,13 @@
 // #include <netinet/in.h>
 //#include <netdb.h>
 #include <string.h>
+#include <errno.h>
 #include <unistd.h>
-#include "native_client/src/tests/wolfMQTT/mqtt_types.h"
-#include "native_client/src/tests/wolfMQTT/mqtt_socket.h"
-#include "native_client/src/tests/wolfMQTT/mqtt_packet.h"
-#include "native_client/src/tests/wolfMQTT/mqtt_client.h"
+#include <fcntl.h>
+#include "native_client/tests/wolfMQTT/mqtt_types.h"
+#include "native_client/tests/wolfMQTT/mqtt_socket.h"
+#include "native_client/tests/wolfMQTT/mqtt_packet.h"
+#include "native_client/tests/wolfMQTT/mqtt_client.h"
 
 #define MQTT_HOST               "127.0.0.1"
 #define MQTT_QOS                MQTT_QOS_0
@@ -32,9 +34,30 @@
 #define INVALID_SOCKET_FD         -1
 #define MQTT_MAX_PACKET_SZ      1024
 #define PRINT_BUFFER_SIZE       80
+/*
+struct in_addr { 
+	unsigned long s_addr; 
+};
+
+struct sockaddr_in { 
+	short sin_family;  
+	unsigned short sin_port; 
+	struct in_addr sin_addr; 
+	char sin_zero[8]; 
+}; 	
 
 
-
+struct addrinfo { 
+	int ai_flags; 
+	int ai_family; 
+	int ai_socktype; 
+	int ai_protocol; 
+	socklen_t ai_addrlen; 
+	char *ai_canonname; 
+	struct sockaddr *ai_addr; 
+	struct addrinfo *ai_next; 
+};
+*/
 /* Local Functions */
 
 /* msg_new on first data callback */
@@ -43,6 +66,95 @@
 /* msg->buffer: Payload buffer */
 /* msg->buffer_len: Payload buffer length */
 /* msg->buffer_pos: Payload buffer position */
+
+/*
+uint16_t
+htons (uint16_t x)
+{
+  return x;
+#if BYTE_ORDER == BIG_ENDIAN
+  return x;
+#elif BYTE_ORDER == LITTLE_ENDIAN
+  return __bswap_16 (x);
+#else
+# error "What kind of system is this?"
+#endif
+}
+*/
+static int fd;
+uint16_t htons(uint16_t hostshort) {
+    return ((hostshort & 0xff) << 8) | (hostshort >> 8);
+}
+
+static int hexval(unsigned c)
+{
+	if (c-'0'<10) return c-'0';
+	c |= 32;
+	if (c-'a'<6) return c-'a'+10;
+	return -1;
+}
+
+int isdigit(int c) {
+  return (c <= '9' && c >= '0') ? 1:0;
+}
+
+int inet_pton(int af, const char *restrict s, void *restrict a0)
+{
+	uint16_t ip[8];
+	unsigned char *a = a0;
+	int i, j, v, d, brk=-1, need_v4=0;
+
+	if (af==AF_INET) {
+		for (i=0; i<4; i++) {
+			for (v=j=0; j<3 && isdigit(s[j]); j++)
+				v = 10*v + s[j]-'0';
+			if (j==0 || (j>1 && s[0]=='0') || v>255) return 0;
+			a[i] = v;
+			if (s[j]==0 && i==3) return 1;
+			if (s[j]!='.') return 0;
+			s += j+1;
+		}
+		return 0;
+	} else if (af!=AF_INET6) {
+		errno = EAFNOSUPPORT;
+		return -1;
+	}
+
+	if (*s==':' && *++s!=':') return 0;
+
+	for (i=0; ; i++) {
+		if (s[0]==':' && brk<0) {
+			brk=i;
+			ip[i&7]=0;
+			if (!*++s) break;
+			if (i==7) return 0;
+			continue;
+		}
+		for (v=j=0; j<4 && (d=hexval(s[j]))>=0; j++)
+			v=16*v+d;
+		if (j==0) return 0;
+		ip[i&7] = v;
+		if (!s[j] && (brk>=0 || i==7)) break;
+		if (i==7) return 0;
+		if (s[j]!=':') {
+			if (s[j]!='.' || (i<6 && brk<0)) return 0;
+			need_v4=1;
+			i++;
+			break;
+		}
+		s += j+1;
+	}
+	if (brk>=0) {
+		memmove(ip+brk+7-i, ip+brk, 2*(i+1-brk));
+		for (j=0; j<7-i; j++) ip[brk+j] = 0;
+	}
+	for (j=0; j<8; j++) {
+		*a++ = ip[j]>>8;
+		*a++ = ip[j];
+	}
+	if (need_v4 && inet_pton(AF_INET, (void *)s, a-4) <= 0) return 0;
+	return 1;
+}
 
 static int Qwaves[10] = {0};
 static int idx = 0;
@@ -81,7 +193,7 @@ static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
         buf[len] = '\0'; /* Make sure its null terminated */
 
         /* Print incoming message */
-        PRINTF("MQTT Message: Topic %s, Qos %d, Len %u",
+        printf("MQTT Message: Topic %s, Qos %d, Len %u",
             buf, msg->qos, msg->total_len);
     }
 
@@ -92,12 +204,13 @@ static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
     }
     XMEMCPY(buf, msg->buffer, len);
     buf[len] = '\0'; /* Make sure its null terminated */
-    PRINTF("Payload (%d - %d): %s",
+    printf("Payload (%d - %d): %s",
         msg->buffer_pos, msg->buffer_pos + len, buf);
 
     if (msg_done) {
+        write(fd, buf, len);
         updateQwave((char *)buf);
-        PRINTF("MQTT Message: Done");
+        printf("MQTT Message: Done");
     }
 
     /* Return negative to terminate publish processing */
@@ -132,10 +245,10 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
     int rc;
     int sockFd, *pSockFd = (int*)context;
     struct sockaddr_in addr;
-    struct addrinfo *result = NULL;
     struct addrinfo hints;
 
     if (pSockFd == NULL) {
+        printf("socket fd is NULL\n");
         return MQTT_CODE_ERROR_BAD_ARG;
     }
 
@@ -149,12 +262,15 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
 
     XMEMSET(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
-
+    addr.sin_port = htons(port);
+    inet_pton(AF_INET, host, &addr.sin_addr);
+     
+    /*
     rc = getaddrinfo(host, NULL, &hints, &result);
     if (rc >= 0 && result != NULL) {
         struct addrinfo* res = result;
 
-        /* prefer ip4 addresses */
+        // prefer ip4 addresses 
         while (res) {
             if (res->ai_family == AF_INET) {
                 result = res;
@@ -176,9 +292,12 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
     if (rc < 0) {
         return MQTT_CODE_ERROR_NETWORK;
     }
+    */
 
-    sockFd = socket(addr.sin_family, SOCK_STREAM, 0);
+    // mkpark: socket always should have the parameters (below)
+    sockFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sockFd < 0) {
+        printf("fail to create socket %d\n", sockFd);
         return MQTT_CODE_ERROR_NETWORK;
     }
 
@@ -190,6 +309,7 @@ static int mqtt_net_connect(void *context, const char* host, word16 port,
             rc, socket_get_error(*pSockFd));
         */
         close(sockFd);
+        printf("fail to connect\n");
         return MQTT_CODE_ERROR_NETWORK;
     }
 
@@ -212,16 +332,17 @@ static int mqtt_net_read(void *context, byte* buf, int buf_len, int timeout_ms)
 
     /* Setup timeout */
     setup_timeout(&tv, timeout_ms);
-    setsockopt(*pSockFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
+    //setsockopt(*pSockFd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv));
 
     /* Loop until buf_len has been read, error or timeout */
     while (bytes < buf_len) {
-        rc = (int)recv(*pSockFd, &buf[bytes], buf_len - bytes, 0);
+        //rc = (int)recv(*pSockFd, &buf[bytes], buf_len - bytes, 0);
+        rc = (int)read(*pSockFd, &buf[bytes], buf_len - bytes);
         if (rc < 0) {
             //rc = socket_get_error(*pSockFd);
             //if (rc == 0)
             //    break; /* timeout */
-            PRINTF("NetRead: Error %d", rc);
+            printf("NetRead: Error %d", rc);
             return MQTT_CODE_ERROR_NETWORK;
         }
         bytes += rc; /* Data */
@@ -247,9 +368,10 @@ static int mqtt_net_write(void *context, const byte* buf, int buf_len,
 
     /* Setup timeout */
     setup_timeout(&tv, timeout_ms);
-    setsockopt(*pSockFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
+    //setsockopt(*pSockFd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
 
-    rc = (int)send(*pSockFd, buf, buf_len, 0);
+    //rc = (int)send(*pSockFd, buf, buf_len, 0);
+    rc = (int)write(*pSockFd, buf, buf_len);
     if (rc < 0) {
         /*
         PRINTF("NetWrite: Error %d (Sock Err %d)",
@@ -279,15 +401,15 @@ static int mqtt_net_disconnect(void *context)
 static int mqtt_tls_verify_cb(int preverify, WOLFSSL_X509_STORE_CTX* store)
 {
     char buffer[WOLFSSL_MAX_ERROR_SZ];
-    PRINTF("MQTT TLS Verify Callback: PreVerify %d, Error %d (%s)",
+    printf("MQTT TLS Verify Callback: PreVerify %d, Error %d (%s)",
         preverify, store->error, store->error != 0 ?
             wolfSSL_ERR_error_string(store->error, buffer) : "none");
-    PRINTF("  Subject's domain name is %s", store->domain);
+    printf("  Subject's domain name is %s", store->domain);
 
     if (store->error != 0) {
         /* Allowing to continue */
         /* Should check certificate and return 0 if not okay */
-        PRINTF("  Allowing cert anyways");
+        printf("  Allowing cert anyways");
     }
 
     return 1;
@@ -320,7 +442,7 @@ static int mqtt_tls_cb(MqttClient* client)
     #endif /* !NO_CERT */
     }
 
-    PRINTF("MQTT TLS Setup (%d)", rc);
+    printf("MQTT TLS Setup (%d)", rc);
 
     return rc;
 }
@@ -432,7 +554,7 @@ int mqtt_test(void)
 
     printf("MQTT Publish: Topic %s, Qos %d, Message %s\n",
         mqtt_obj.publish.topic_name, mqtt_obj.publish.qos, mqtt_obj.publish.buffer); 
-	
+    fd = open("mqtttest.txt", O_RDWR, 0);	
 	/* Wait for messages */
     while (1) {
         ret = MqttClient_WaitMessage_ex(&m_client, &mqtt_obj, MQTT_CMD_TIMEOUT_MS);

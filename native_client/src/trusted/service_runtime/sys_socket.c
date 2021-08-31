@@ -24,16 +24,19 @@ int32_t NaClSysSocketOpen(struct NaClAppThread  *natp,
           "0x%08"NACL_PRIx32", 0x%x, 0x%x)\n",
           (uintptr_t) natp, domain, type, protocol);
 
+  printf("%s %d\n", __func__, __LINE__);
   // only tcp is available
   if (domain != AF_INET || type != SOCK_STREAM || protocol != IPPROTO_TCP) {
-    retval = NACL_ABI_ESOCKTNOSUPPORT;
+    retval = -NACL_ABI_ESOCKTNOSUPPORT;
     goto cleanup; 
   }
   
+  printf("%s %d\n", __func__, __LINE__);
   desc = (struct NaClDesc *)NaClDescSocketDescMake();
   if (desc != NULL) {
     retval = NaClAppSetDescAvail(nap, desc);
   }
+  printf("retval: %d\n", retval);
   
 cleanup:
   return retval;

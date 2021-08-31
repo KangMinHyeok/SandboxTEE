@@ -34,11 +34,11 @@
 #if !defined(WOLFMQTT_USER_SETTINGS) && !defined(USE_WINDOWS_API)
     /* If options.h is missing use the "./configure" script. Otherwise, copy
      * the template "wolfmqtt/options.h.in" into "wolfmqtt/options.h" */
-    #include "options.h"
+    #include "native_client/tests/wolfMQTT/options.h"
 #endif
-#include "mqtt_types.h"
-#include "mqtt_packet.h"
-#include "mqtt_socket.h"
+#include "native_client/tests/wolfMQTT/mqtt_types.h"
+#include "native_client/tests/wolfMQTT/mqtt_packet.h"
+#include "native_client/tests/wolfMQTT/mqtt_socket.h"
 
 #if defined(WOLFMQTT_PROPERTY_CB) && !defined(WOLFMQTT_V5)
     #error "WOLFMQTT_V5 must be defined to use WOLFMQTT_PROPERTY_CB"
