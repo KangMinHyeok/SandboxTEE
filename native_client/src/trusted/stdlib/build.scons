@@ -38,7 +38,7 @@ ldr_input.append('stdio.c')
 ldr_input.append('qsort.c')
 ldr_input.append('assert.c')
 ldr_input.append('time_convert.c')
-
+ldr_input.append('strtok.c')
 
 envt.DualLibrary('sgx_stdlib', ldr_input)
 

@@ -1,6 +1,6 @@
 #include <string.h>
 
-static inline char* strtok(char *string, const char *control, char **lasts)
+char* strtok_r(char *string, const char *control, char **lasts)
 {
     unsigned char *str;
     const unsigned char *ctrl = (unsigned char *)control;
