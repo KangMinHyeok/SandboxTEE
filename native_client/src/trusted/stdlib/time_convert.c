@@ -21,32 +21,32 @@ int is_leap_year(uint16_t year)
 		return -1;
 }
 
-void utc_timestamp_to_date(timestamp_t timestamp, datetime_t* datetime)
+void utc_timestamp_to_date(timestamp_t timestamp, datedata_t* date, timedata_t* time)
 {
-	uint8_t  month;
+
+    uint8_t  month;
 	uint32_t days;
 	uint16_t days_in_year;
 	uint16_t year;
 	timestamp_t second_in_day;
 
 	second_in_day = timestamp % ONE_DAY;
-
-	datetime->second = second_in_day % 60;
-
-	second_in_day /= 60;
-	datetime->minute = second_in_day % 60;
+	time->second = second_in_day % 60;
 
 	second_in_day /= 60;
-	datetime->hour = second_in_day % 24;
+	time->minute = second_in_day % 60;
+
+	second_in_day /= 60;
+	time->hour = (second_in_day % 24) + 9;
 	
 
 	days = timestamp / ONE_DAY;
 	
 	for (year = 1970; year <= 2200; year++) {
 		if (is_leap_year(year))
-			days_in_year = 366;
-		else
 			days_in_year = 365;
+		else
+			days_in_year = 366;
 
 		if (days >= days_in_year)
 			days -= days_in_year;
@@ -54,8 +54,8 @@ void utc_timestamp_to_date(timestamp_t timestamp, datetime_t* datetime)
 			break;
 	}
 	
-	datetime->year = year;
-	if (is_leap_year(datetime->year)) 
+	date->year = year;
+	if (!is_leap_year(date->year)) 
 		month_days[2] = 29; 
 	else
 		month_days[2] = 28;
@@ -66,6 +66,6 @@ void utc_timestamp_to_date(timestamp_t timestamp, datetime_t* datetime)
 		else
 			break;
 	}
-	datetime->month = month;
-	datetime->day = days + 1;
+	date->month = month;
+	date->day = days + 1;
 }

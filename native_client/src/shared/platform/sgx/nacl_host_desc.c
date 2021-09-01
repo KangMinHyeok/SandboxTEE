@@ -433,8 +433,6 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 	int ret = 0;
 	WOLFSSL *ssl;
 	WOLFSSL_CTX *ctx = NULL;
-	//int ret = 0;
-	//char buff[256];
 
 	printf("%s %d\n", __func__, __LINE__);
   NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
@@ -447,25 +445,10 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     struct TraceLog *log = &trace_log;
 
-    /*time_t rawtime;
-    struct tm * timeinfo;
-    char * now = "";
-
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    snprintf(now, 19, "%d-%02d-%02d %02d:%02d:%02d",
-            timeinfo->tm_year+1900,
-            timeinfo->tm_mon,
-            timeinfo->tm_mday,
-            timeinfo->tm_hour,
-            timeinfo->tm_min,
-            timeinfo->tm_sec);
-    */
-
-
     // 2. Assign values
      
-    char timestamp[19];
+    char *date = NULL;
+    char *time = NULL;
     int retval;
     struct nacl_abi_timeval now;
 
@@ -476,28 +459,33 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     }
 
     timestamp_t unix_timestamp = now.nacl_abi_tv_sec;
-	datetime_t datetime;
-	utc_timestamp_to_date(unix_timestamp , &datetime);
-	printf("unix time : %d\n", unix_timestamp );
-	printf("datetime : %d-%d-%d %d:%d:%d\n",
-            datetime.year, 
-            datetime.month, 
-            datetime.day, 
-            datetime.hour, 
-            datetime.minute, 
-            datetime.second);
-
-    snprintf(timestamp, 19, "%04d-%02d-%02d %02d:%02d:%02d",
-            datetime.year,
-            datetime.month,
-            datetime.day,
-            datetime.hour,
-            datetime.minute,
-            datetime.second);
+	datedata_t datedata;
+    timedata_t timedata;
+	utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
+	//printf("unix time : %d\n", unix_timestamp );
+	/*printf("datetime : %d-%d-%d %d:%d:%d\n",
+            datedata.year, 
+            datedata.month, 
+            datedata.day, 
+            timedata.hour, 
+            timedata.minute, 
+            timedata.second);
+    */
+    
+    snprintf(date, sizeof(datedata), "%d-%d-%d",
+            datedata.year,
+            datedata.month,
+            datedata.day);
+    snprintf(time, sizeof(timedata), "%d:%d:%d",
+            timedata.hour,
+            timedata.minute,
+            timedata.second);
 
     log->msg_type = 0;
-    log->timestamp = "2021-08-26 12:55:20";
-    //log->timestamp = timestamp; 
+    log->date = date;
+    log->date_len = sizeof(date);
+    log->time = time;
+    log->time_len = sizeof(time); 
     log->svc_id = "ecg_app";
     log->svc_id_len = strlen(log->svc_id);
     log->agent_id = "io_agent_1";
@@ -506,10 +494,13 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     log->device_id_len = strlen(log->device_id);
     log->file_name = path;
     log->file_name_len = strlen(log->file_name);
-    log->io_mode = mode; //flag? need to check
+    log->io_mode = flags;
     log->result = 0;
     log->total_len = sizeof(log->msg_type) + 
-                     sizeof(log->timestamp) +
+                     sizeof(log->date_len) +
+                     log->date_len +
+                     sizeof(log->time_len) +
+                     log->time_len +
                      log->svc_id_len + 
                      sizeof(log->svc_id_len) +
                      log->agent_id_len + 
@@ -524,10 +515,13 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     char buff[log->total_len];
 
-    snprintf(buff, log->total_len, "%d%d%s%d%s%d%s%d%s%d%s%d%d",
+    snprintf(buff, log->total_len, "%d%d%d%s%d%s%d%s%d%s%d%s%d%s%d%d",
                 log->total_len, 
                 log->msg_type, 
-                log->timestamp,
+                log->date_len,
+                log->date,
+                log->time_len,
+                log->time,
                 log->svc_id_len, 
                 log->svc_id, 
                 log->agent_id_len, 
@@ -541,14 +535,22 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     
     // 3. TLS CONNECTION OPEN & SEND TRACELOG
 
-    //send_tracelog(ssl, buff);
+    ip = "223.195.37.157";
+    port = 11111;
 
+    ssl = ssl_handshake(ip, port, ctx);
+    if (ret < 0) {
+        printf("ERROR: ssl_handshake fail\n");
+        return ret;
+    }
+
+    send_tracelog(ssl, buff);
 
 	//ip = "147.46.114.86";
 	ip = "147.46.244.108";
 	port = 6379;
 	
-  // get redis key
+   // get redis key
 	ssl = ssl_handshake(ip, port, ctx);
 	if (ret < 0) {
 		printf("ERROR: ssl_handshake fail\n");
