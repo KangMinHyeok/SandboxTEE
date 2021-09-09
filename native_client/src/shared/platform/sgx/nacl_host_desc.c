@@ -535,7 +535,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     
     // 3. TLS CONNECTION OPEN & SEND TRACELOG
 
-    ip = "223.195.37.157";
+    ip = "122.46.129.53";
     port = 11111;
 
     ssl = ssl_handshake(ip, port, ctx);
