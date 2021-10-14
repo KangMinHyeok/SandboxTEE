@@ -1,10 +1,14 @@
 #ifndef __ENCLAVE_OCALLS__
 #define __ENCLAVE_OCALLS__
 
-
 #include "native_client/src/include/build_config.h"
 
 #if NACL_SGX == 1
+
+#include "sgx_quote.h"
+#include "sgx_report.h"
+
+#include "native_client/src/trusted/xcall/ra.h"
 
 #include <unistd.h>
 #include <time.h>
@@ -123,6 +127,9 @@ int ocall_debugp (int val);
 // TODO: impl
 void ocall_exit(int status);
 
+// RA
+int ocall_sgx_init_quote(sgx_target_info_t *target_info);//, sgx_report_data_t *report_data, sgx_report_t *report);
+int ocall_remote_attestation(sgx_quote_t *quote, uint32_t *quote_size, sgx_report_t* report, const struct ra_tls_options* opts);
 
 #endif
 #endif

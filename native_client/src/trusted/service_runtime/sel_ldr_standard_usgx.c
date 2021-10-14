@@ -11,6 +11,16 @@
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/include/portability.h"
 
+#include <unistd.h>
+#include <sys/syscall.h>
+
+#ifndef SYS_gettid
+#error "SYS_gettid unavailable on this system"
+#endif
+
+#define gettid() ((pid_t)syscall(SYS_gettid))
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -39,7 +39,6 @@
 #ifndef WOLFCRYPT_ONLY
 
 #ifdef HAVE_ERRNO_H
-asdf
     #include <errno.h>
 #endif
 

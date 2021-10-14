@@ -35,6 +35,10 @@ extern char * strndup(const char *s, size_t n);
 // strtol.c
 extern long strtol(const char *nptr, char **endptr, register int base);
 
+// strcat.c
+extern char *strcat(char *destination, const char *source); 
+
+
 #endif
 
 #endif

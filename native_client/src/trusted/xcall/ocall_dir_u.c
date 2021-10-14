@@ -88,8 +88,10 @@ int sgx_ocall_fcntl(void * pms) {
 
 int sgx_ocall_getdents(void * pms) {
 	int ret = 0;
-	ms_ocall_getdents_t * ms = (ms_ocall_getdents_t *) pms;
-	ret = getdents64(ms->ms_fd, ms->ms_dirp, ms->ms_size);
+        ms_ocall_getdents_t * ms = (ms_ocall_getdents_t *) pms;
+        printf("this is error... do not use this function or fix it\n");
+        ret = 0; // getdents64(ms->ms_fd, ms->ms_dirp, ms->ms_size);
+        (void) ms;
 	return ret;
 }
 

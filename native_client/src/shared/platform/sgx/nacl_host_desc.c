@@ -13,21 +13,22 @@
  * system call return interface of small negative numbers as errors.
  */
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include "native_client/src/shared/platform/sgx/cert.h"
 #include "native_client/src/trusted/wolfssl/options.h"
 #include "native_client/src/trusted/wolfssl/ssl.h"
 #include "native_client/src/trusted/wolfssl/types.h"
 #include "native_client/src/trusted/wolfssl/settings.h"
 #include "native_client/src/trusted/wolfssl/coding.h"
 #include "native_client/src/trusted/wolfssl/handshake.h"
-
+#include "native_client/src/trusted/xcall/ra.h"
 
 #undef __GLIBC__
 // #include <sys/mman.h>
@@ -66,6 +67,18 @@
 #  define PREAD ocall_pread64
 #  define PWRITE ocall_pwrite64
 # endif
+
+int redis_auth = 0;
+char *redis_id_len;
+char *redis_id;
+char *redis_pw_len;
+char *redis_pw;
+char *sks_key;
+uint8_t der_key[2048];
+uint8_t der_cert[8 * 1024];
+uint32_t der_key_len;
+uint32_t der_cert_len;
+
 
 /*
  * Map our ABI to the host OS's ABI.
@@ -371,46 +384,215 @@ int send_tracelog(WOLFSSL *ssl, char *buff) {
     return 0;
 }
 
-char* set_get_key_msg() {
-	//char *id = get_id();
-	//char *pw = get_pw();
-	char *get_key_msg =  "*2\r\n$3\r\nGET\r\n$10\r\nmmlab:1234\r\n";
-
-	return get_key_msg;
-}
-
-int redis_get_key(WOLFSSL *ssl) {
+int redis_auth_kgen() {
 	char buff[512];
+	char *ip;
+	char *tok, *next_ptr;
+	char *tok2, *next_ptr2;
+	int port, len;
 	int ret = 0;
-	int len;
-	char *key, *next_ptr;
-	char *get_key_msg = set_get_key_msg();
+	WOLFSSL *ssl;
+	WOLFSSL_CTX *ctx = NULL;
 
-	// SEND (ID+PW  w/ Get Key)? - send ["GET", ["mmlab", "1234"]]
-	len = strlen(get_key_msg);
-	if ((ret = wolfSSL_write(ssl, get_key_msg, len)) != len) {
-		printf("ERROR: failed to write entire message\n");
-		printf("%d bytes of %d bytes were sent", ret, (int) len);
+	char *auth_msg = "*2\r\n$4\r\nAUTH\r\n$15\r\nmmlab_test:1111\r\n";
+	char *kgen_msg = "*2\r\n$4\r\nKGEN\r\n$15\r\nmmlab_test:1111\r\n"; 
+
+	ip = "147.46.244.108";
+	port = 6380;
+	
+	ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
+	if (ret < 0) {
+		printf("ERROR: ssl_handshake fail\n");
 		return ret;
 	}
 
-	// GET Key - recv ["a1b2c3dd"]
+	// send AUTH msg
+	len = strlen(auth_msg);
+	if ((ret = wolfSSL_write(ssl, auth_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		return ret;
+	}
+
+	// read AUTH response: ID/PW
+	memset(buff, 0, sizeof(buff));
+	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+		printf("ERROR: failed to read\n");
+		return -1;
+	}
+	//printf("[AUTH] Read %s\n", buff);
+
+	tok = strtok_r(buff, "\r\n", &next_ptr);
+	if (strcmp(tok, "*2") != 0) {
+		printf("ERROR: [AUTH] wrong response %s\n");
+		return -1;
+	}
+	tok = strtok_r(NULL, "\r\n", &next_ptr); 
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	if (strcmp(tok, "OK") != 0) {
+		printf("ERROR: [AUTH] wrong response %s\n");
+		return -1;
+	}
+
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	redis_id_len = (char*)malloc(strlen(tok));
+	memcpy(redis_id_len, tok, strlen(tok));
+	
+	tok2 = strtok_r(tok, "$", &next_ptr2);
+	len = atoi(tok2);
+	
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	if (len != (int)strlen(tok)) {
+		printf("ERROR: [AUTH] wrong response, len %s\n");
+		return -1;
+	}
+
+	redis_id = (char*)malloc(len);
+	memcpy(redis_id, tok, len);
+	printf("Redis ID: %s (len: %d)\n", redis_id, len);
+	
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	redis_pw_len = (char*)malloc(strlen(tok));
+	memcpy(redis_pw_len, tok, strlen(tok));
+
+	tok2 = strtok_r(tok, "$", &next_ptr2);
+	len = atoi(tok2);
+	
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	if (len != (int)strlen(tok)) {
+		printf("ERROR: [AUTH] wrong response, len %s\n");
+		return -1;
+	}
+
+	redis_pw = (char*)malloc(len);
+	memcpy(redis_pw, tok, len);
+	printf("Redis PW: %s (len: %d)\n", redis_pw, len);
+	
+	// send KGEN msg
+	len = strlen(kgen_msg);
+	if ((ret = wolfSSL_write(ssl, kgen_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		return ret;
+	}
+
+	// read AUTH response: ID/PW
+	memset(buff, 0, sizeof(buff));
+	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+		printf("ERROR: failed to read\n");
+		return -1;
+	}
+	printf("[KGEN] Read: %s\n", buff);
+
+	wolfSSL_free(ssl);
+	wolfSSL_CTX_free(ctx);
+	wolfSSL_Cleanup();
+	return 0;
+}
+
+char* gen_sks_auth_msg() {
+	char msg[128] = "*3\r\n$4\r\nAUTH\r\n";
+	char *split = "\r\n";
+	char *ret;
+
+	strcat(msg, redis_id_len);
+	strcat(msg, split);
+	strcat(msg, redis_id);
+	strcat(msg, split);
+	strcat(msg, redis_pw_len);
+	strcat(msg, split);
+	strcat(msg, redis_pw);
+	strcat(msg, split);
+
+	ret = (char*)malloc(strlen(msg));
+	memcpy(ret, msg, strlen(msg));
+	return ret;
+}
+
+int redis_get_key() {
+	char buff[512];
+	int ret = 0;
+	int len;
+	int port;
+	char *ip;
+	char *tok, *tok2, *next_ptr, *next_ptr2;
+	char *sks_auth_msg; 
+	char *get_key_msg = "*2\r\n$3\r\nGET\r\n$15\r\nmmlab_test:1111\r\n";
+	WOLFSSL *ssl;
+	WOLFSSL_CTX *ctx = NULL;
+
+	if (!redis_auth) {
+		ret = redis_auth_kgen();
+		if (ret < 0) {
+			return -1;
+		}
+		redis_auth = 1;
+	}
+
+	sks_auth_msg = gen_sks_auth_msg();
+	
+	//printf("sks_auth_msg: %s\n", sks_auth_msg);
+
+	ip = "147.46.244.108";
+	port = 6379;
+	
+	ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
+	if (ret < 0) {
+		printf("ERROR: ssl_handshake fail\n");
+		return ret;
+	}
+  
+	
+	// SEND AUTH 
+	len = strlen(sks_auth_msg);
+	if ((ret = wolfSSL_write(ssl, sks_auth_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		return ret;
+	}
+
+	// GET response
 	memset(buff, 0, sizeof(buff));
 	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
 		printf("ERROR: failed to read\n");
 	}
-	printf("[GET KEY] READ: %s\n", buff);
+	printf("[SKS AUTH] READ: %s\n", buff);
 	
-  key = strtok_r(buff, "\r\n", &next_ptr);
-  while (key) {
-    printf("tok = [%s]\n", key);
-    key = strtok_r(NULL, "\r\n", &next_ptr);
-  }
 
-  UNREFERENCED_PARAMETER(key);
-  UNREFERENCED_PARAMETER(next_ptr);
-  return ret;
+	// SEND (ID+PW  w/ Get Key)
+	len = strlen(get_key_msg);
+	if ((ret = wolfSSL_write(ssl, get_key_msg, len)) != len) {
+		printf("ERROR: failed to write entire message\n");
+		return ret;
+	}
+
+	// GET Key 
+	memset(buff, 0, sizeof(buff));
+	if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+		printf("ERROR: failed to read\n");
+	}
+	//printf("[GET KEY] READ: %s\n", buff);
+
+  tok = strtok_r(buff, "\r\n", &next_ptr);
+	tok2 = strtok_r(tok, "$", &next_ptr2);
+	len = atoi(tok2);
+	
+	tok = strtok_r(NULL, "\r\n", &next_ptr);
+	if (len != (int)strlen(tok)) {
+		printf("ERROR: [AUTH] wrong response, len %s\n");
+		return -1;
+	}
+
+	sks_key = (char*)malloc(len);
+	memcpy(sks_key, tok, len);
+	printf("SKS Key: %s (len: %d)\n", sks_key, len);
+	
+	free(sks_auth_msg);
+	wolfSSL_free(ssl);
+	wolfSSL_CTX_free(ctx);
+	wolfSSL_Cleanup();
+
+  return 0;
 }
+
 
 static int NaClHostDescCtor(struct NaClHostDesc  *d,
                             int fd,
@@ -428,18 +610,24 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
                      int                  mode) {
   int host_desc;
   int posix_flags;
-	char *ip;
-	int port;
 	int ret = 0;
 	WOLFSSL *ssl;
 	WOLFSSL_CTX *ctx = NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
+	char *ip;
+	int port;
+
   NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
           (uintptr_t) d, path, flags, mode);
   if (NULL == d) {
     NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   }
+
+	// RA
+	der_key_len = sizeof(der_key);
+	der_cert_len = sizeof(der_cert);
+	create_key_and_x509((uint8_t*)&der_key, (int*)&der_key_len, (uint8_t*)&der_cert, (int*)&der_cert_len);
+
     //send trace log
     // 1. Declare TraceLog 
 
@@ -538,7 +726,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     ip = "122.46.129.53";
     port = 11111;
 
-    ssl = ssl_handshake(ip, port, ctx);
+    ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
     if (ret < 0) {
         printf("ERROR: ssl_handshake fail\n");
         return ret;
@@ -546,6 +734,9 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     send_tracelog(ssl, buff);
 
+	ret = redis_get_key();
+	
+	/*
 	//ip = "147.46.114.86";
 	ip = "147.46.244.108";
 	port = 6379;
@@ -559,13 +750,9 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
 	redis_get_key(ssl);
 	printf("%s %d\n", __func__, __LINE__);
+	*/
+  UNREFERENCED_PARAMETER(ret);
 
-	wolfSSL_free(ssl);
-	wolfSSL_CTX_free(ctx);
-	wolfSSL_Cleanup();
-
-  UNREFERENCED_PARAMETER(ssl);
-  
   /*
    * Sanitize access flags.
    */

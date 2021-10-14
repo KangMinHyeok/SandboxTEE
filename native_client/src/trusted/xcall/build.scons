@@ -14,6 +14,7 @@ if env.Bit('usgx'):
 	ldr_input.append('ocall_time_u.c')
 	ldr_input.append('ocall_socket_u.c')
 	ldr_input.append('ocall_misc_u.c')
+	ldr_input.append('ocall_ra_u.c')
 	ldr_input.append('sgx_entry.S')
 	ldr_input.append('sgx_thread.c')
 	ldr_input.append('ocall_tables.c')
@@ -27,11 +28,14 @@ elif env.Bit('sgx'):
 	ldr_input.append('ocall_time_t.c')
 	ldr_input.append('ocall_socket_t.c')
 	ldr_input.append('ocall_misc_t.c')
+	ldr_input.append('ocall_ra_t.c')
 	ldr_input.append('enclave_framework.c')
 	ldr_input.append('enclave_entry.S')
 	ldr_input.append('handle_ecall.c')
 	ldr_input.append('enclave_exception.c')
-
+	ldr_input.append('wolfssl-ra.c')
+	ldr_input.append('wolfssl-ra-attester.c')
+	
 	envt = env.Clone(COMPONENT_STATIC=False)
 	envt.Append(
 		_LIBFLAGS=

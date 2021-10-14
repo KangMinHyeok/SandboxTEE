@@ -2836,7 +2836,7 @@ def MakeSgxEnv():
   ] + ['--param', 'ssp-buffer-size=4']
 
   sgx_include = [
-          #'-I${SGX_SDK}/include/',
+          '-I${SGX_SDK}/include/',
           '-I${SOURCE_ROOT}',
           '-Wno-long-long', 
           '-Wswitch-enum', 
@@ -2845,7 +2845,7 @@ def MakeSgxEnv():
   ]
 
   sgx_env.Prepend(
-    CCFLAGS = common_flags + [
+    CCFLAGS = common_flags + ['-I/home/mmlab/linux-sgx/linux/installer/common/sdk/output/package/include'
         ] + sgx_include, 
     CFLAGS = [
         # '-nostdinc'
@@ -2960,7 +2960,7 @@ usgx_env.Replace(
 usgx_env.SetBits('usgx')
 # TODO(mkpark) : change the root path
 usgx_env.Append(
-      CCFLAGS=['-DUSGX', '-I/home/hmlee/linux-sgx-driver'])
+      CCFLAGS=['-DUSGX', '-I/home/mmlab/linux-sgx-driver', '-I/home/mmlab/linux-sgx/linux/installer/common/sdk/output/package/include'])
 
 usgx_env.AddMethod(SDKInstallBin)
 AddDualLibrary(usgx_env)

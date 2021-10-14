@@ -1726,7 +1726,7 @@ kk #define XMALLOC(s, h, type)  pvPortMalloc((s))
 #define XSTRNCPY strncpy
 #define XSTRNCAT strncat
 #define XMEMMEM memmem
-#define XSTRTOK strtok
+#define XSTRTOK strtok_r
 #define XSTRNCASECMP strncasecmp
 #define XSTRSTR strstr
 #define XSTRNSTR mystrnstr
@@ -1997,5 +1997,16 @@ XSTRNCASECMP(const char *s1, const char *s2, int n)
 #ifdef __cplusplus
 }   /* extern "C" */
 #endif
+
+// TODO: hmlee adds below options explicitly
+#define HAVE_ECC
+#define WOLFSSL_KEY_GEN
+//#ifdef NO_CERTS
+//#undef NO_CERTS
+//#endif
+//#ifdef NO_FILESYSTEM
+//#undef NO_FILESYSTEM
+//#endif
+
 
 #endif //WOLF_CRYPT_SETTINGS_H

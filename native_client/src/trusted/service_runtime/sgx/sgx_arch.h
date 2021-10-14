@@ -188,6 +188,7 @@ typedef struct {
     uint8_t  report_data[64];
     uint8_t  keyid[32];
     sgx_arch_mac_t mac;
+    uint8_t  reserved5[512];
 } __attribute__((packed, aligned(512))) sgx_arch_report_t;
 
 

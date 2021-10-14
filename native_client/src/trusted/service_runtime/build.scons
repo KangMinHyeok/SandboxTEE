@@ -446,6 +446,7 @@ sel_ldr_libs = ['sel',
 
 if env.Bit('usgx'):
   sel_main_objs = [env.ComponentObject('nacl_test_injection_main.c')]
+  env.Append(_LIBFLAGS=['-L/home/hmlee/linux-sgx/linux/installer/common/sdk/output/package/lib64/', '-lsgx_uae_service'])
   env.ComponentProgram('sel_ldr', sel_main_objs,
 												EXTRA_LIBS=['sel_main', 'usgx_nacl'])
   Return()

@@ -69,6 +69,9 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
 	[OCALL_FUTEX] = sgx_ocall_futex,
 	[OCALL_PRINT_STRING] = sgx_ocall_print_string,
 	[OCALL_DEBUGP] =  sgx_ocall_debugp,
+	
+	[OCALL_SGX_INIT_QUOTE] = sgx_ocall_sgx_init_quote,
+	[OCALL_REMOTE_ATTESTATION] = sgx_ocall_remote_attestation,
 };
 
 

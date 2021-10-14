@@ -7646,11 +7646,18 @@ static int SetExtKeyUsage(byte* output, word32 outSz, byte input)
     return idx;
 }
 
+int my_atoi_wolfssl(char *s) {
+  int res = 0;
+  for (int i = 0; s[i] != '\0'; ++i)
+    res = res * 10 + s[i] - '0';
+  return res;
+}
+
 /* Encode OID string representation to ITU-T X.690 format */
 static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
 {
     word32 val, idx = 0, nb_val;
-    char *token, *str;//, *ptr;
+    char *token, *str, *ptr;
     word32 len;
 
     if (out == NULL || outSz == NULL || *outSz < 2 || in == NULL)
@@ -7668,11 +7675,11 @@ static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
     nb_val = 0;
 
     /* parse value, and set corresponding Policy OID value */
-    //token = XSTRTOK(str, ".", &ptr);
-    token = XSTRTOK(str, ".");
+    token = XSTRTOK(str, ".", &ptr);
+    //token = XSTRTOK(str, ".");
     while (token != NULL)
     {
-        val = (word32)atoi(token);
+        val = (word32)my_atoi_wolfssl(token);
 
         if (nb_val == 0) {
             if (val > 2) {
@@ -7718,8 +7725,8 @@ static int EncodePolicyOID(byte *out, word32 *outSz, const char *in, void* heap)
                 out[idx++] = oid[i--];
         }
 
-        //token = XSTRTOK(NULL, ".", &ptr);
-    		token = XSTRTOK(str, ".");
+        token = XSTRTOK(NULL, ".", &ptr);
+    		//token = XSTRTOK(str, ".");
         nb_val++;
     }
 
@@ -9379,7 +9386,7 @@ int wc_SetAuthKeyId(Cert *cert, const char* file)
 int wc_SetKeyUsage(Cert *cert, const char *value)
 {
     int ret = 0;
-    char *token, *str;//, *ptr;
+    char *token, *str, *ptr;
     word32 len;
 
     if (cert == NULL || value == NULL)
@@ -9395,8 +9402,8 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
     XSTRNCPY(str, value, XSTRLEN(value));
 
     /* parse value, and set corresponding Key Usage value */
-    //if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
-    if ((token = XSTRTOK(str, ",")) == NULL) {
+    if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
+    //if ((token = XSTRTOK(str, ",")) == NULL) {
         XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
         return KEYUSAGE_E;
     }
@@ -9428,8 +9435,8 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
             break;
         }
 
-        //token = XSTRTOK(NULL, ",", &ptr);
-        token = XSTRTOK(NULL, ",");
+        token = XSTRTOK(NULL, ",", &ptr);
+        //token = XSTRTOK(NULL, ",");
     }
 
     XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
@@ -9440,7 +9447,7 @@ int wc_SetKeyUsage(Cert *cert, const char *value)
 int wc_SetExtKeyUsage(Cert *cert, const char *value)
 {
     int ret = 0;
-    char *token, *str;//, *ptr;
+    char *token, *str, *ptr;
     word32 len;
 
     if (cert == NULL || value == NULL)
@@ -9456,8 +9463,8 @@ int wc_SetExtKeyUsage(Cert *cert, const char *value)
     XSTRNCPY(str, value, XSTRLEN(value));
 
     /* parse value, and set corresponding Key Usage value */
-    //if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
-    if ((token = XSTRTOK(str, ",")) == NULL) {
+    if ((token = XSTRTOK(str, ",", &ptr)) == NULL) {
+    //if ((token = XSTRTOK(str, ",")) == NULL) {
     		XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);
         return EXTKEYUSAGE_E;
     }
@@ -9485,8 +9492,8 @@ int wc_SetExtKeyUsage(Cert *cert, const char *value)
             break;
         }
 
-        //token = XSTRTOK(NULL, ",", &ptr);
-        token = XSTRTOK(NULL, ",");
+        token = XSTRTOK(NULL, ",", &ptr);
+        //token = XSTRTOK(NULL, ",");
     }
 
     XFREE(str, cert->heap, DYNAMIC_TYPE_TMP_BUFFER);

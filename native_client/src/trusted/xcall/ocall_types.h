@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "ra.h"
+//#include "sgx_quote.h"
+//#include "sgx_report.h"
 #include "native_client/src/include/build_config.h"
 
 #if NACL_SGX == 0 && NACL_USGX == 0
@@ -84,7 +87,10 @@ enum {
 	OCALL_PRINT_STRING, 		// Misc
 	OCALL_DEBUGP,						// Misc
 	
-	
+
+	OCALL_SGX_INIT_QUOTE,
+	OCALL_REMOTE_ATTESTATION,
+
 	OCALL_NR,
 
 };
@@ -411,6 +417,21 @@ typedef struct {
 	int ms_val;
 } ms_ocall_debugp_t;
 
+// RA
+
+typedef struct {
+	sgx_target_info_t* ms_target_info;
+} ms_ocall_sgx_init_quote_t;
+
+typedef struct {
+	sgx_spid_t ms_spid;
+	sgx_quote_sign_type_t ms_quote_type;
+	sgx_report_t* ms_report;
+	sgx_quote_t* ms_quote;
+	uint32_t ms_quote_size;
+	attestation_verification_report_t *attestation_report;
+} ms_ocall_remote_attestation_t;
+
 
 // File
 int sgx_ocall_open(void * pms);
@@ -481,6 +502,10 @@ int sgx_ocall_fionread(void * pms);
 int sgx_ocall_futex(void * pms);
 int sgx_ocall_print_string(void * pms);
 int sgx_ocall_debugp(void * pms);
+
+// RA
+int sgx_ocall_sgx_init_quote(void * pms);
+int sgx_ocall_remote_attestation(void *pms);
 
 
 #endif
