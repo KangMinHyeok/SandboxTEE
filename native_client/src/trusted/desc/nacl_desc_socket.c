@@ -31,7 +31,7 @@
 
 #include "native_client/src/trusted/wolfssl/handshake.h"
 
-#define MQTT_TLS 1
+#define MQTT_TLS 0
 
 static struct NaClDescVtbl const kNaClDescSocketDescVtbl;
 
