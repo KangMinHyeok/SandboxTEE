@@ -64,116 +64,19 @@ int cert_verify_callback(int preverify, WOLFSSL_X509_STORE_CTX* store) {
 	//TODO just pass
 	return 1;
 }
-/*
-WOLFSSL *ssl_initiate(char *ip, int port, WOLFSSL_CTX* ctx) {
-	int sockfd;
-  int ret;
-  
-	struct sockaddr_in servAddr;
 
-	WOLFSSL *ssl;
-	//WOLFSSL_CTX* ctx;
-	WOLFSSL_METHOD* method;
 
-  NaClLog(3, "ssl_handshake");
-
-	memset(&servAddr, 0, sizeof(servAddr));
-	servAddr.sin_family = AF_INET;             
-	servAddr.sin_port   = (((port & 0xff) << 8) | (port >> 8)); 
-
-	if (my_inet_pton(ip, &servAddr.sin_addr) != 1) {
-		printf("ERROR: invalid address\n");
-		ret = -1;
-		goto end;
-	}
-
-	if ((ret = wolfSSL_Init()) != WOLFSSL_SUCCESS) {
-		printf("ERROR: Failed to initialize the library\n");
-		goto end;
-	}
-
-	method = wolfTLSv1_2_client_method();
-	if (method == NULL) {
-		ret = -1;
-		goto end;
-	}
-
-	if ((ctx = wolfSSL_CTX_new(method)) == NULL) {
-		printf("ERROR: wolfSSL_CTXS_new failed\n");
-		ret = -1;
-		goto end;
-	}
-
-	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
-		printf("ERROR: failed to load cert, please check the file.\n");
-		goto ctx_cleanup;
-	}
-
-	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, cert_verify_callback);
-
-	if ((ssl = wolfSSL_new(ctx)) == NULL) {
-		printf("ERROR: failed to create WOLFSSL object\n");
-		ret = -1;
-		goto ctx_cleanup;
-	}
-	
-	// Connect to the server 
-	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
-		printf("ERROR: failed to connect\n");
-		ret = -1;
-		goto cleanup;
-	}
-
-	if ((ret = wolfSSL_set_fd(ssl, sockfd)) != WOLFSSL_SUCCESS) {
-		printf("ERROR: Failed to set the file descriptor\n");
-		goto cleanup;
-	}
-
-cleanup:
-	wolfSSL_free(ssl);
-ctx_cleanup:
-	wolfSSL_CTX_free(ctx);
-	wolfSSL_Cleanup();
-end:
-	return ssl;
-}
-
-int ssl_handshake_new(char *ip, int port, WOLFSSL_CTX* ctx) {
-
-	int ret = 0;
-    //WOLFSSL *ssl = NULL;
-  
-	
-	if ((ret = wolfSSL_connect(ssl)) != SSL_SUCCESS) {
-		printf("ERROR: failed to connect to wolfSSL\n");
-		goto cleanup;
-	}
-
-	return ssl;
-
-cleanup:
-	wolfSSL_free(ssl);
-ctx_cleanup:
-	wolfSSL_CTX_free(ctx);
-	wolfSSL_Cleanup();
-end:
-	return ret;
-}
-*/
-
-WOLFSSL *ssl_handshake(char *ip, int port, WOLFSSL_CTX* ctx, uint8_t *client_key, uint32_t client_key_len, uint8_t *client_cert, uint32_t client_cert_len) {
+WOLFSSL *ssl_handshake_full(char *ip, int port, WOLFSSL_CTX* ctx, uint8_t *client_key, uint32_t client_key_len, uint8_t *client_cert, uint32_t client_cert_len) {
 
 	int sockfd;
 	int ret = 0;
-    //WOLFSSL *ssl = NULL;
     
 	struct sockaddr_in servAddr;
 
 	WOLFSSL *ssl;
-	//WOLFSSL_CTX* ctx;
 	WOLFSSL_METHOD* method;
 
-  NaClLog(3, "ssl_handshake_old");
+  	NaClLog(3, "ssl_handshake_old");
 
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;             
@@ -249,7 +152,80 @@ cleanup:
 	wolfSSL_free(ssl);
 ctx_cleanup:
 	wolfSSL_CTX_free(ctx);
-	wolfSSL_Cleanup();
+	// wolfSSL_Cleanup();
+end:
+	return ssl;
+}
+
+
+WOLFSSL *ssl_handshake(char *ip, int port, WOLFSSL_CTX* ctx, uint8_t *client_key, uint32_t client_key_len, uint8_t *client_cert, uint32_t client_cert_len) {
+
+	int sockfd;
+	int ret = 0;
+    
+	struct sockaddr_in servAddr;
+
+	WOLFSSL *ssl;
+
+  	NaClLog(3, "ssl_handshake");
+
+	memset(&servAddr, 0, sizeof(servAddr));
+	servAddr.sin_family = AF_INET;             
+	servAddr.sin_port   = (((port & 0xff) << 8) | (port >> 8)); 
+
+	if (my_inet_pton(ip, &servAddr.sin_addr) != 1) {
+		printf("ERROR: invalid address\n");
+		ret = -1;
+		goto end;
+	}
+	if ((ret = wolfSSL_CTX_load_verify_buffer(ctx, ca_cert, sizeof(ca_cert), SSL_FILETYPE_PEM)) != SSL_SUCCESS) {
+		printf("ERROR: failed to load cert, please check the file.\n");
+		goto ctx_cleanup;
+	}
+
+	wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, cert_verify_callback);
+
+	//client
+	if ((ret = wolfSSL_CTX_use_certificate_buffer(ctx, client_cert, client_cert_len, SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
+		printf("ERROR: failed to use cert, please check the file.\n");
+		goto ctx_cleanup;
+	}
+	if ((ret = wolfSSL_CTX_use_PrivateKey_buffer(ctx, client_key, client_key_len, SSL_FILETYPE_ASN1)) != SSL_SUCCESS) {
+		printf("ERROR: failed to use key, please check the file.\n");
+		goto ctx_cleanup;
+	}
+
+
+	if ((ssl = wolfSSL_new(ctx)) == NULL) {
+		printf("ERROR: failed to create WOLFSSL object\n");
+		ret = -1;
+		goto ctx_cleanup;
+	}
+	
+	/* Connect to the server */
+	if ((sockfd = ocall_sock_connect(AF_INET, SOCK_STREAM, 0, (struct sockaddr*) &servAddr, sizeof(servAddr), NULL, NULL)) < 0) {
+		printf("ERROR: failed to connect\n");
+		ret = -1;
+		goto cleanup;
+	}
+
+	if ((ret = wolfSSL_set_fd(ssl, sockfd)) != WOLFSSL_SUCCESS) {
+		printf("ERROR: Failed to set the file descriptor\n");
+		goto cleanup;
+	}
+	
+	if ((ret = wolfSSL_connect(ssl)) != SSL_SUCCESS) {
+		printf("ERROR: failed to connect to wolfSSL\n");
+		goto cleanup;
+	}
+
+	return ssl;
+
+cleanup:
+	wolfSSL_free(ssl);
+ctx_cleanup:
+	wolfSSL_CTX_free(ctx);
+	// wolfSSL_Cleanup();
 end:
 	return ssl;
 }

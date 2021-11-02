@@ -60,6 +60,8 @@
 #if NACL_SGX == 1 || NACL_USGX == 1
 // driver path
 #include "native_client/src/trusted/service_runtime/sgx/sgx_arch.h"
+#include "native_client/src/trusted/wolfssl/ssl.h"
+
 #endif
 
 
@@ -108,6 +110,19 @@ struct NaClSGX {
 	char *sig_file;
 	char *token_file;
 	sgx_arch_secs_t *enclave_secs;
+};
+
+struct NaClCTX{
+	WOLFSSL_CTX *ctx;
+	uint8_t der_key[2048];
+	uint8_t der_cert [8 * 1024];
+	uint32_t der_key_len;
+	uint32_t der_cert_len;
+
+	char *redis_id;
+	char *redis_pw;
+	char *redis_id_len;
+	char *redis_pw_len;
 };
 #endif
 
@@ -418,6 +433,8 @@ struct NaClApp {
   // hmlee
 #if NACL_SGX == 1 || NACL_USGX == 1
   struct NaClSGX		*sgx;
+  struct NaClCTX		*nacl_ctx;
+
 #endif
 
 };

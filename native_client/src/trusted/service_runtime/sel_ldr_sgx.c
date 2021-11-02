@@ -60,6 +60,9 @@
 #include "native_client/src/trusted/stdlib/fileio.h"
 #endif
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
+#include "native_client/src/trusted/wolfssl/ssl.h"
+#include "native_client/src/trusted/xcall/ra.h"
+#include "native_client/src/trusted/wolfssl/handshake.h"
 
 // TODO(mkpark): uncomment below code
 static int IsEnvironmentVariableSet(char const *env_name) {
@@ -325,6 +328,145 @@ int NaClAppCtor(struct NaClApp *nap) {
   return 1;
 }
 
+
+#if NACL_SGX == 1
+int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
+    char buff[512];
+    char *ip;
+    char *tok, *next_ptr;
+    char *tok2, *next_ptr2;
+    int port, len;
+    int ret = 0;
+    WOLFSSL *ssl;
+
+    char *auth_msg = "*2\r\n$4\r\nAUTH\r\n$15\r\nmmlab_test:1111\r\n";
+    char *kgen_msg = "*2\r\n$4\r\nKGEN\r\n$15\r\nmmlab_test:1111\r\n";
+
+    ip = "147.46.244.130";
+    port = 6380;
+
+    ssl = ssl_handshake(ip, port, nacl_ctx->ctx, nacl_ctx->der_key, nacl_ctx->der_key_len, nacl_ctx->der_cert, nacl_ctx->der_cert_len);
+    if (ret < 0) {
+        printf("ERROR: ssl_handshake fail\n");
+        return ret;
+    }
+
+    // send AUTH msg
+    len = strlen(auth_msg);
+    if ((ret = wolfSSL_write(ssl, auth_msg, len)) != len) {
+        printf("ERROR: failed to write entire message\n");
+        return ret;
+    }
+
+    // read AUTH response: ID/PW
+    memset(buff, 0, sizeof(buff));
+    if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+        printf("ERROR: failed to read\n");
+        return -1;
+    }
+    //printf("[AUTH] Read %s\n", buff);
+
+	    tok = strtok_r(buff, "\r\n", &next_ptr);
+    if (strcmp(tok, "*2") != 0) {
+        printf("ERROR: [AUTH] wrong response %s\n");
+        return -1;
+    }
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    if (strcmp(tok, "OK") != 0) {
+        printf("ERROR: [AUTH] wrong response %s\n");
+        return -1;
+    }
+
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    nacl_ctx->redis_id_len = (char*)malloc(strlen(tok));
+    memcpy(nacl_ctx->redis_id_len, tok, strlen(tok));
+
+    tok2 = strtok_r(tok, "$", &next_ptr2);
+    len = atoi(tok2);
+
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    if (len != (int)strlen(tok)) {
+        printf("ERROR: [AUTH] wrong response, len %s\n");
+        return -1;
+    }
+
+    nacl_ctx->redis_id = (char*)malloc(len);
+    memcpy(nacl_ctx->redis_id, tok, len);
+    printf("Redis ID: %s (len: %d)\n", nacl_ctx->redis_id, len);
+
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+    nacl_ctx->redis_pw_len = (char*)malloc(strlen(tok));
+    memcpy(nacl_ctx->redis_pw_len, tok, strlen(tok));
+
+    tok2 = strtok_r(tok, "$", &next_ptr2);
+    len = atoi(tok2);
+
+    tok = strtok_r(NULL, "\r\n", &next_ptr);
+        if (len != (int)strlen(tok)) {
+        printf("ERROR: [AUTH] wrong response, len %s\n");
+        return -1;
+    }
+
+    nacl_ctx->redis_pw = (char*)malloc(len);
+    memcpy(nacl_ctx->redis_pw, tok, len);
+    printf("Redis PW: %s (len: %d)\n", nacl_ctx->redis_pw, len);
+
+    // send KGEN msg
+    len = strlen(kgen_msg);
+    if ((ret = wolfSSL_write(ssl, kgen_msg, len)) != len) {
+        printf("ERROR: failed to write entire message\n");
+        return ret;
+    }
+
+    // read AUTH response: ID/PW
+    memset(buff, 0, sizeof(buff));
+    if ((ret = wolfSSL_read(ssl, buff, sizeof(buff)-1)) == -1) {
+        printf("ERROR: failed to read\n");
+        return -1;
+    }
+    printf("[KGEN] Read: %s\n", buff);
+
+    wolfSSL_free(ssl);
+    //wolfSSL_CTX_free(ctx);
+    //wolfSSL_Cleanup();
+    return 0;
+}
+
+
+
+void NaClSetCTX(struct NaClCTX *nacl_ctx) {
+	int ret;
+	WOLFSSL_METHOD* method;
+
+	// set wolfssl_ctx
+	if ((ret = wolfSSL_Init()) != WOLFSSL_SUCCESS) {
+        printf("ERROR: Failed to initialize the library\n");
+    }
+    
+    method = wolfTLSv1_2_client_method();
+    if (method == NULL) {
+    	printf("ERROR: Failed to generate client_method\n");
+    }
+
+    if ((nacl_ctx->ctx = wolfSSL_CTX_new(method)) == NULL) {
+        printf("ERROR: wolfSSL_CTXS_new failed\n");
+    }
+
+	// ra
+	nacl_ctx->der_key_len = sizeof(nacl_ctx->der_key);
+	nacl_ctx->der_cert_len = sizeof(nacl_ctx->der_cert);
+	create_key_and_x509((uint8_t*)&(nacl_ctx->der_key), (int*)&(nacl_ctx->der_key_len), (uint8_t*)&(nacl_ctx->der_cert), (int*)&(nacl_ctx->der_cert_len));
+
+	redis_auth_key_gen(nacl_ctx);
+
+
+	printf("NaClSetCTX Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+}
+#endif
+
+
 struct NaClApp *NaClAppCreate(void) {
   struct NaClApp *nap = malloc(sizeof(struct NaClApp));
   if (nap == NULL)
@@ -339,6 +481,10 @@ struct NaClApp *NaClAppCreate(void) {
 	nap->sgx->enclave_secs = malloc(sizeof(sgx_arch_secs_t));
 	if (nap->sgx->enclave_secs == NULL)
 		NaClLog(LOG_FATAL, "Failed to allocated NaClSGX\n");
+
+	nap->nacl_ctx = malloc(sizeof(struct NaClCTX));
+	NaClSetCTX(nap->nacl_ctx);
+
 #endif
 
 

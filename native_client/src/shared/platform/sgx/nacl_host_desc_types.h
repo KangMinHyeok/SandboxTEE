@@ -12,9 +12,27 @@
 #ifndef NATIVE_CLIENT_SRC_TRUSTED_PLATFORM_LINUX_NACL_HOST_DESC_TYPES_H_
 #define NATIVE_CLIENT_SRC_TRUSTED_PLATFORM_LINUX_NACL_HOST_DESC_TYPES_H_
 
+#include "native_client/src/trusted/wolfssl/ssl.h"
+
+// hmlee
+struct DescCTX{
+    WOLFSSL_CTX *ctx;
+    uint8_t der_key[2048];
+    uint8_t der_cert [8 * 1024];
+    uint32_t der_key_len;
+    uint32_t der_cert_len;
+
+    char *redis_id;
+    char *redis_pw;
+    char *redis_id_len;
+    char *redis_pw_len;
+};
+
 struct NaClHostDesc {
   int d;
   int flags;
+
+  struct DescCTX *desc_ctx;
 
   /*
    * friend int NaClDescIoDescExternalizeSize(...);

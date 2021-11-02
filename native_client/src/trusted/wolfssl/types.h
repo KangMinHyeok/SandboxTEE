@@ -450,7 +450,7 @@
         DYNAMIC_TYPE_ECC_BUFFER   = 85,
         DYNAMIC_TYPE_QSH          = 86,
         DYNAMIC_TYPE_SALT         = 87,
-        DYNAMIC_TYPE_HASH_TMP     = 88,
+        DYNAMIC_TYPE_HASH_TMP     = 88
 	};
 
 	/* max error buffer string size */
