@@ -397,7 +397,7 @@ int redis_auth_kgen() {
 	char *auth_msg = "*2\r\n$4\r\nAUTH\r\n$15\r\nmmlab_test:1111\r\n";
 	char *kgen_msg = "*2\r\n$4\r\nKGEN\r\n$15\r\nmmlab_test:1111\r\n"; 
 
-	ip = "147.46.244.108";
+	ip = "147.46.244.130";
 	port = 6380;
 	
 	ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
@@ -532,7 +532,7 @@ int redis_get_key() {
 	
 	//printf("sks_auth_msg: %s\n", sks_auth_msg);
 
-	ip = "147.46.244.108";
+	ip = "147.46.244.130";
 	port = 6379;
 	
 	ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
@@ -608,26 +608,28 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
                      char const           *path,
                      int                  flags,
                      int                  mode) {
-  int host_desc;
-  int posix_flags;
+    
+    int host_desc;
+  	int posix_flags;
 	int ret = 0;
-	WOLFSSL *ssl;
-	WOLFSSL_CTX *ctx = NULL;
+	//WOLFSSL *ssl;
+	//WOLFSSL_CTX *ctx = NULL;
 
-	char *ip;
-	int port;
-
-  NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
-          (uintptr_t) d, path, flags, mode);
-  if (NULL == d) {
-    NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
-  }
+	//char *ip;
+	//int port;
+	
+	NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
+			(uintptr_t) d, path, flags, mode);
+  	if (NULL == d) {
+    	NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
+  	}
 
 	// RA
 	der_key_len = sizeof(der_key);
 	der_cert_len = sizeof(der_cert);
 	create_key_and_x509((uint8_t*)&der_key, (int*)&der_key_len, (uint8_t*)&der_cert, (int*)&der_cert_len);
 
+	/*
     //send trace log
     // 1. Declare TraceLog 
 
@@ -651,14 +653,14 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     timedata_t timedata;
 	utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
 	//printf("unix time : %d\n", unix_timestamp );
-	/*printf("datetime : %d-%d-%d %d:%d:%d\n",
-            datedata.year, 
-            datedata.month, 
-            datedata.day, 
-            timedata.hour, 
-            timedata.minute, 
-            timedata.second);
-    */
+	//printf("datetime : %d-%d-%d %d:%d:%d\n",
+    //        datedata.year, 
+    //        datedata.month, 
+    //        datedata.day, 
+    //        timedata.hour, 
+    //        timedata.minute, 
+    //        timedata.second);
+    //
     
     snprintf(date, sizeof(datedata), "%d-%d-%d",
             datedata.year,
@@ -722,7 +724,6 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
                 log->result);
     
     // 3. TLS CONNECTION OPEN & SEND TRACELOG
-
     ip = "122.46.129.53";
     port = 11111;
 
@@ -733,6 +734,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     }
 
     send_tracelog(ssl, buff);
+	*/
 
 	ret = redis_get_key();
 	
