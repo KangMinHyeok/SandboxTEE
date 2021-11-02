@@ -31,7 +31,7 @@
 
 #include "native_client/src/trusted/wolfssl/handshake.h"
 
-#define MQTT_TLS 1
+#define MQTT_TLS 0
 
 static struct NaClDescVtbl const kNaClDescSocketDescVtbl;
 
@@ -73,6 +73,7 @@ static void NaClDescSocketDescDtor(struct NaClRefCount *vself) {
   (*vself->vtbl->Dtor)(vself);
 }
 
+#if MQTT_TLS
 static int NaClDescSocketMakeSSLContext(struct NaClDescSocketDesc *sdp) {
 
   int ret = 0;
@@ -113,6 +114,7 @@ cleanall:
 cleanup:
   return -1;
 }
+#endif
 
 struct NaClDescSocketDesc *NaClDescSocketDescMake() {
   struct NaClDescSocketDesc *sdp = NULL;

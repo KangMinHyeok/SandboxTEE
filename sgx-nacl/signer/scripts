@@ -11,7 +11,7 @@ if [  $# -le 0 ]
 	fi 
 
 
-export NACL_HOME=$HOME/iitp/native_client/
+export NACL_HOME=$HOME/nacl/native_client/
 
 ./pal-sgx-sign -key enclave-key.pem -manifest hello.manifest.sgx -output tmp.sig -libsel $NACL_HOME/scons-out/sgx-linux-x86-64/staging/libsgx_nacl.so -exec $1
 ./pal-sgx-get-token -output tmp.token -sig tmp.sig
