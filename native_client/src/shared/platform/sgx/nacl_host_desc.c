@@ -519,8 +519,8 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     // 2. Assign values
      
-    char *date = NULL;
-    char *time = NULL;
+    char date[20] = "";
+    char timenow[20] = "";
     int retval;
     struct nacl_abi_timeval now;
 
@@ -534,7 +534,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 	datedata_t datedata;
     timedata_t timedata;
 	utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
-	printf("unix time : %d\n", unix_timestamp );
+	/*printf("unix time : %d\n", unix_timestamp );
 	printf("datetime : %d-%d-%d %d:%d:%d\n",
             datedata.year, 
             datedata.month, 
@@ -542,32 +542,30 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
             timedata.hour, 
             timedata.minute, 
             timedata.second);
-   
-    snprintf(date, 
-    		9,"%d-%d-%d",
+   */
+    snprintf(date, 10,"%d-%02d-%02d",
             datedata.year,
             datedata.month,
             datedata.day);
-    snprintf(time, sizeof(timedata), "%d:%d:%d",
+    snprintf(timenow, 8, "%02d:%02d:%02d",
             timedata.hour,
             timedata.minute,
             timedata.second);
 
-	printf("date: %s, filename: %s\n", date, path);
     log->msg_type = 0;
-    log->date = "2021-11-02";
+    log->date = date;
     log->date_len = sizeof(log->date);
-    log->time = "16:20:01";
+    log->time = timenow;
     log->time_len = sizeof(log->time); 
     log->svc_id = "ecg_app";
     log->svc_id_len = strlen(log->svc_id);
-    log->agent_id = "io_agent_a";
+    log->agent_id = "io_agent_1";
     log->agent_id_len = strlen(log->agent_id);
     log->device_id = "user_device";
     log->device_id_len = strlen(log->device_id);
     log->file_name = path;
     log->file_name_len = strlen(log->file_name);
-    log->io_mode = mode;
+    log->io_mode = flags;
     log->result = 0;
     log->total_len = sizeof(log->msg_type) + 
                      sizeof(log->date_len) +
@@ -588,34 +586,21 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     char buff[512];
 
-    snprintf(buff, log->total_len, "%d,%s,%s,%s,%s,%s,%s,%d,%d",
-                //log->total_len, 
-                log->msg_type, 
-                //log->date_len,
-                log->date,
-                //log->time_len,
-                log->time,
-                //log->svc_id_len, 
-                log->svc_id, 
-                //log->agent_id_len, 
-                log->agent_id,
-                //log->device_id_len, 
-                log->device_id, 
-                //log->file_name_len, 
-                log->file_name,
-                log->io_mode, 
-                log->result);
-    
-    // 3. TLS CONNECTION OPEN & SEND TRACELOG
-/*    ip = "122.46.129.53";
-    iport = 11111;
+	snprintf(buff, 512, "%d,%s,%s,%s,%s,%s,%s,%d,%d",
+			log->msg_type,
+			log->date,
+			log->time,
+			log->svc_id,
+			log->agent_id,
+		    log->device_id,                                                                 
+		    log->file_name,                               
+		    log->io_mode,         
+		    log->result);
 
-    ssl = ssl_handshake(ip, port, ctx, der_key, der_key_len, der_cert, der_cert_len);
-    if (ret < 0) {
-        printf("ERROR: ssl_handshake fail\n");
-        return ret;
-    }
-*/
+	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
+
+
+
     send_tracelog(buff, desc_ctx);
 	
 	ret = redis_get_key(desc_ctx);
