@@ -511,7 +511,6 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     	NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   	}
 
-
     //send trace log
     // 1. Declare TraceLog 
 
@@ -534,15 +533,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 	datedata_t datedata;
     timedata_t timedata;
 	utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
-	/*printf("unix time : %d\n", unix_timestamp );
-	printf("datetime : %d-%d-%d %d:%d:%d\n",
-            datedata.year, 
-            datedata.month, 
-            datedata.day, 
-            timedata.hour, 
-            timedata.minute, 
-            timedata.second);
-   */
+    
     snprintf(date, 10,"%d-%02d-%02d",
             datedata.year,
             datedata.month,
