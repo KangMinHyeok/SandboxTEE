@@ -366,7 +366,7 @@ int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
     }
     //printf("[AUTH] Read %s\n", buff);
 
-	    tok = strtok_r(buff, "\r\n", &next_ptr);
+	tok = strtok_r(buff, "\r\n", &next_ptr);
     if (strcmp(tok, "*2") != 0) {
         printf("ERROR: [AUTH] wrong response %s\n");
         return -1;
@@ -380,8 +380,9 @@ int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
 
     tok = strtok_r(NULL, "\r\n", &next_ptr);
     tok = strtok_r(NULL, "\r\n", &next_ptr);
-    nacl_ctx->redis_id_len = (char*)malloc(strlen(tok));
+    nacl_ctx->redis_id_len = (char*)malloc(strlen(tok) + 1);
     memcpy(nacl_ctx->redis_id_len, tok, strlen(tok));
+    nacl_ctx->redis_id_len[strlen(tok)] = '\0';
 
     tok2 = strtok_r(tok, "$", &next_ptr2);
     len = atoi(tok2);
@@ -392,14 +393,16 @@ int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
         return -1;
     }
 
-    nacl_ctx->redis_id = (char*)malloc(len);
+    nacl_ctx->redis_id = (char*)malloc(len + 1);
     memcpy(nacl_ctx->redis_id, tok, len);
+    nacl_ctx->redis_id[len] = '\0';
     printf("Redis ID: %s (len: %d)\n", nacl_ctx->redis_id, len);
 
     tok = strtok_r(NULL, "\r\n", &next_ptr);
-    nacl_ctx->redis_pw_len = (char*)malloc(strlen(tok));
+    nacl_ctx->redis_pw_len = (char*)malloc(strlen(tok) + 1);
     memcpy(nacl_ctx->redis_pw_len, tok, strlen(tok));
-
+    nacl_ctx->redis_pw_len[strlen(tok)] = '\0';
+    
     tok2 = strtok_r(tok, "$", &next_ptr2);
     len = atoi(tok2);
 
@@ -409,8 +412,9 @@ int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
         return -1;
     }
 
-    nacl_ctx->redis_pw = (char*)malloc(len);
+    nacl_ctx->redis_pw = (char*)malloc(len + 1);
     memcpy(nacl_ctx->redis_pw, tok, len);
+    nacl_ctx->redis_pw[len] = '\0';
     printf("Redis PW: %s (len: %d)\n", nacl_ctx->redis_pw, len);
 
     // send KGEN msg
