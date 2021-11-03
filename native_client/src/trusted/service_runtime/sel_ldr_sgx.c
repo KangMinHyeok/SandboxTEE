@@ -132,16 +132,13 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   if (!DynArrayCtor(&nap->threads, 2)) {
     goto cleanup_cpu_features;
   }
-  if (!DynArrayCtor(&nap->desc_tbl, 10)) {
+  if (!DynArrayCtor(&nap->desc_tbl, 15)) {
     goto cleanup_threads;
   }
 
-/*
-//TODO
   if (!NaClVmmapCtor(&nap->mem_map)) {
     goto cleanup_desc_tbl;
   }
-*/
 
   nap->mem_io_regions = (struct NaClIntervalMultiset *) malloc(
       sizeof(struct NaClIntervalRangeTree));
@@ -311,7 +308,7 @@ int NaClAppWithEmptySyscallTableCtor(struct NaClApp *nap) {
   nap->mem_io_regions = NULL;
  cleanup_mem_map:
   NaClVmmapDtor(&nap->mem_map);
- //cleanup_desc_tbl:
+ cleanup_desc_tbl:
   DynArrayDtor(&nap->desc_tbl);
  cleanup_threads:
   DynArrayDtor(&nap->threads);
@@ -465,8 +462,6 @@ void NaClSetCTX(struct NaClCTX *nacl_ctx) {
 
 	redis_auth_key_gen(nacl_ctx);
 
-
-	printf("NaClSetCTX Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 }
 #endif
 

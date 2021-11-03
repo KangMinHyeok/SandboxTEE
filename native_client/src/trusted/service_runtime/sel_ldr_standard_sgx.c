@@ -297,7 +297,6 @@ int NaClCreateMainThread(struct NaClApp     *nap,
   NaClLog(2, "  user stack ptr : %016"NACL_PRIxPTR"\n",
           NaClSysToUserStackAddr(nap, stack_ptr));
   
-  
   // TODO: position of the below
   NaClInitSwitchToApp(nap);
   NaClXMutexLock(&nap->mu);
