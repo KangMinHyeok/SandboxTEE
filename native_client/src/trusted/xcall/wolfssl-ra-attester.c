@@ -136,7 +136,7 @@ void make_report_message(char *json, const sgx_quote_t* quote, const uint32_t qu
 
 void parse_response_header(const char* header, size_t header_len, unsigned char* signature, const size_t signature_max_size, uint32_t* signature_size) {
 	const char sig_tag[] = "X-IASReport-Signature: ";
-	char* sig_begin = my_memmem(header, header_len, sig_tag,	strlen(sig_tag));
+	char* sig_begin = my_memmem(header, header_len, sig_tag, strlen(sig_tag));
 	assert(sig_begin != NULL);
 	sig_begin += strlen(sig_tag);
 	char* sig_end = my_memmem(sig_begin, header_len - (sig_begin - header),	"\r\n",	strlen("\r\n"));
@@ -193,6 +193,7 @@ void my_urldecode(char *dst, const char *src, int src_len, int *dst_len) {
 	*dst++ = '\0';
 }
 
+/*
 static void pem_to_base64_der(const char* pem, uint32_t pem_len, char* der, uint32_t* der_len, uint32_t der_max_len) {
 	assert(XSTRNCMP((char*) pem, pem_marker_begin, strlen(pem_marker_begin)) == 0);
 	assert(XSTRNCMP((char*) pem + pem_len - strlen(pem_marker_end),
@@ -210,7 +211,7 @@ static void pem_to_base64_der(const char* pem, uint32_t pem_len, char* der, uint
 	}
 	*der_len = out_len;
 }
-
+*/
 
 void extract_certificates_from_response_header(const char* header, size_t header_len, attestation_verification_report_t* attn_report) {
 	// Locate x-iasreport-signature HTTP header field in the response.
@@ -230,17 +231,20 @@ void extract_certificates_from_response_header(const char* header, size_t header
 	
 	unescaped_len = field_len;
 
-	char* cert_begin = my_memmem(unescaped, unescaped_len, pem_marker_begin,	strlen(pem_marker_begin));
+	char* cert_begin = my_memmem(unescaped, unescaped_len, pem_marker_begin, strlen(pem_marker_begin));
 	assert(cert_begin != NULL);
 	char* cert_end = my_memmem(unescaped, unescaped_len, pem_marker_end, strlen(pem_marker_end));
 	assert(cert_end != NULL);
 	uint32_t cert_len = cert_end - cert_begin + strlen(pem_marker_end);
 
 	assert(cert_len <= sizeof(attn_report->ias_sign_cert));
-	pem_to_base64_der(cert_begin, cert_len,
-			(char*) attn_report->ias_sign_cert,
-			&attn_report->ias_sign_cert_len,
-			sizeof(attn_report->ias_sign_cert));
+	memcpy(attn_report->ias_sign_cert, cert_begin, cert_len);
+	attn_report->ias_sign_cert_len = cert_len;
+
+	//pem_to_base64_der(cert_begin, cert_len,
+	//		(char*) attn_report->ias_sign_cert,
+	//		&attn_report->ias_sign_cert_len,
+	//		sizeof(attn_report->ias_sign_cert));
 
 	cert_begin = my_memmem(cert_end, unescaped_len - (cert_end - unescaped), pem_marker_begin, strlen(pem_marker_begin));
 	assert(cert_begin != NULL);
@@ -249,10 +253,13 @@ void extract_certificates_from_response_header(const char* header, size_t header
 	cert_len = cert_end - cert_begin + strlen(pem_marker_end);
 
 	assert(cert_len <= sizeof(attn_report->ias_sign_ca_cert));
-	pem_to_base64_der(cert_begin, cert_len,
-			(char*) attn_report->ias_sign_ca_cert,
-			&attn_report->ias_sign_ca_cert_len,
-			sizeof(attn_report->ias_sign_ca_cert));
+	memcpy((char*) attn_report->ias_sign_ca_cert, cert_begin, cert_len);
+	attn_report->ias_sign_ca_cert_len = cert_len;
+	
+	//pem_to_base64_der(cert_begin, cert_len,
+	//		(char*) attn_report->ias_sign_ca_cert,
+	//		&attn_report->ias_sign_ca_cert_len,
+	//		sizeof(attn_report->ias_sign_ca_cert));
 
 	unescaped = NULL;
 }
@@ -384,7 +391,10 @@ void obtain_attestation_verification_report(const sgx_quote_t* quote, const uint
 	parse_response_header(response, header_len,	attn_report->ias_report_signature, sizeof(attn_report->ias_report_signature), &attn_report->ias_report_signature_len);
 	attn_report->ias_report_len = sizeof(attn_report->ias_report);
 
-	base64_encode((uint8_t*) body, received - header_len,	attn_report->ias_report, &attn_report->ias_report_len);
+	memcpy(attn_report->ias_report, body, received - header_len);
+	attn_report->ias_report_len = received - header_len;
+
+	//base64_encode((uint8_t*) body, received - header_len,	attn_report->ias_report, &attn_report->ias_report_len);
 	extract_certificates_from_response_header(response, header_len, attn_report);
 
 
@@ -405,13 +415,13 @@ static void generate_x509(ecc_key* key, uint8_t* der_crt, int* der_crt_len, cons
 	wc_InitCert(&crt);
 	NaClLog(4, "wc_InitCert done\n");
 
-	strncpy(crt.subject.country, "US", CTC_NAME_SIZE);
-	strncpy(crt.subject.state, "OR", CTC_NAME_SIZE);
-	strncpy(crt.subject.locality, "Hillsboro", CTC_NAME_SIZE);
-	strncpy(crt.subject.org, "Intel Inc.", CTC_NAME_SIZE);
-	strncpy(crt.subject.unit, "Intel Labs", CTC_NAME_SIZE);
+	strncpy(crt.subject.country, "KR", CTC_NAME_SIZE);
+	strncpy(crt.subject.state, "", CTC_NAME_SIZE);
+	strncpy(crt.subject.locality, "", CTC_NAME_SIZE);
+	strncpy(crt.subject.org, "MMLAB", CTC_NAME_SIZE);
+	strncpy(crt.subject.unit, "MMLAB", CTC_NAME_SIZE);
 	strncpy(crt.subject.commonName, "SGX rocks!", CTC_NAME_SIZE);
-	strncpy(crt.subject.email, "webmaster@intel.com", CTC_NAME_SIZE);
+	strncpy(crt.subject.email, "", CTC_NAME_SIZE);
 
 	memcpy(crt.iasAttestationReport, attn_report->ias_report,
 			attn_report->ias_report_len);
@@ -489,6 +499,7 @@ void create_key_and_x509(uint8_t* der_key, int* der_key_len, uint8_t* der_cert, 
 	NaClLog(4, "obtain_attestation_verification_report done\n");
 
 	generate_x509(&gen_key, der_cert, der_cert_len, &attestation_report);
+		
 	NaClLog(4, "generate_x509 done\n");
 
 }

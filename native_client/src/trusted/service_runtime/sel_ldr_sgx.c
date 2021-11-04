@@ -343,7 +343,7 @@ int redis_auth_key_gen(struct NaClCTX *nacl_ctx) {
     char *kgen_msg = "*2\r\n$4\r\nKGEN\r\n$15\r\nmmlab_test:1111\r\n";
 
     ip = "147.46.244.130";
-    port = 6380;
+    port = 6381;
 
     ssl = ssl_handshake(ip, port, nacl_ctx->ctx, nacl_ctx->der_key, nacl_ctx->der_key_len, nacl_ctx->der_cert, nacl_ctx->der_cert_len);
     if (ret < 0) {
