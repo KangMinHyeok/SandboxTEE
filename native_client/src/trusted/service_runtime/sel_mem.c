@@ -30,7 +30,8 @@
 #include "native_client/src/trusted/service_runtime/include/sys/fcntl.h"
 #include "native_client/src/trusted/service_runtime/include/sys/mman.h"
 
-#define START_ENTRIES   5   /* tramp+text, rodata, data, bss, stack */
+// TODO originally, 5. TODO realloc
+#define START_ENTRIES   10  /* tramp+text, rodata, data, bss, stack */
 #define REMOVE_MARKED_DEBUG 0
 
 

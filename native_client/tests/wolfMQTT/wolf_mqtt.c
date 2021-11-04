@@ -19,7 +19,7 @@
 #define MQTT_CMD_TIMEOUT_MS     30000
 #define MQTT_CON_TIMEOUT_MS     5000
 #define MQTT_CLIENT_ID          "wolfMQTTClient"
-#define MQTT_TOPIC_NAME         "wolfMQTT/test/ECG"
+#define MQTT_TOPIC_NAME         "test"
 #define MQTT_PUBLISH_MSG        "Test Publish"
 #define MQTT_USERNAME           NULL
 #define MQTT_PASSWORD           NULL
@@ -28,34 +28,38 @@
     #define MQTT_PORT           8883
 #else
     #define MQTT_USE_TLS        0
-    #define MQTT_PORT           1883
+    #define MQTT_PORT           11224
 #endif
 
 #define INVALID_SOCKET_FD         -1
 #define MQTT_MAX_PACKET_SZ      1024
 #define PRINT_BUFFER_SIZE       80
+static struct timeval start;
+static struct timeval end;
+static int start_timer = 1;    
+
 /*
 struct in_addr { 
-	unsigned long s_addr; 
+    unsigned long s_addr; 
 };
 
 struct sockaddr_in { 
-	short sin_family;  
-	unsigned short sin_port; 
-	struct in_addr sin_addr; 
-	char sin_zero[8]; 
-}; 	
+    short sin_family;  
+    unsigned short sin_port; 
+    struct in_addr sin_addr; 
+    char sin_zero[8]; 
+};  
 
 
 struct addrinfo { 
-	int ai_flags; 
-	int ai_family; 
-	int ai_socktype; 
-	int ai_protocol; 
-	socklen_t ai_addrlen; 
-	char *ai_canonname; 
-	struct sockaddr *ai_addr; 
-	struct addrinfo *ai_next; 
+    int ai_flags; 
+    int ai_family; 
+    int ai_socktype; 
+    int ai_protocol; 
+    socklen_t ai_addrlen; 
+    char *ai_canonname; 
+    struct sockaddr *ai_addr; 
+    struct addrinfo *ai_next; 
 };
 */
 /* Local Functions */
@@ -86,12 +90,26 @@ uint16_t htons(uint16_t hostshort) {
     return ((hostshort & 0xff) << 8) | (hostshort >> 8);
 }
 
+unsigned long int ntohl ( unsigned long int x)
+{
+   return (
+              ( ( x & 0x000000ffU ) << 24 ) |
+
+             ( ( x & 0x0000ff00U ) << 8   ) |
+
+             ( ( x & 0x00ff0000U ) >> 8   )  |
+
+             ( ( x & 0xff000000U ) >> 24 )  
+
+   );
+}
+
 static int hexval(unsigned c)
 {
-	if (c-'0'<10) return c-'0';
-	c |= 32;
-	if (c-'a'<6) return c-'a'+10;
-	return -1;
+    if (c-'0'<10) return c-'0';
+    c |= 32;
+    if (c-'a'<6) return c-'a'+10;
+    return -1;
 }
 
 int isdigit(int c) {
@@ -100,84 +118,124 @@ int isdigit(int c) {
 
 int inet_pton(int af, const char *restrict s, void *restrict a0)
 {
-	uint16_t ip[8];
-	unsigned char *a = a0;
-	int i, j, v, d, brk=-1, need_v4=0;
+    uint16_t ip[8];
+    unsigned char *a = a0;
+    int i, j, v, d, brk=-1, need_v4=0;
 
-	if (af==AF_INET) {
-		for (i=0; i<4; i++) {
-			for (v=j=0; j<3 && isdigit(s[j]); j++)
-				v = 10*v + s[j]-'0';
-			if (j==0 || (j>1 && s[0]=='0') || v>255) return 0;
-			a[i] = v;
-			if (s[j]==0 && i==3) return 1;
-			if (s[j]!='.') return 0;
-			s += j+1;
-		}
-		return 0;
-	} else if (af!=AF_INET6) {
-		errno = EAFNOSUPPORT;
-		return -1;
-	}
+    if (af==AF_INET) {
+        for (i=0; i<4; i++) {
+            for (v=j=0; j<3 && isdigit(s[j]); j++)
+                v = 10*v + s[j]-'0';
+            if (j==0 || (j>1 && s[0]=='0') || v>255) return 0;
+            a[i] = v;
+            if (s[j]==0 && i==3) return 1;
+            if (s[j]!='.') return 0;
+            s += j+1;
+        }
+        return 0;
+    } else if (af!=AF_INET6) {
+        errno = EAFNOSUPPORT;
+        return -1;
+    }
 
-	if (*s==':' && *++s!=':') return 0;
+    if (*s==':' && *++s!=':') return 0;
 
-	for (i=0; ; i++) {
-		if (s[0]==':' && brk<0) {
-			brk=i;
-			ip[i&7]=0;
-			if (!*++s) break;
-			if (i==7) return 0;
-			continue;
-		}
-		for (v=j=0; j<4 && (d=hexval(s[j]))>=0; j++)
-			v=16*v+d;
-		if (j==0) return 0;
-		ip[i&7] = v;
-		if (!s[j] && (brk>=0 || i==7)) break;
-		if (i==7) return 0;
-		if (s[j]!=':') {
-			if (s[j]!='.' || (i<6 && brk<0)) return 0;
-			need_v4=1;
-			i++;
-			break;
-		}
-		s += j+1;
-	}
-	if (brk>=0) {
-		memmove(ip+brk+7-i, ip+brk, 2*(i+1-brk));
-		for (j=0; j<7-i; j++) ip[brk+j] = 0;
-	}
-	for (j=0; j<8; j++) {
-		*a++ = ip[j]>>8;
-		*a++ = ip[j];
-	}
-	if (need_v4 && inet_pton(AF_INET, (void *)s, a-4) <= 0) return 0;
-	return 1;
+    for (i=0; ; i++) {
+        if (s[0]==':' && brk<0) {
+            brk=i;
+            ip[i&7]=0;
+            if (!*++s) break;
+            if (i==7) return 0;
+            continue;
+        }
+        for (v=j=0; j<4 && (d=hexval(s[j]))>=0; j++)
+            v=16*v+d;
+        if (j==0) return 0;
+        ip[i&7] = v;
+        if (!s[j] && (brk>=0 || i==7)) break;
+        if (i==7) return 0;
+        if (s[j]!=':') {
+            if (s[j]!='.' || (i<6 && brk<0)) return 0;
+            need_v4=1;
+            i++;
+            break;
+        }
+        s += j+1;
+    }
+    if (brk>=0) {
+        memmove(ip+brk+7-i, ip+brk, 2*(i+1-brk));
+        for (j=0; j<7-i; j++) ip[brk+j] = 0;
+    }
+    for (j=0; j<8; j++) {
+        *a++ = ip[j]>>8;
+        *a++ = ip[j];
+    }
+    if (need_v4 && inet_pton(AF_INET, (void *)s, a-4) <= 0) return 0;
+    return 1;
 }
 
-static int Qwaves[10] = {0};
+static int ecgs[10] = {0};
 static int idx = 0;
+static int is_start = 1;
 
-static void updateQwave(char *qwave_str)
+static void updateQwave(byte *ecg)
 {
-    int q = atoi(qwave_str);
-    Qwaves[idx++] = q;
-    if (idx >= 10)
+    char buff[512];
+    double elapsedTime;
+    int q = ntohl(*((long *)ecg));
+    // int q = *((long *)ecg);
+    ecgs[idx++] = q;
+
+    if (idx >= 10){
       idx = 0;
-    int sum = 0;
-    printf("Qwaves: [");
-    for (int i = 0; i < 10; i++){
-        printf("%d, ", Qwaves[i]);
-        sum += Qwaves[i];
+      is_start = 0;
     }
+    int sum = 0;
+    printf("ecgs: [");
+    int len = is_start == 1? idx:10;
     
-    printf("], sum= %d, avg = %d, curr = %d, is_anomaly? %d\n", sum, sum / 10, q, (sum / 10 - q > 30 || sum / 10 - q < -30) ? 1 : 0);
+    for (int i = 0; i < 10; i++){
+        printf("%d, ", ecgs[i]);
+        sum += ecgs[i];
+    }    
+
+    int avg = sum / len;
+    int threshold = 300;
+    int is_anomaly = (avg - q > threshold || avg - q < -threshold) ? 1 : 0;
+
+    
+    printf("]\nsum= %d, avg = %d, curr = %d, is_anomaly? %d\n", sum, avg, q, is_anomaly);
+    
+
+    if (is_anomaly == 1){
+        // fd = open("mqtttest.txt", O_RDWR | O_APPEND | O_CREAT, 0 | S_IRUSR | S_IWUSR);   
+        fd = open("mqtttest.txt", O_RDWR | O_APPEND | O_CREAT, 0);   
+        if (fd < 0){
+			printf("APP: open failed\n");
+		}
+        snprintf(buff, 512, "sum= %d, avg = %d, curr = %d, is_anomaly? %d\n", sum, avg, q, is_anomaly);
+        write(fd, buff, strlen(buff));
+        // stop timer
+        gettimeofday(&end, NULL);
+        elapsedTime = (end.tv_sec - start.tv_sec) * 1000.0;      // sec to ms
+        elapsedTime += (end.tv_usec - start.tv_usec) / 1000.0;   // us to ms
+        printf("[elapsed time] %f ms\n", elapsedTime);
+        // float time_taken = ((float)(elapsed))/CLOCKS_PER_SEC; // calculate the elapsed time
+        // printf("The program took %f seconds to execute\n", time_taken);
+
+        fflush(stdin);
+        start_timer = 1;
+    }
+
 }
 
 static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
     byte msg_new, byte msg_done)
 {
+    if (start_timer){
+        gettimeofday(&start, NULL);
+        start_timer = 0;
+    }
     byte buf[PRINT_BUFFER_SIZE+1];
     word32 len;
 
@@ -193,8 +251,8 @@ static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
         buf[len] = '\0'; /* Make sure its null terminated */
 
         /* Print incoming message */
-        printf("MQTT Message: Topic %s, Qos %d, Len %u",
-            buf, msg->qos, msg->total_len);
+        // printf("MQTT Message: Topic %s, Qos %d, Len %u",
+        //     buf, msg->qos, msg->total_len);
     }
 
     /* Print message payload */
@@ -204,13 +262,13 @@ static int mqtt_message_cb(MqttClient *client, MqttMessage *msg,
     }
     XMEMCPY(buf, msg->buffer, len);
     buf[len] = '\0'; /* Make sure its null terminated */
-    printf("Payload (%d - %d): %s",
-        msg->buffer_pos, msg->buffer_pos + len, buf);
+    // printf("Payload (%d - %d): %s",
+    //     msg->buffer_pos, msg->buffer_pos + len, buf);
 
     if (msg_done) {
         write(fd, buf, len);
-        updateQwave((char *)buf);
-        printf("MQTT Message: Done");
+        updateQwave((byte *)buf);
+        // printf("MQTT Message: Done");
     }
 
     /* Return negative to terminate publish processing */
@@ -425,12 +483,12 @@ static int mqtt_tls_cb(MqttClient* client)
         wolfSSL_CTX_set_verify(client->tls.ctx, WOLFSSL_VERIFY_PEER,
                                mqtt_tls_verify_cb);
 
-		/* default to success */
+        /* default to success */
         rc = WOLFSSL_SUCCESS;
 
-	#if !defined(NO_CERT)
+    #if !defined(NO_CERT)
     #if 0
-    	/* Load CA certificate buffer */
+        /* Load CA certificate buffer */
         rc = wolfSSL_CTX_load_verify_buffer(client->tls.ctx, caCertBuf,
                                           caCertSize, WOLFSSL_FILETYPE_PEM);
     #endif
@@ -541,21 +599,21 @@ int mqtt_test(void)
                 MQTT_TOPIC_NAME, MQTT_QOS);
     
     // publish
-    memset(&mqtt_obj, 0, sizeof(mqtt_obj));
-    mqtt_obj.publish.qos = MQTT_QOS;
-    mqtt_obj.publish.topic_name = MQTT_TOPIC_NAME;
-    mqtt_obj.publish.packet_id = mqtt_get_packetid(&m_packet_id_last);
-    mqtt_obj.publish.buffer = (byte*)MQTT_PUBLISH_MSG;
-    mqtt_obj.publish.total_len = XSTRLEN(MQTT_PUBLISH_MSG);
-    ret = MqttClient_Publish(&m_client, &mqtt_obj.publish);
-    if (ret != MQTT_CODE_SUCCESS)
-        goto exit;
+    // memset(&mqtt_obj, 0, sizeof(mqtt_obj));
+    // mqtt_obj.publish.qos = MQTT_QOS;
+    // mqtt_obj.publish.topic_name = MQTT_TOPIC_NAME;
+    // mqtt_obj.publish.packet_id = mqtt_get_packetid(&m_packet_id_last);
+    // mqtt_obj.publish.buffer = (byte*)MQTT_PUBLISH_MSG;
+    // mqtt_obj.publish.total_len = XSTRLEN(MQTT_PUBLISH_MSG);
+    // ret = MqttClient_Publish(&m_client, &mqtt_obj.publish);
+    // if (ret != MQTT_CODE_SUCCESS)
+    //     goto exit;
     
 
-    printf("MQTT Publish: Topic %s, Qos %d, Message %s\n",
-        mqtt_obj.publish.topic_name, mqtt_obj.publish.qos, mqtt_obj.publish.buffer); 
-    fd = open("mqtttest.txt", O_RDWR, 0);	
-	/* Wait for messages */
+    // printf("MQTT Publish: Topic %s, Qos %d, Message %s\n",
+    //     mqtt_obj.publish.topic_name, mqtt_obj.publish.qos, mqtt_obj.publish.buffer); 
+    // fd = open("mqtttest.txt", O_RDWR, 0);   
+    /* Wait for messages */
     while (1) {
         ret = MqttClient_WaitMessage_ex(&m_client, &mqtt_obj, MQTT_CMD_TIMEOUT_MS);
         if (ret == MQTT_CODE_ERROR_TIMEOUT) {
@@ -585,3 +643,4 @@ int main(void)
     ret = mqtt_test();
     return ret;
 }
+

@@ -152,6 +152,8 @@ struct NaClDescSocketDesc *NaClDescSocketDescMake() {
   }
 #endif
 
+  goto cleanup;
+
 cleanall:
   free(sdp);
   free(hd);
