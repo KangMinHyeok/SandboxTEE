@@ -590,7 +590,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
 	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
 
-    //send_tracelog(buff, desc_ctx);
+    send_tracelog(buff, desc_ctx);
 
 	printf("%s %d\n", __func__, __LINE__);
 	ret = redis_get_key(desc_ctx);
