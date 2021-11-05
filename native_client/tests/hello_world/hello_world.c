@@ -18,15 +18,13 @@ void hello_world(void) {
   printf("Hello, World!\n");
   int f = open("/home/hmlee/SandboxTEE/native_client/tests/hello_world/testdata256.txt", O_RDWR, 0644);
   if (f < 0) {
-    printf("open fail\n");
+    printf("hello_world - File Open Fail\n");
   } else {
-  	printf("open success\n");
+  	printf("hello_world - File Open Success\n");
   }
 
-  printf("AAAAAAAAAAAAAAAAAAAAAA\n");
   char *str = "aaaaaa";
   write(f, str, strlen(str));
-  printf("BBBBBBBBBBBBBBBBBBBB\n");
   close(f);
 }
 

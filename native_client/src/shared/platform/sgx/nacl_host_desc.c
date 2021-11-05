@@ -423,7 +423,8 @@ int redis_get_key(struct DescCTX *desc_ctx) {
 	
 	//printf("sks_auth_msg: %s\n", sks_auth_msg);
 
-	ip = "147.46.244.130";
+	//ip = "147.46.244.130";
+	ip = "10.73.31.201";
 	port = 6379;
 	
 	ssl = ssl_handshake(ip, port, desc_ctx->ctx, desc_ctx->der_key, desc_ctx->der_key_len, desc_ctx->der_cert, desc_ctx->der_cert_len);
@@ -592,7 +593,6 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
     send_tracelog(buff, desc_ctx);
 
-	printf("%s %d\n", __func__, __LINE__);
 	ret = redis_get_key(desc_ctx);
 
   UNREFERENCED_PARAMETER(ret);
