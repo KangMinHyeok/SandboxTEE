@@ -719,7 +719,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
                                            Elf_Word p_flags,
                                            Elf_Off file_offset,
                                            Elf_Off segment_size,
-                                           uintptr_t vaddr,
+                                           uintptr_t p_vaddr,
                                            uintptr_t paddr) {
   size_t rounded_filesz;       // 64k rounded 
   int mmap_prot = 0, prot = 0;
@@ -727,6 +727,8 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
   NaClValidationStatus validator_status = NaClValidationFailed;
   struct NaClValidationMetadata metadata;
   int read_last_page_if_partial_allocation_page = 1;
+  uintptr_t vaddr = NaClTruncAllocPage(p_vaddr);
+
   //ssize_t read_ret;
 
   rounded_filesz = NaClRoundAllocPage(segment_size);
@@ -920,7 +922,12 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
   }
   */
   // mmap in 
+
 	rounded_filesz = NaClRoundPage(segment_size);
+
+  if ((0xFFF&segment_size) + (0xFFF&p_vaddr) > 0x1000)
+  	  rounded_filesz += 0x1000;
+
   if (rounded_filesz == 0) {
     NaClLog(4,
             "NaClElfFileMapSegment: no pages to map, probably because"
@@ -1376,11 +1383,8 @@ NaClErrorCode NaClElfImageLoad(struct NaClElfImage *image,
 
 		int map_status;
 		map_status = NaClElfFileMapSegment(nap, ndp, php->p_flags,
-																			 offset, filesz, vaddr, paddr);
+																			 offset, filesz, php->p_vaddr, paddr);
 		
-		//map_status = NaClElfFileMapSegmentSGX(nap, ndp, php->p_flags,
-		//																	 offset, vaddr, paddr, php->p_memsz);
-
 
 		/*
 		 * NB: -Werror=switch-enum forces us to not use a switch.
