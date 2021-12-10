@@ -68,7 +68,7 @@
 #  define PWRITE ocall_pwrite64
 # endif
 
-char *sks_key;
+//char *sks_key;
 
 
 /*
@@ -473,16 +473,21 @@ int redis_get_key(struct DescCTX *desc_ctx) {
 		return -1;
 	}
 
-	sks_key = (char*)malloc(len);
-	memcpy(sks_key, tok, len);
-	printf("SKS Key: %s (len: %d)\n", sks_key, len);
+	desc_ctx->sks_key = (char*)malloc(len);	
+	memcpy(desc_ctx->sks_key, tok, len);
+	desc_ctx->sks_key_len = len;
+	printf("SKS Key: %s (len: %d)\n", desc_ctx->sks_key, desc_ctx->sks_key_len);
+	
+	//sks_key = (char*)malloc(len);
+	//memcpy(sks_key, tok, len);
+	//printf("SKS Key: %s (len: %d)\n", sks_key, len);
 	
 	free(sks_auth_msg);
 	wolfSSL_free(ssl);
 	//wolfSSL_CTX_free(ctx);
 	//wolfSSL_Cleanup();
 
-  return 0;
+  return len;
 }
 
 
@@ -591,11 +596,12 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 
 	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
 
-    send_tracelog(buff, desc_ctx);
+    //send_tracelog(buff, desc_ctx);
 
 	ret = redis_get_key(desc_ctx);
-
-  UNREFERENCED_PARAMETER(ret);
+	printf("SKS Key: %s (len: %d)\n", d->desc_ctx->sks_key, d->desc_ctx->sks_key_len);
+  
+  	UNREFERENCED_PARAMETER(ret);
 
   /*
    * Sanitize access flags.
@@ -726,7 +732,8 @@ ssize_t NaClHostDescWrite(struct NaClHostDesc *d,
   ssize_t retval;
 
   NaClHostDescCheckValidity("NaClHostDescWrite", d);
-  if (NACL_ABI_O_RDONLY == (d->flags & NACL_ABI_O_ACCMODE)) {
+
+   if (NACL_ABI_O_RDONLY == (d->flags & NACL_ABI_O_ACCMODE)) {
     NaClLog(3, "NaClHostDescWrite: RDONLY file\n");
     return -NACL_ABI_EBADF;
   }

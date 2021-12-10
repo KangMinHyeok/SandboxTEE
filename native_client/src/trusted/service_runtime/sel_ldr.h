@@ -123,6 +123,10 @@ struct NaClCTX{
 	char *redis_pw;
 	char *redis_id_len;
 	char *redis_pw_len;
+
+	char *sks_key;
+	uint32_t sks_key_len;
+
 };
 #endif
 
