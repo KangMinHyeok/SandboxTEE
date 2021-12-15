@@ -13,6 +13,7 @@
 #define NATIVE_CLIENT_SRC_TRUSTED_PLATFORM_LINUX_NACL_HOST_DESC_TYPES_H_
 
 #include "native_client/src/trusted/wolfssl/ssl.h"
+#include "native_client/src/trusted/wolfssl/aes.h"
 
 // hmlee
 struct DescCTX{
@@ -29,6 +30,8 @@ struct DescCTX{
 	
 	char *sks_key;
 	uint32_t sks_key_len;
+
+    byte    iv[AES_BLOCK_SIZE];
 };
 
 struct NaClHostDesc {

@@ -28,6 +28,12 @@
 #include "native_client/src/trusted/wolfssl/settings.h"
 #include "native_client/src/trusted/wolfssl/coding.h"
 #include "native_client/src/trusted/wolfssl/handshake.h"
+#include "native_client/src/trusted/wolfssl/aes.h"
+#include "native_client/src/trusted/wolfssl/sha256.h"
+#include "native_client/src/trusted/wolfssl/random.h"
+
+#define SALT_SIZE 8
+
 #include "native_client/src/trusted/xcall/ra.h"
 
 #undef __GLIBC__
@@ -67,8 +73,6 @@
 #  define PREAD ocall_pread64
 #  define PWRITE ocall_pwrite64
 # endif
-
-//char *sks_key;
 
 
 /*
@@ -708,6 +712,50 @@ int NaClHostDescPosixTake(struct NaClHostDesc *d,
   return 0;
 }
 
+static ssize_t ReadFile(struct NaClHostDesc *d, void *buf, size_t len) {
+
+  ssize_t retval;
+  ssize_t retlen;
+  byte *input;
+  byte *output;
+  Aes aes;
+
+  int length = len;
+  struct DescCTX *desc_ctx = d->desc_ctx;
+
+  input = (byte *) malloc(len);
+  output = (byte *) malloc(len);
+
+  retlen = ocall_read(d->d, input, length); 
+  if (retlen == -1) {
+  	  retval = -NaClXlateErrno(errno);
+  	  goto read_out;
+  }
+
+  printf("%d %d\n", retlen, length);
+	
+  retval = wc_AesSetKey(&aes, (byte *) desc_ctx->sks_key, AES_BLOCK_SIZE, desc_ctx->iv, AES_ENCRYPTION);
+  if (retval != 0) {
+  	  retval = -NACL_ABI_EINVAL;
+  	  goto read_out;
+  }
+
+  retval = wc_AesCtrEncrypt(&aes, output, input, length); 
+  if (retval != 0) {
+	  retval = -NACL_ABI_EINVAL;
+	  goto read_out;
+  }
+
+  memcpy(buf, output, len);
+  retval = retlen;
+
+read_out:
+  free(input); 
+  free(output);
+
+  return retval;
+}
+
 ssize_t NaClHostDescRead(struct NaClHostDesc  *d,
                          void                 *buf,
                          size_t               len) {
@@ -718,8 +766,73 @@ ssize_t NaClHostDescRead(struct NaClHostDesc  *d,
     NaClLog(3, "NaClHostDescRead: WRONLY file\n");
     return -NACL_ABI_EBADF;
   }
-  return ((-1 == (retval = ocall_read(d->d, buf, len)))
-          ? -NaClXlateErrno(errno) : retval);
+   
+  struct DescCTX *desc_ctx = d->desc_ctx;
+  if (desc_ctx == NULL || desc_ctx->sks_key == 0 || desc_ctx->sks_key_len != 64) {
+	NaClLog(3, "sks_key is null\n");
+	retval = ocall_read(d->d, buf, len);
+	return (retval == -1)? -NaClXlateErrno(errno):retval;
+  } else {
+    retval = ReadFile(d, buf, len);
+  }
+  return retval;
+}
+
+
+static ssize_t WriteFile(struct NaClHostDesc *d, void const *buf, size_t len){
+
+  int retval;
+
+  WC_RNG     rng;
+  byte*   input;
+  byte*   output;
+  Aes aes;
+
+  int     length = len;
+
+  struct DescCTX *desc_ctx = d->desc_ctx;
+  
+  retval = wc_InitRng(&rng);
+  if (retval != 0) {
+	NaClLog(3, "init rng failed\n");
+	return -NACL_ABI_EBADF;
+  }
+
+  if (desc_ctx->iv == NULL) {
+	  retval = wc_RNG_GenerateBlock(&rng, desc_ctx->iv, AES_BLOCK_SIZE);
+	  if (retval != 0){
+		NaClLog(3, "rng generateblock failed\n");
+		return -NACL_ABI_EBADF;
+	  }
+  }
+
+  retval = wc_AesSetKey(&aes, (byte *) desc_ctx->sks_key, AES_BLOCK_SIZE, desc_ctx->iv, AES_ENCRYPTION);
+  if (retval != 0){
+	NaClLog(3, "aessetkey failed\n");
+	return -NACL_ABI_EBADF;
+  }
+
+  printf("length: %d %d\n", length, len);
+  input = (byte *) malloc (length);
+  output = (byte *) malloc (length);
+  memcpy(input, buf, len);
+
+  retval = wc_AesCtrEncrypt(&aes, output, input, length);
+  if (retval != 0){
+	retval = -NACL_ABI_EINVAL;
+  }
+
+  retval = ocall_write(d->d, output, length);
+  if (-1 == retval) {
+    retval = -NaClXlateErrno(errno);
+    goto write_out;
+  }
+  printf("length: %d %d\n", retval, len);
+
+write_out:
+  free(input);
+  free(output);
+  return retval;
 }
 
 ssize_t NaClHostDescWrite(struct NaClHostDesc *d,
@@ -743,16 +856,26 @@ ssize_t NaClHostDescWrite(struct NaClHostDesc *d,
    * Grab O_APPEND attribute lock, in case pwrite occurs in another
    * thread.
    */
+ 
   if (need_lock) {
     NaClHostDescExclusiveLock(d->d);
   }
-  retval = ocall_write(d->d, buf, len);
+
+  struct DescCTX *desc_ctx = d->desc_ctx;
+  if (desc_ctx == NULL || desc_ctx->sks_key == 0 || desc_ctx->sks_key_len != 64) {
+	NaClLog(3, "sks_key is null\n");
+	retval = ocall_write(d->d, buf, len);
+	return (retval == -1)? -NaClXlateErrno(errno):retval;
+  } else {
+    retval = WriteFile(d, buf, len);
+  }
   if (need_lock) {
     NaClHostDescExclusiveUnlock(d->d);
   }
-  if (-1 == retval) {
-    retval = -NaClXlateErrno(errno);
-  }
+
+  // if (-1 == retval) {
+  //  retval = -NaClXlateErrno(errno);
+  //}
   return retval;
 }
 

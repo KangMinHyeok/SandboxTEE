@@ -2001,6 +2001,7 @@ XSTRNCASECMP(const char *s1, const char *s2, int n)
 // TODO: hmlee adds below options explicitly
 #define HAVE_ECC
 #define WOLFSSL_KEY_GEN
+#define WOLFSSL_AES_COUNTER
 //#ifdef NO_CERTS
 //#undef NO_CERTS
 //#endif

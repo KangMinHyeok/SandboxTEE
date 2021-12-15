@@ -23,7 +23,7 @@
 #ifndef WOLF_CRYPT_AES_H
 #define WOLF_CRYPT_AES_H
 
-#include "types.h"
+#include "native_client/src/trusted/wolfssl/types.h"
 
 #ifndef NO_AES
 

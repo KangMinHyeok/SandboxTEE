@@ -133,6 +133,9 @@ int32_t NaClSysOpen(struct NaClAppThread  *natp,
 		memcpy(hd->desc_ctx->redis_id, nap->nacl_ctx->redis_id, strlen(nap->nacl_ctx->redis_id));
 		hd->desc_ctx->redis_pw = malloc(strlen(nap->nacl_ctx->redis_pw));
 		memcpy(hd->desc_ctx->redis_pw, nap->nacl_ctx->redis_pw, strlen(nap->nacl_ctx->redis_pw));
+
+		hd->desc_ctx->sks_key = 0;
+		hd->desc_ctx->sks_key_len = -1;
 	#endif
 
     retval = NaClHostDescOpen(hd, path, flags, mode);

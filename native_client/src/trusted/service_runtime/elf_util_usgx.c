@@ -925,8 +925,8 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
 
 	rounded_filesz = NaClRoundPage(segment_size);
 
-  //if ( ((0xFFF&segment_size) + (0xFFF&p_vaddr) > 0x1000) && () )
-  //	  rounded_filesz += 0x1000;
+  if ( ((0xFFF&segment_size) + (0xFFF&p_vaddr) > 0x1000) && (1) )
+  	  rounded_filesz += 0x1000;
 
   if (rounded_filesz == 0) {
     NaClLog(4,

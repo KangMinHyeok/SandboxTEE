@@ -164,7 +164,8 @@ extern void _wordcopy_fwd_dest_aligned (long int, long int, int);
       dst_bp += (nbytes) & -OPSIZ;                        \
       (nbytes_left) = (nbytes) % OPSIZ;                       \
     } while (0)
-typedef unsigned char byte;
+
+// typedef unsigned char byte;
 
 #ifndef size_t
 typedef __kernel_size_t size_t;
