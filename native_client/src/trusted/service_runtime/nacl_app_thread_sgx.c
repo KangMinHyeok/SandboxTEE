@@ -264,7 +264,6 @@ int NaClAppThreadSpawn(struct NaClApp *nap,
    */
   natp->host_thread_is_defined = 1;
   
-  // TODO: check here
   NaClAppThreadLauncher((void *) natp);
 
   // NEVER REACH HERE
