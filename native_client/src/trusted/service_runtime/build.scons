@@ -4,7 +4,6 @@
 # found in the LICENSE file.
 '''
 'filename_util.cc',
-    #'load_file.c',
     'nacl_desc_effector_ldr.c',
     'nacl_error_gio.c', 
     'nacl_error_log_hook.c',
@@ -14,15 +13,12 @@
     'nacl_valgrind_hooks.c',
     'sel_qualify.c',
     'sel_validate_image.c',
-    #'sys_imc.c',
     'thread_suspension_common.c',
     'thread_suspension_unwind.c',
-    #'elf_util.c',
     'arch/x86/nacl_ldt_x86.c',
     'arch/x86_64/nacl_app_64.c',
     'arch/x86_64/sel_ldr_x86_64.c',
-    #'arch/x86_64/tramp_64.S',
-		'arch/x86_64/sel_addrspace_posix_x86_64.c'
+    'arch/x86_64/sel_addrspace_posix_x86_64.c'
 		'linux/nacl_bootstrap_args.c',
 		#'linux/nacl_thread_nice.c',
 		'linux/r_debug.c',
