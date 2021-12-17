@@ -825,14 +825,15 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
        * Fallback implementation.  Use the mapped memory as source for
        * the dynamic code insertion interface.
        */
-      // TODO: mkpark
-      sys_ret = 0;
 #if NACL_SGX != 1
       sys_ret = NaClTextDyncodeCreate(nap,
                                       (uint32_t) usraddr,
                                       (uint8_t *) image_sys_addr,
                                       (uint32_t) length,
                                       NULL);
+#else
+      // note that it is not supported in SGX
+	  sysret = 0;
 #endif
       if (sys_ret < 0) {
         map_result = sys_ret;
