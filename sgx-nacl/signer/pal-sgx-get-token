@@ -22,7 +22,7 @@ def int_to_bytes(i):
 def bytes_to_int(b):
     i = 0
     for c in b:
-        i = i * 256 + ord(c)
+        i = i * 256 + ord(str(c))
     return i
 
 
@@ -196,103 +196,104 @@ if __name__ == "__main__":
     
     attr = read_sigstruct(open(args['sig'], 'rb').read())
 
-    print >>sys.stderr, "Attributes:"
-    print >>sys.stderr, "    header: %s %s %s %s" % (hexto8digit(attr['a']),hexto8digit(attr['b']),hexto8digit(attr['c']),hexto8digit(attr['d']))
+    
+    #print >>sys.stderr, "Attributes:"
+    #print >>sys.stderr, "    header: %s %s %s %s" % (hexto8digit(attr['a']),hexto8digit(attr['b']),hexto8digit(attr['c']),hexto8digit(attr['d']))
     f.write(hexto8digit(attr['a'])+hexto8digit(attr['b'])+hexto8digit(attr['c'])+hexto8digit(attr['d']))
 
-    print >>sys.stderr, "    vendor: %s" % (hexto8digit(attr['vendor']))
+    #print >>sys.stderr, "    vendor: %s" % (hexto8digit(attr['vendor']))
     f.write(hexto8digit(attr['vendor']))
 
-    print >>sys.stderr, "    date: %s" % (hexto8digit(str(attr['year'])+str(attr['month']).zfill(2)+str(attr['day'])))
+    #print >>sys.stderr, "    date: %s" % (hexto8digit(str(attr['year'])+str(attr['month']).zfill(2)+str(attr['day'])))
     f.write(hexto8digit(str(attr['year'])+str(attr['month']).zfill(2)+str(attr['day'])))
 
-    print >>sys.stderr, "    header2: %s %s %s %s" % (hexto8digit(attr['e']),hexto8digit(attr['f']),hexto8digit(attr['g']),hexto8digit(attr['h']))
+    #print >>sys.stderr, "    header2: %s %s %s %s" % (hexto8digit(attr['e']),hexto8digit(attr['f']),hexto8digit(attr['g']),hexto8digit(attr['h']))
     f.write(hexto8digit(attr['e'])+hexto8digit(attr['f'])+hexto8digit(attr['g'])+hexto8digit(attr['h']))
 
-    print >>sys.stderr, "    swdefined : %s" % (hexto8digit(attr['i']))
+    #print >>sys.stderr, "    swdefined : %s" % (hexto8digit(attr['i']))
     f.write(hexto8digit(attr['i']))
 
-    print >>sys.stderr, "    reserve :"
+    #print >>sys.stderr, "    reserve :"
     for i in range(0,21):
-        print >>sys.stderr, " %s" % ("00000000")
+        #print >>sys.stderr, " %s" % ("00000000")
         f.write("00000000")
 
-    print >>sys.stderr, "    CET_ATTRIBUTES : 0000 or 0101 "
+    #print >>sys.stderr, "    CET_ATTRIBUTES : 0000 or 0101 "
     f.write("0000")
 
-    print >>sys.stderr, "    reserve : 0000"
+    #print >>sys.stderr, "    reserve : 0000"
     f.write("0000")    
 
-    print >>sys.stderr, "    modulus:   %s..." % (attr['modulus'].encode('hex'))
+    print(sys.stderr, "   modulus:   %s..." % (attr['modulus'].encode('hex')))
     # f.write("modulus is\n")
     f.write(attr['modulus'].encode('hex'))
     # f.write("\n")
 
-    print >>sys.stderr, "    exponent:  %s" % (hexto8digit(attr['exponent']))
+    #print >>sys.stderr, "    exponent:  %s" % (hexto8digit(attr['exponent']))
     f.write(hexto8digit(attr['exponent']))
 
-    print >>sys.stderr, "    signature: %s..." % (attr['signature'].encode('hex'))
+    #print >>sys.stderr, "    signature: %s..." % (attr['signature'].encode('hex'))
     # f.write("signature is\n")
     f.write(attr['signature'].encode('hex'))
     # f.write("\n")
 
 
-    print >>sys.stderr, "    miscselect:     %08x"  % (bytes_to_int(attr['miscs']))
+    #print >>sys.stderr, "    miscselect:     %08x"  % (bytes_to_int(attr['miscs']))
     temp = "%08x" % (bytes_to_int(attr['miscs']))
     print("miscs temp is ")
     print(temp)
     f.write(temp)
 
-    print >>sys.stderr, "    miscmask:     %08x"  % (bytes_to_int(attr['miscmask']))
+    #print >>sys.stderr, "    miscmask:     %08x"  % (bytes_to_int(attr['miscmask']))
     f.write("%08x" % bytes_to_int(attr['miscmask']))
 
-    print >>sys.stderr, "    isvfamilyid:    %032x" % ((attr['isvfamilyid']))
+    #print >>sys.stderr, "    isvfamilyid:    %032x" % ((attr['isvfamilyid']))
     print("isvfamily temp is ")
     temp = "%032x" % (attr['isvfamilyid'])
     print(temp)
     f.write(temp)
 
-    print >>sys.stderr, "    flags:     %016x" % (bytes_to_int(attr['flags']))
+    #print >>sys.stderr, "    flags:     %016x" % (bytes_to_int(attr['flags']))
     f.write("%016x" % bytes_to_int(attr['flags']))
-    print >>sys.stderr, "    xfrms:     %016x" % (bytes_to_int(attr['xfrms']))
+    #print >>sys.stderr, "    xfrms:     %016x" % (bytes_to_int(attr['xfrms']))
     f.write("%016x" % bytes_to_int(attr['xfrms']))
 
 
-    print >>sys.stderr, "    flagmask:     %016x" % (bytes_to_int(attr['flagmask']))
+    #print >>sys.stderr, "    flagmask:     %016x" % (bytes_to_int(attr['flagmask']))
     f.write("%016x" % bytes_to_int(attr['flagmask']))
-    print >>sys.stderr, "    xfrmmask:     %016x" % (bytes_to_int(attr['xfrmmask']))
+    #print >>sys.stderr, "    xfrmmask:     %016x" % (bytes_to_int(attr['xfrmmask']))
     f.write("%016x" % bytes_to_int(attr['xfrmmask']))
 
-    print >>sys.stderr, "    mrenclave: %s" % (attr['mrenclave'].encode('hex'))
+    #print >>sys.stderr, "    mrenclave: %s" % (attr['mrenclave'].encode('hex'))
     f.write(attr['mrenclave'].encode('hex'))
 
-    print >>sys.stderr, "    reserve :"
+    #print >>sys.stderr, "    reserve :"
     for i in range(0,4):
-        print >>sys.stderr, " %s" % ("00000000")
+        #print >>sys.stderr, " %s" % ("00000000")
         f.write("00000000")
 
-    print >>sys.stderr, "    isvextprodid: %s" % (str(attr['isvextprodid']).zfill(32))
+    #print >>sys.stderr, "    isvextprodid: %s" % (str(attr['isvextprodid']).zfill(32))
     f.write(str(attr['isvextprodid']).zfill(32))
 
-    print >>sys.stderr, "    isvprodid: %s" % (str(attr['isvprodid']).zfill(4))
+    #print >>sys.stderr, "    isvprodid: %s" % (str(attr['isvprodid']).zfill(4))
     f.write(str(attr['isvprodid']).zfill(4))
 
-    print >>sys.stderr, "    isvsvn:    %s" % (str(attr['isvsvn']).zfill(4))
+    #print >>sys.stderr, "    isvsvn:    %s" % (str(attr['isvsvn']).zfill(4))
     f.write(str(attr['isvsvn']).zfill(4))
 
 
-    print >>sys.stderr, "    reserve :"
+    #print >>sys.stderr, "    reserve :"
     for i in range(0,3):
-        print >>sys.stderr, " %s" % ("00000000")
+        #print >>sys.stderr, " %s" % ("00000000")
         f.write("00000000")
     
     
     
-    print >>sys.stderr, "    q1: %s..." % (attr['q1'].encode('hex'))
+    #print >>sys.stderr, "    q1: %s..." % (attr['q1'].encode('hex'))
     # f.write("q1 is\n")
     f.write(attr['q1'].encode('hex'))
     # f.write("\n")
-    print >>sys.stderr, "    q2: %s..." % (attr['q2'].encode('hex'))
+    #print >>sys.stderr, "    q2: %s..." % (attr['q2'].encode('hex'))
     # f.write("q2 is\n")
     f.write(attr['q2'].encode('hex'))
     # f.write("\n")

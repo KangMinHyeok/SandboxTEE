@@ -26,6 +26,11 @@ NORETURN_PTR void (*NaClSwitch)(struct NaClThreadContext *context);
 
 void NaClInitSwitchToApp(struct NaClApp *nap) {
   /* TODO(jfb) Use a safe cast here. */
+#if NACL_SGX
+// TODO add cpu_features and remove the if branch
+    NaClSwitch = NaClSwitchAVX;
+return;
+#endif
   NaClCPUFeaturesX86 *features = (NaClCPUFeaturesX86 *) nap->cpu_features;
   if (NaClGetCPUFeatureX86(features, NaClCPUFeatureX86_AVX)) {
     NaClSwitch = NaClSwitchAVX;

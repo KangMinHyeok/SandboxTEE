@@ -18,6 +18,8 @@ uintptr_t NaClElfImageGetEntryPoint(struct NaClElfImage *image);
 
 struct NaClElfImage *NaClElfImageNew(struct NaClDesc *gp,
                                      NaClErrorCode *err_code);
+struct NaClElfImage *NaClElfImageServiceRuntimeNew(struct NaClDesc *gp,
+                                     NaClErrorCode *err_code);
 
 NaClErrorCode NaClElfImageValidateElfHeader(struct NaClElfImage *image);
 
@@ -34,6 +36,13 @@ NaClErrorCode NaClElfImageValidateProgramHeaders(
   struct NaClElfImage *image,
   uint8_t             addr_bits,
   struct NaClElfImageInfo *info);
+
+
+#if NACL_USGX == 1
+NaClErrorCode NaClElfImageLoadServiceRuntime(struct NaClElfImage *image,
+                               struct NaClDesc *ndp,
+                               struct NaClApp *nap);
+#endif
 
 /*
  * Loads an ELF executable before the address space's memory

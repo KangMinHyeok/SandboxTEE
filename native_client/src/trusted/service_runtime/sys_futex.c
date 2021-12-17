@@ -23,6 +23,8 @@
 #include "native_client/src/shared/platform/nacl_clock.h"
 #include "native_client/src/shared/platform/nacl_host_desc.h"
 
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
+
 #if defined(__ANDROID__) && !defined(FUTEX_PRIVATE_FLAG)
 /*
  * Android's Linux headers currently don't define these flags.
@@ -75,7 +77,17 @@ int32_t NaClSysFutexWaitAbs(struct NaClAppThread *natp, uint32_t addr,
       return -NACL_ABI_ETIMEDOUT;
     }
   }
+#if NACL_SGX == 1
+  uint64_t timeout = host_rel_timeout.tv_sec * 1000000 + host_rel_timeout.tv_nsec*1000l;
+  if (ocall_futex(
+              (int *) sysaddr,
+              FUTEX_WAIT | FUTEX_PRIVATE_FLAG,
+              value,
+              (abstime_ptr != 0 ? &timeout : (uint64_t) 0),
+              0,
+              0)) {
 
+#else
   if (syscall(__NR_futex,
               sysaddr,
               FUTEX_WAIT | FUTEX_PRIVATE_FLAG,
@@ -83,6 +95,7 @@ int32_t NaClSysFutexWaitAbs(struct NaClAppThread *natp, uint32_t addr,
               (abstime_ptr != 0 ? (uintptr_t) &host_rel_timeout : 0),
               0,
               0)) {
+#endif
     /*
      * The non-Linux implementation will crash on a bad address here,
      * so ensure the Linux implementation behaves consistently.
@@ -107,7 +120,11 @@ int32_t NaClSysFutexWake(struct NaClAppThread *natp, uint32_t addr,
     NaClLog(1, "NaClSysFutexWake: address out of range\n");
     return 0;
   }
+#if NACL_SGX == 1
+  woken_count = ocall_futex( (int *)
+#else
   woken_count = syscall(__NR_futex,
+#endif
                         sysaddr,
                         FUTEX_WAKE | FUTEX_PRIVATE_FLAG,
                         nwake,

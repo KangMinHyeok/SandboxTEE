@@ -1,0 +1,15 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+
+ldr_input = ['mqtt_client.c', 'mqtt_packet.c', 'mqtt_socket.c']
+
+envwm = env.Clone()
+envwm.Append(CFLAGS=['-I${SOURCE_ROOT}/native_client/src/trusted/wolfMQTT/'])
+
+envwm.DualLibrary('mqtt', ldr_input)

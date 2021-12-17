@@ -1,0 +1,60 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+ldr_input = []
+if env.Bit('usgx'):
+	ldr_input.append('ocall_mem_u.c')
+	ldr_input.append('ocall_file_u.c')
+	ldr_input.append('ocall_dir_u.c')
+	ldr_input.append('ocall_time_u.c')
+	ldr_input.append('ocall_socket_u.c')
+	ldr_input.append('ocall_misc_u.c')
+	ldr_input.append('ocall_ra_u.c')
+	ldr_input.append('sgx_entry.S')
+	ldr_input.append('sgx_thread.c')
+	ldr_input.append('ocall_tables.c')
+	ldr_input.append('ecall_enclave_start_u.c')
+	env.DualLibrary('usgx_nacl', ldr_input)
+elif env.Bit('sgx'):
+	ldr_input.append('ocall_tables.c')
+	ldr_input.append('ocall_mem_t.c')
+	ldr_input.append('ocall_file_t.c')
+	ldr_input.append('ocall_dir_t.c')
+	ldr_input.append('ocall_time_t.c')
+	ldr_input.append('ocall_socket_t.c')
+	ldr_input.append('ocall_misc_t.c')
+	ldr_input.append('ocall_ra_t.c')
+	ldr_input.append('enclave_framework.c')
+	ldr_input.append('enclave_entry.S')
+	ldr_input.append('handle_ecall.c')
+	ldr_input.append('enclave_exception.c')
+	ldr_input.append('wolfssl-ra.c')
+	ldr_input.append('wolfssl-ra-attester.c')
+	
+	envt = env.Clone(COMPONENT_STATIC=False)
+	envt.Append(
+		_LIBFLAGS=
+		['-eenclave_entry',
+		'-Wl,-Tsrc/trusted/xcall/enclave.lds',
+		'-zcombreloc', '-zdefs', '-pie'])
+
+	# check site_scons/site_tools/library_deps.py
+	envt.DualLibrary('sgx_nacl', ldr_input, EXTRA_LIBS=[
+	'sel', 
+	'env_cleanser', 
+	'nrd_xfer',
+	'platform',
+	'sgx_stdlib',
+	'wolflib',
+	#'debug_stub',
+	])
+
+
+
+
+

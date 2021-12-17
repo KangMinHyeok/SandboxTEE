@@ -1,0 +1,48 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+ldr_input = []
+if not env.Bit('sgx'):
+	print("SGX is not set in stdlib")
+	Return()
+
+envt = env.Clone()
+envt.Append(CCFLAGS=['-Wno-pointer-arith', '-Wno-pedantic'])
+
+ldr_input.append('errno-loc.c')
+ldr_input.append('fileio.c')
+ldr_input.append('getenv.c')
+#ldr_input.append('isatty.c')
+ldr_input.append('memory2.c')
+ldr_input.append('wordcopy.c')
+ldr_input.append('printf.c')
+ldr_input.append('printfmt.c')
+ldr_input.append('memset.c')
+ldr_input.append('memcpy.c')
+ldr_input.append('memcmp.c')
+ldr_input.append('memmem.c')
+ldr_input.append('enclave_pages.c')
+ldr_input.append('db_memory.c')
+ldr_input.append('memory.c')
+ldr_input.append('strlen.c')
+ldr_input.append('strchr.c')
+ldr_input.append('strcpy.c')
+ldr_input.append('strcmp.c')
+ldr_input.append('strdup.c')
+ldr_input.append('strtol.c')
+ldr_input.append('strstr.c')
+ldr_input.append('stdio.c')
+ldr_input.append('qsort.c')
+ldr_input.append('assert.c')
+ldr_input.append('time_convert.c')
+ldr_input.append('strtok.c')
+ldr_input.append('atoi.c')
+ldr_input.append('strcat.c')
+envt.DualLibrary('sgx_stdlib', ldr_input)
+
+

@@ -52,7 +52,6 @@
 #include "native_client/src/trusted/service_runtime/win/exception_patch/ntdll_patch.h"
 #include "native_client/src/trusted/service_runtime/win/debug_exception_handler.h"
 
-
 static void (*g_enable_outer_sandbox_func)(void) = NULL;
 
 void NaClSetEnableOuterSandboxFunc(void (*func)(void)) {
@@ -469,6 +468,7 @@ static void RedirectIO(struct NaClApp *nap, struct redir *redir_queue){
   }
 }
 
+// untrusted
 int NaClSelLdrMain(int argc, char **argv) {
   struct NaClApp                *nap = NULL;
   struct SelLdrOptions          optionsImpl;
@@ -495,22 +495,22 @@ int NaClSelLdrMain(int argc, char **argv) {
    * handling, the following function will not return.  If this is a normal
    * sel_ldr process, the following function does nothing.
    */
-  NaClDebugExceptionHandlerStandaloneHandleArgs(argc, argv);
+  NaClDebugExceptionHandlerStandaloneHandleArgs(argc, argv); // delete 
 
-  nap = NaClAppCreate();
+  nap = NaClAppCreate(); // untrusted copy 
   if (nap == NULL) {
-    NaClLog(LOG_FATAL, "NaClAppCreate() failed\n");
+    NaClLog(LOG_FATAL, "NaClAppCreate() failed\n"); 
   }
 
-  NaClPerfCounterCtor(&time_all_main, "SelMain");
+  NaClPerfCounterCtor(&time_all_main, "SelMain"); // delete
 
-  fflush((FILE *) NULL);
+  fflush((FILE *) NULL);  // untrusted
 
-  SelLdrOptionsCtor(options);
-  if (!DynArrayCtor(&env_vars, 0)) {
+  SelLdrOptionsCtor(options); // untrusted copy
+  if (!DynArrayCtor(&env_vars, 0)) { // untrusted copy
     NaClLog(LOG_FATAL, "Failed to allocate env var array\n");
   }
-  NaClSelLdrParseArgs(argc, argv, options, &env_vars, nap);
+  NaClSelLdrParseArgs(argc, argv, options, &env_vars, nap); // untrusted copy (options, env_vars, nap)
 
   /*
    * Define the environment variables for untrusted code.
@@ -518,12 +518,12 @@ int NaClSelLdrMain(int argc, char **argv) {
   if (!DynArraySet(&env_vars, env_vars.num_entries, NULL)) {
     NaClLog(LOG_FATAL, "Adding env_vars NULL terminator failed\n");
   }
-  NaClEnvCleanserCtor(&env_cleanser, 0, options->enable_env_passthrough);
+  NaClEnvCleanserCtor(&env_cleanser, 0, options->enable_env_passthrough); // untrusted copy
   if (!NaClEnvCleanserInit(&env_cleanser, NaClGetEnviron(),
                            (char const *const *) env_vars.ptr_array)) {
     NaClLog(LOG_FATAL, "Failed to initialise env cleanser\n");
   }
-  envp = NaClEnvCleanserEnvironment(&env_cleanser);
+  envp = NaClEnvCleanserEnvironment(&env_cleanser); // untrusted
 
   if (options->debug_mode_startup_signal) {
 #if NACL_WINDOWS
@@ -559,7 +559,7 @@ int NaClSelLdrMain(int argc, char **argv) {
 #endif
   } else if (options->debug_mode_bypass_acl_checks) {
     /* If both -m and -a are specified, -m takes precedence. */
-    NaClInsecurelyBypassAllAclChecks();
+    NaClInsecurelyBypassAllAclChecks(); // delete
   }
 
   nap->ignore_validator_result = (options->debug_mode_ignore_validator > 0);
@@ -602,7 +602,7 @@ int NaClSelLdrMain(int argc, char **argv) {
    */
   if (!options->skip_qualification) {
     NaClErrorCode pq_error = NACL_FI_VAL("pq", NaClErrorCode,
-                                         NaClRunSelQualificationTests());
+                                         NaClRunSelQualificationTests()); // untrusted
     if (LOAD_OK != pq_error) {
       errcode = pq_error;
       nap->module_load_status = pq_error;
@@ -616,7 +616,7 @@ int NaClSelLdrMain(int argc, char **argv) {
   }
 
 #if NACL_LINUX
-  NaClSignalHandlerInit();
+  NaClSignalHandlerInit(); // ildan pass
 #endif
   /*
    * Patch the Windows exception dispatcher to be safe in the case of
@@ -627,13 +627,13 @@ int NaClSelLdrMain(int argc, char **argv) {
      NACL_BUILD_SUBARCH == 64)
   NaClPatchWindowsExceptionDispatcher();
 #endif
-  NaClSignalTestCrashOnStartup();
+  NaClSignalTestCrashOnStartup(); // ildan pass
 
   /*
    * Open both files first because (on Mac OS X at least)
    * NaClAppLoadFile() enables an outer sandbox.
    */
-  if (NULL != options->blob_library_file) {
+  if (NULL != options->blob_library_file) { // delete
     NaClFileNameForValgrind(options->blob_library_file);
     blob_file = (struct NaClDesc *) NaClDescIoDescOpen(
         options->blob_library_file, NACL_ABI_O_RDONLY, 0);
@@ -645,10 +645,11 @@ int NaClSelLdrMain(int argc, char **argv) {
     NaClPerfCounterIntervalLast(&time_all_main);
   }
 
-  NaClAppInitialDescriptorHookup(nap);
+  NaClAppInitialDescriptorHookup(nap); // untrusted + trusted
 
   NaClLog(2, "Loading nacl file %s (non-RPC)\n", options->nacl_file);
-  errcode = NaClAppLoadFileFromFilename(nap, options->nacl_file);
+
+  errcode = NaClAppLoadFileFromFilename(nap, options->nacl_file); // need modification (LOAD enclave)
   if (LOAD_OK != errcode) {
     if (!options->quiet) {
       NaClLog(LOG_ERROR, "Error while loading \"%s\": %s\n"
@@ -668,7 +669,7 @@ int NaClSelLdrMain(int argc, char **argv) {
     exit(0);
   }
 
-  RedirectIO(nap, options->redir_queue);
+  RedirectIO(nap, options->redir_queue); // delete 
 
   /*
    * Enable the outer sandbox, if one is defined.  Do this as soon as
@@ -677,10 +678,10 @@ int NaClSelLdrMain(int argc, char **argv) {
    * We cannot enable the sandbox if file access is enabled.
    */
   if (!NaClFileAccessEnabled() && g_enable_outer_sandbox_func != NULL) {
-    g_enable_outer_sandbox_func();
+    g_enable_outer_sandbox_func(); // ildan pass
   }
 
-  if (NULL != options->blob_library_file) {
+  if (NULL != options->blob_library_file) { // delete
     errcode = NaClMainLoadIrt(nap, blob_file, NULL);
     if (LOAD_OK != errcode) {
       NaClLog(LOG_ERROR, "Error while loading \"%s\": %s\n",
@@ -706,23 +707,26 @@ int NaClSelLdrMain(int argc, char **argv) {
    */
   fflush((FILE *) NULL);
 
-  NaClAppStartModule(nap);
+  NaClAppStartModule(nap); // untrusted
 
   /*
    * For restricted file access, change directory to the root of the restricted
    * directory. This is required for safety, because we allow relative
    * pathnames.
    */
-  if (NaClRootDir != NULL && NaClHostDescChdir(NaClRootDir)) {
+  if (NaClRootDir != NULL && NaClHostDescChdir(NaClRootDir)) { // ignore
     NaClLog(LOG_FATAL, "Could not change directory to root dir\n");
   }
 
   if (options->enable_debug_stub) {
-    if (!NaClDebugInit(nap)) {
+    if (!NaClDebugInit(nap)) { // delete
       goto error;
     }
   }
-  NACL_TEST_INJECTION(BeforeMainThreadLaunches, ());
+  NACL_TEST_INJECTION(BeforeMainThreadLaunches, ()); // ildan pass
+
+  // TODO start enclave??????????
+
   if (!NaClCreateMainThread(nap,
                             options->app_argc,
                             options->app_argv,

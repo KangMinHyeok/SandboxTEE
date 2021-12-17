@@ -1,0 +1,14 @@
+# -*- python -*-
+
+import os
+import sys
+import glob
+
+Import('env')
+
+
+# trusted
+wolf_objs = Glob('*.c')
+
+env.DualLibrary('wolflib', wolf_objs) 
+

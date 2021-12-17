@@ -8,6 +8,7 @@
 #define NATIVE_CLIENT_SRC_TRUSTED_SERVICE_RUNTIME_NACL_RESOURCE_H_
 
 #include "native_client/src/include/nacl_base.h"
+#include "native_client/src/trusted/stdlib/stddef.h"
 
 EXTERN_C_BEGIN
 

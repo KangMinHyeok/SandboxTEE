@@ -483,5 +483,11 @@ static struct NaClDescVtbl const kNaClDescQuotaVtbl = {
   NaClDescQuotaSetFlags,
   NaClDescQuotaGetFlags,
   NaClDescIsattyNotImplemented,
+#if NACL_SGX
+  NaClDescBindNotImplemented,
+  NaClDescListenNotImplemented,
+  NaClDescAcceptNotImplemented,
+  NaClDescConnectNotImplemented,
+#endif
   NACL_DESC_QUOTA,
 };

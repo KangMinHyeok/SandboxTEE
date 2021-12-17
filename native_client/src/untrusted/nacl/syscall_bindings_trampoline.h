@@ -29,6 +29,7 @@ struct stat;
 struct timespec;
 struct timeval;
 
+
 #define NACL_SYSCALL(s) ((TYPE_nacl_ ## s) NACL_SYSCALL_ADDR(NACL_sys_ ## s))
 
 /*
@@ -277,6 +278,15 @@ typedef int (*TYPE_nacl_futex_wait_abs) (volatile int *addr, int value,
 typedef int (*TYPE_nacl_futex_wake) (volatile int *addr, int nwake);
 
 typedef int (*TYPE_nacl_get_random_bytes) (void *buf, size_t buf_size);
+
+
+
+typedef int (*TYPE_nacl_socket) (int domain, int type, int protocol);
+typedef int (*TYPE_nacl_bind) (int sockfd, uint32_t my_addr, size_t addrlen);
+typedef int (*TYPE_nacl_listen) (int sockfd, int backlog);
+typedef int (*TYPE_nacl_accept) (int sockfd, uint32_t addr, size_t addrlen);
+typedef int (*TYPE_nacl_connect) (int sockfd, uint32_t serv_addr, size_t addrlen);
+
 
 #if defined(__cplusplus)
 }

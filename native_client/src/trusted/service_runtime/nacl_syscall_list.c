@@ -17,6 +17,7 @@
 #include "native_client/src/trusted/service_runtime/sys_memory.h"
 #include "native_client/src/trusted/service_runtime/sys_parallel_io.h"
 #include "native_client/src/trusted/service_runtime/sys_random.h"
+#include "native_client/src/trusted/service_runtime/sys_socket.h"
 #include "native_client/src/trusted/service_runtime/include/bits/nacl_syscalls.h"
 
 /*
@@ -70,12 +71,14 @@ NACL_DEFINE_SYSCALL_3(NaClSysReadlink)
 NACL_DEFINE_SYSCALL_2(NaClSysUtimes)
 NACL_DEFINE_SYSCALL_4(NaClSysPRead)
 NACL_DEFINE_SYSCALL_4(NaClSysPWrite)
+#if NACL_SGX == 0
 NACL_DEFINE_SYSCALL_1(NaClSysImcMakeBoundSock)
 NACL_DEFINE_SYSCALL_1(NaClSysImcAccept)
 NACL_DEFINE_SYSCALL_1(NaClSysImcConnect)
 NACL_DEFINE_SYSCALL_3(NaClSysImcSendmsg)
 NACL_DEFINE_SYSCALL_3(NaClSysImcRecvmsg)
 NACL_DEFINE_SYSCALL_1(NaClSysImcMemObjCreate)
+#endif
 NACL_DEFINE_SYSCALL_1(NaClSysTlsInit)
 NACL_DEFINE_SYSCALL_4(NaClSysThreadCreate)
 NACL_DEFINE_SYSCALL_0(NaClSysTlsGet)
@@ -89,16 +92,24 @@ NACL_DEFINE_SYSCALL_2(NaClSysCondWait)
 NACL_DEFINE_SYSCALL_1(NaClSysCondSignal)
 NACL_DEFINE_SYSCALL_1(NaClSysCondBroadcast)
 NACL_DEFINE_SYSCALL_3(NaClSysCondTimedWaitAbs)
-NACL_DEFINE_SYSCALL_1(NaClSysImcSocketPair)
+#if NACL_SGX == 0
+ NACL_DEFINE_SYSCALL_1(NaClSysImcSocketPair)
+#endif
+
+// TODO
+/*
 NACL_DEFINE_SYSCALL_1(NaClSysSemCreate)
 NACL_DEFINE_SYSCALL_1(NaClSysSemWait)
 NACL_DEFINE_SYSCALL_1(NaClSysSemPost)
 NACL_DEFINE_SYSCALL_1(NaClSysSemGetValue)
+*/
 NACL_DEFINE_SYSCALL_0(NaClSysSchedYield)
 NACL_DEFINE_SYSCALL_2(NaClSysSysconf)
+/*
 NACL_DEFINE_SYSCALL_3(NaClSysDyncodeCreate)
 NACL_DEFINE_SYSCALL_3(NaClSysDyncodeModify)
 NACL_DEFINE_SYSCALL_2(NaClSysDyncodeDelete)
+*/
 NACL_DEFINE_SYSCALL_1(NaClSysSecondTlsSet)
 NACL_DEFINE_SYSCALL_0(NaClSysSecondTlsGet)
 NACL_DEFINE_SYSCALL_2(NaClSysExceptionHandler)
@@ -109,6 +120,15 @@ NACL_DEFINE_SYSCALL_1(NaClSysTestCrash)
 NACL_DEFINE_SYSCALL_3(NaClSysFutexWaitAbs)
 NACL_DEFINE_SYSCALL_2(NaClSysFutexWake)
 NACL_DEFINE_SYSCALL_2(NaClSysGetRandomBytes)
+
+#if NACL_SGX
+NACL_DEFINE_SYSCALL_3(NaClSysSocketOpen)
+NACL_DEFINE_SYSCALL_3(NaClSysSocketBind)
+NACL_DEFINE_SYSCALL_2(NaClSysSocketListen)
+NACL_DEFINE_SYSCALL_3(NaClSysSocketAccept)
+NACL_DEFINE_SYSCALL_3(NaClSysSocketConnect)
+#endif
+
 
 void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysNull, NACL_sys_null);
@@ -157,6 +177,7 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysUtimes, NACL_sys_utimes);
   NACL_REGISTER_SYSCALL(nap, NaClSysPRead, NACL_sys_pread);
   NACL_REGISTER_SYSCALL(nap, NaClSysPWrite, NACL_sys_pwrite);
+#if NACL_SGX == 0
   NACL_REGISTER_SYSCALL(nap, NaClSysImcMakeBoundSock,
                         NACL_sys_imc_makeboundsock);
   NACL_REGISTER_SYSCALL(nap, NaClSysImcAccept, NACL_sys_imc_accept);
@@ -165,6 +186,7 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysImcRecvmsg, NACL_sys_imc_recvmsg);
   NACL_REGISTER_SYSCALL(nap, NaClSysImcMemObjCreate,
                         NACL_sys_imc_mem_obj_create);
+#endif
   NACL_REGISTER_SYSCALL(nap, NaClSysTlsInit, NACL_sys_tls_init);
   NACL_REGISTER_SYSCALL(nap, NaClSysThreadCreate, NACL_sys_thread_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysTlsGet, NACL_sys_tls_get);
@@ -179,16 +201,24 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysCondBroadcast, NACL_sys_cond_broadcast);
   NACL_REGISTER_SYSCALL(nap, NaClSysCondTimedWaitAbs,
                         NACL_sys_cond_timed_wait_abs);
+#if NACL_SGX == 0
   NACL_REGISTER_SYSCALL(nap, NaClSysImcSocketPair, NACL_sys_imc_socketpair);
+#endif
+// TODO
+/*
   NACL_REGISTER_SYSCALL(nap, NaClSysSemCreate, NACL_sys_sem_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemWait, NACL_sys_sem_wait);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemPost, NACL_sys_sem_post);
   NACL_REGISTER_SYSCALL(nap, NaClSysSemGetValue, NACL_sys_sem_get_value);
+*/
   NACL_REGISTER_SYSCALL(nap, NaClSysSchedYield, NACL_sys_sched_yield);
   NACL_REGISTER_SYSCALL(nap, NaClSysSysconf, NACL_sys_sysconf);
+// TODO
+/*
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeCreate, NACL_sys_dyncode_create);
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeModify, NACL_sys_dyncode_modify);
   NACL_REGISTER_SYSCALL(nap, NaClSysDyncodeDelete, NACL_sys_dyncode_delete);
+*/
   NACL_REGISTER_SYSCALL(nap, NaClSysSecondTlsSet, NACL_sys_second_tls_set);
   NACL_REGISTER_SYSCALL(nap, NaClSysSecondTlsGet, NACL_sys_second_tls_get);
   NACL_REGISTER_SYSCALL(nap, NaClSysExceptionHandler,
@@ -201,4 +231,12 @@ void NaClAppRegisterDefaultSyscalls(struct NaClApp *nap) {
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWaitAbs, NACL_sys_futex_wait_abs);
   NACL_REGISTER_SYSCALL(nap, NaClSysFutexWake, NACL_sys_futex_wake);
   NACL_REGISTER_SYSCALL(nap, NaClSysGetRandomBytes, NACL_sys_get_random_bytes);
+
+#if NACL_SGX
+  NACL_REGISTER_SYSCALL(nap, NaClSysSocketOpen, NACL_sys_socket);
+  NACL_REGISTER_SYSCALL(nap, NaClSysSocketBind, NACL_sys_bind);
+  NACL_REGISTER_SYSCALL(nap, NaClSysSocketListen, NACL_sys_listen);
+  NACL_REGISTER_SYSCALL(nap, NaClSysSocketAccept, NACL_sys_accept);
+  NACL_REGISTER_SYSCALL(nap, NaClSysSocketConnect, NACL_sys_connect);
+#endif
 }

@@ -39,6 +39,8 @@
 #include "native_client/src/shared/platform/nacl_threads.h"
 #include "native_client/src/shared/platform/nacl_timestamp.h"
 
+#include "native_client/src/trusted/xcall/enclave_ocalls.h"
+
 static int              g_initialized = 0;
 
 /*
@@ -138,15 +140,21 @@ void NaClLogSetFile(char const *log_file) {
 }
 
 int NaClLogDefaultLogVerbosity(void) {
+#if NACL_SGX == 1
+  // TODO: fix here
+  return 0;
+#else
   char *env_verbosity;
 
   if (NULL != (env_verbosity = getenv("NACLVERBOSITY"))) {
     return strtol(env_verbosity, (char **) 0, 0);
   }
   return 0;
+#endif
 }
 
 struct Gio *NaClLogDefaultLogGio(void) {
+
   char            *log_file;
   FILE            *log_iob;
 
@@ -162,17 +170,26 @@ struct Gio *NaClLogDefaultLogGio(void) {
 
 void NaClLogModuleInitExtended(int        initial_verbosity,
                                struct Gio *log_gio) {
+
   if (!g_initialized) {
     NaClXMutexCtor(&log_mu);
     g_initialized = 1;
   }
   NaClLogSetVerbosity(initial_verbosity);
+#if NACL_SGX != 1
   NaClLogSetGio(log_gio);
+#endif
 }
 
 void NaClLogModuleInit(void) {
+#if NACL_SGX == 1
+  // TODO: fix here
+  NaClLogModuleInitExtended(NaClLogDefaultLogVerbosity(),
+                            NULL);
+#else
   NaClLogModuleInitExtended(NaClLogDefaultLogVerbosity(),
                             NaClLogDefaultLogGio());
+#endif
 }
 
 void NaClLogModuleFini(void) {
@@ -380,9 +397,12 @@ void NaClLogV_mu(int        detail_level,
     verbosity = NaClLogDefaultLogVerbosity();
   }
 
+// TODO
+#if NACL_SGX != 1
   if (detail_level <= verbosity) {
     NaClLogDoLogV_mu(detail_level, fmt, ap);
   }
+#endif
 }
 
 void NaClLogV(int         detail_level,

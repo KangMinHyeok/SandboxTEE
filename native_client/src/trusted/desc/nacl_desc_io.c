@@ -398,6 +398,12 @@ static struct NaClDescVtbl const kNaClDescIoDescVtbl = {
   NaClDescSetFlags,
   NaClDescGetFlags,
   NaClDescIoIsatty,
+#if NACL_SGX
+  NaClDescBindNotImplemented,
+  NaClDescListenNotImplemented,
+  NaClDescAcceptNotImplemented,
+  NaClDescConnectNotImplemented,
+#endif
   NACL_DESC_HOST_IO,
 };
 

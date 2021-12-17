@@ -1,5 +1,9 @@
+*.pyc
+*.swp
+*.o
 *.ps
 *.png
 *.pdf
 *.csv
 .DS_Store
+tags

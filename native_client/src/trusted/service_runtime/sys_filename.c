@@ -42,6 +42,7 @@ int32_t NaClSysOpen(struct NaClAppThread  *natp,
   if (!NaClFileAccessEnabled()) {
     return -NACL_ABI_EACCES;
   }
+	
 
   retval = CopyHostPathInFromUser(nap, path, sizeof path, pathname);
   if (0 != retval)
@@ -112,6 +113,31 @@ int32_t NaClSysOpen(struct NaClAppThread  *natp,
       retval = (uint32_t) -NACL_ABI_ENOMEM;
       goto cleanup;
     }
+
+	// Copy nacl_ctx to NaClHostDesc
+	#if NACL_SGX == 1
+		hd->desc_ctx = malloc(sizeof(struct DescCTX));
+
+		hd->desc_ctx->ctx = nap->nacl_ctx->ctx;
+		
+		hd->desc_ctx->der_key_len = nap->nacl_ctx->der_key_len;
+		hd->desc_ctx->der_cert_len = nap->nacl_ctx->der_cert_len;
+		memcpy(hd->desc_ctx->der_key, nap->nacl_ctx->der_key, hd->desc_ctx->der_key_len);
+		memcpy(hd->desc_ctx->der_cert, nap->nacl_ctx->der_cert, hd->desc_ctx->der_cert_len);
+
+		hd->desc_ctx->redis_id_len = malloc(strlen(nap->nacl_ctx->redis_id_len));
+		memcpy(hd->desc_ctx->redis_id_len, nap->nacl_ctx->redis_id_len, strlen(nap->nacl_ctx->redis_id_len));
+		hd->desc_ctx->redis_pw_len = malloc(strlen(nap->nacl_ctx->redis_pw_len));
+		memcpy(hd->desc_ctx->redis_pw_len, nap->nacl_ctx->redis_pw_len, strlen(nap->nacl_ctx->redis_pw_len));
+		hd->desc_ctx->redis_id = malloc(strlen(nap->nacl_ctx->redis_id));
+		memcpy(hd->desc_ctx->redis_id, nap->nacl_ctx->redis_id, strlen(nap->nacl_ctx->redis_id));
+		hd->desc_ctx->redis_pw = malloc(strlen(nap->nacl_ctx->redis_pw));
+		memcpy(hd->desc_ctx->redis_pw, nap->nacl_ctx->redis_pw, strlen(nap->nacl_ctx->redis_pw));
+
+		hd->desc_ctx->sks_key = 0;
+		hd->desc_ctx->sks_key_len = -1;
+	#endif
+
     retval = NaClHostDescOpen(hd, path, flags, mode);
     NaClLog(1,
             "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0%o, 0%o) returned %d\n",

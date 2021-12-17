@@ -21,7 +21,7 @@ TCSSIZE = PAGESIZE
 SSAFRAMESIZE = PAGESIZE
 SSAFRAMENUM = 2
 
-ENCLAVE_STACK_SIZE = PAGESIZE * 128
+ENCLAVE_STACK_SIZE = PAGESIZE * 256
 DEFAULT_ENCLAVE_SIZE = '64G'
 DEFAULT_THREAD_NUM = 4
 ENCLAVE_HEAP_MIN = 0x10000
@@ -187,11 +187,11 @@ def get_enclave_attributes(manifest):
 
     for attr in attributes:
         if attr in sgx_flags:
-            flags_raw = ''.join([chr(ord(a)|ord(b)) for a, b in zip(flags_raw, sgx_flags[attr])])
+            flags_raw = ''.join([chr(ord(str(a))|ord(str(b))) for a, b in zip(flags_raw, sgx_flags[attr])])
         if attr in sgx_xfrms:
-            xfrms_raw = ''.join([chr(ord(a)|ord(b)) for a, b in zip(xfrms_raw, sgx_xfrms[attr])])
+            xfrms_raw = ''.join([chr(ord(str(a))|ord(str(b))) for a, b in zip(xfrms_raw, sgx_xfrms[attr])])
         if attr in sgx_miscs:
-            miscs_raw = ''.join([chr(ord(a)|ord(b)) for a, b in zip(miscs_raw, sgx_miscs[attr])])
+            miscs_raw = ''.join([chr(ord(str(a))|ord(str(b))) for a, b in zip(miscs_raw, sgx_miscs[attr])])
 
     return flags_raw, xfrms_raw, miscs_raw
 
@@ -316,15 +316,20 @@ class MemoryArea:
 
         if file:
             loadcmds = get_loadcmds(file)
-            print loadcmds
+            print (loadcmds)
             if loadcmds:
                 mapaddr = 0xffffffffffffffff
                 mapaddr_end = 0
                 for (offset, addr, filesize, memsize, prot) in loadcmds:
+                    print(hex(filesize), hex(memsize))
                     if rounddown(addr) < mapaddr:
+                        print("down", hex(addr))
                         mapaddr = rounddown(addr)
+                        print("down", hex(mapaddr))
                     if roundup(addr + memsize) > mapaddr_end:
+                        print("up", hex(addr))
                         mapaddr_end = roundup(addr + memsize)
+                        print("up", hex(mapaddr_end))
 
                 self.is_binary = True
                 self.size = mapaddr_end - mapaddr
@@ -350,11 +355,9 @@ def get_memory_areas(attr, args): # manifest, attr, args):
 
     # untrusted area: 4GG
     addr_base = 0x100000000 
-    # NACL_TRAMPOLINE_START (==1<NACL_NULL_REGION_SHIFT; null area)
+
+
     addr_tramp_start = 0x10000
-    size =  0x10000 # NACL_TRAMPOLINE_SIZE
-    areas.append(MemoryArea('trampoline', size=size,
-                            flags=PAGEINFO_R|PAGEINFO_X|PAGEINFO_REG, addr = addr_base + addr_tramp_start))
 
 
     # Executable module's LOAD segments
@@ -363,7 +366,7 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     # index: offset, addr, filesz, memsz, flags 
     for segments in loadlist:
         size = segments[0]+segments[3]-NaClTruncAllocPage(segments[0])
-        size = ((size/PAGESIZE)+1)*PAGESIZE
+        size = (((size-1+PAGESIZE)/PAGESIZE))*PAGESIZE
 
         flag = PAGEINFO_REG        
         flags = segments[4]
@@ -378,16 +381,24 @@ def get_memory_areas(attr, args): # manifest, attr, args):
                             flags = flag, 
                             addr = addr_base + NaClTruncAllocPage(segments[1])))                    
         segnum += 1
+    
+    size =  0x10000 # NACL_TRAMPOLINE_SIZE
+    areas.append(MemoryArea('trampoline', size=size,
+                            flags=PAGEINFO_R|PAGEINFO_X|PAGEINFO_REG, addr = addr_base + addr_tramp_start))
 
+    size = 0x10000000 # stack size
+    areas.append(MemoryArea('nacl stack', size=size,
+                            flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_base + 0xf0000000))
+    
     hole_start = 0x1f0000000;
-    stack_start = 0x1ff000000;
-    areas.append(MemoryArea('hole', size = stack_start - hole_start,
-        flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
-        addr = hole_start));
+    stack_start = 0x1f0000000;
+    #areas.append(MemoryArea('hole', size = stack_start - hole_start,
+    #    flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
+    #    addr = hole_start));
   
-    areas.append(MemoryArea('exec_stack', size= 0x1000000, 
-        flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
-        addr = stack_start))
+    #areas.append(MemoryArea('exec_stack', size= 0x1000000, 
+    #    flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, 
+    #    addr = stack_start))
 
 
     size = (int((os.path.getsize(args['libsel']))/TCSSIZE)+1)*TCSSIZE
@@ -408,6 +419,7 @@ def get_memory_areas(attr, args): # manifest, attr, args):
 
     
     size = size=attr['thread_num'] * PAGESIZE
+    addr_index = 0xc30000000
     areas.append(MemoryArea('tls', size=size,
                            flags=PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
     addr_index += size
@@ -416,12 +428,15 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     size = attr['thread_num'] * TCSSIZE # TCSSIZE == PAGESIZE
     areas.append(MemoryArea('tcs', size = size,
                             flags = PAGEINFO_TCS, addr = addr_index))
-    addr_index += size
+    addr_index += size*2
 
     size = attr['thread_num'] * SSAFRAMESIZE * SSAFRAMENUM
     areas.append(MemoryArea('ssa', size = size,
                             flags = PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
     addr_index += size
+
+    areas.append(MemoryArea('dummy', size = PAGESIZE, 
+                            flags = PAGEINFO_R|PAGEINFO_W|PAGEINFO_REG, addr = addr_index))
 
     # 
     #     areas.append(MemoryArea('stack', size=ENCLAVE_STACK_SIZE,
@@ -433,6 +448,7 @@ def get_memory_areas(attr, args): # manifest, attr, args):
     #     areas.append(MemoryArea('exec', file=args['exec'],
     #                             flags=PAGEINFO_W|PAGEINFO_REG))
     # return areas
+    
     return areas
 
 
@@ -448,7 +464,7 @@ def generate_measurement(areas):
 
     def do_eextend(digest, offset):
         data = struct.pack("<8sQ48s", "EEXTEND", offset, "")
-        digest.update(data)
+        #digest.update(data)
 
     class mrenclave_digest:
         def __init__(self):
@@ -511,6 +527,7 @@ def generate_measurement(areas):
             if (desc == "manifest" or area.desc == "exec"): #mkpark
                 continue
 
+            
             for er in range(pg, pg + PAGESIZE, 256):
                 do_eextend(digest, er)
                 start = er - m_addr + f_addr
@@ -537,19 +554,19 @@ def generate_measurement(areas):
                 if len(start_zero + data + end_zero) != 256:
                     raise Exception("wrong calculation")
                 digest.update(start_zero + data + end_zero)
-
+            
     for area in areas:
         if area.file:
             with open(area.file, 'rb') as f:
                 if area.is_binary:
-                    print (area.addr)
+                    #print (area.addr)
                     loadcmds = get_loadcmds(area.file)
                     if loadcmds:
                         mapaddr = 0xffffffffffffffff
                         for (offset, addr, filesize, memsize, prot) in loadcmds:
                             if rounddown(addr) < mapaddr:
                                 mapaddr = rounddown(addr)
-                    print ("1: ", area.addr, mapaddr)
+                    #print ("1: ", area.addr, mapaddr)
                     baseaddr = area.addr - mapaddr
                     for (offset, addr, filesize, memsize, prot) in loadcmds:
                         flags = area.flags
@@ -564,15 +581,15 @@ def generate_measurement(areas):
                             desc = 'code'
                         else:
                             desc = 'data'
-                        print ("4")
+                        #print ("4")
                         load_file(mrenclave, f, offset, baseaddr + addr,
                                   filesize, memsize, desc, flags, area)
-                        print ("2")
+                        #print ("2")
                 else:
                     load_file(mrenclave, f, 0, area.addr,
                               os.stat(area.file).st_size, area.size,
                               area.desc, area.flags, area)
-                    print ("2")
+                    #print ("2")
         else:
             for a in range(area.addr, area.addr + area.size, PAGESIZE):
                 do_eadd(mrenclave, a, area.flags)
@@ -838,5 +855,5 @@ if __name__ == "__main__":
     print >>sys.stderr, "    " + mrenclave.encode('hex')
 
     # Generate sigstruct
-    open('sample2.sig', 'wb').write(generate_sigstruct(mrenclave))
+    open('tmp.sig', 'wb').write(generate_sigstruct(mrenclave))
 

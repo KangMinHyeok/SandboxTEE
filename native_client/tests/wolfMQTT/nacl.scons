@@ -1,0 +1,33 @@
+# -*- python -*-
+# Copyright (c) 2012 The Native Client Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+Import('env')
+import os
+
+envt = env.Clone()
+
+ldr_input = []
+ldr_input.append('mqtt_client.c')
+ldr_input.append('mqtt_socket.c')
+ldr_input.append('mqtt_packet.c')
+
+envt.ComponentLibrary('mqtt', ldr_input)
+
+envt.Append(CCFLAGS=['-std=c99'])
+wolf_mqtt_nexe = envt.ComponentProgram('wolf_mqtt', 
+                                    'wolf_mqtt.c',
+                                  EXTRA_LIBS=['${NONIRT_LIBS}',
+                                        'mqtt'
+                                    ])
+node = envt.CommandSelLdrTestNacl(
+    'wolf_mqtt_test.out',
+    wolf_mqtt_nexe,
+    stdout_golden=env.File('wolf_mqtt.stdout'),
+    )
+
+envt.AddNodeToTestSuite(node,
+                       ['small_tests', 'sel_ldr_tests'],
+                       'run_wolf_mqtt_test')
+

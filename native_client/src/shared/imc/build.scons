@@ -34,6 +34,8 @@ if env.Bit('mac'):
 
 env.DualLibrary('imc', nacl_imc_inputs)
 
+if env.Bit('sgx'):
+	Return()
 
 sigpipe_test_exe = env.ComponentProgram(
     'sigpipe_test',

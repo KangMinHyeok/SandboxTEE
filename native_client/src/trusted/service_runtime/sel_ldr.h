@@ -57,6 +57,14 @@
 
 #include "native_client/src/trusted/validator/ncvalidate.h"
 
+#if NACL_SGX == 1 || NACL_USGX == 1
+// driver path
+#include "native_client/src/trusted/service_runtime/sgx/sgx_arch.h"
+#include "native_client/src/trusted/wolfssl/ssl.h"
+
+#endif
+
+
 EXTERN_C_BEGIN
 
 #define NACL_DEFAULT_STACK_MAX  (16 << 20)  /* main thread stack */
@@ -93,6 +101,34 @@ struct NaClSpringboardInfo {
   uint32_t start_addr;
   uint32_t end_addr;
 };
+
+// hmlee
+#if NACL_SGX == 1 || NACL_USGX == 1
+struct NaClSGX {
+	char *nacl_file;
+	char *enclave_img;
+	char *sig_file;
+	char *token_file;
+	sgx_arch_secs_t *enclave_secs;
+};
+
+struct NaClCTX{
+	WOLFSSL_CTX *ctx;
+	uint8_t der_key[2048];
+	uint8_t der_cert [8 * 1024];
+	uint32_t der_key_len;
+	uint32_t der_cert_len;
+
+	char *redis_id;
+	char *redis_pw;
+	char *redis_id_len;
+	char *redis_pw_len;
+
+	char *sks_key;
+	uint32_t sks_key_len;
+
+};
+#endif
 
 struct NaClApp {
   /*
@@ -397,6 +433,14 @@ struct NaClApp {
    */
   struct NaClListNode       futex_wait_list_head;
 #endif
+
+  // hmlee
+#if NACL_SGX == 1 || NACL_USGX == 1
+  struct NaClSGX		*sgx;
+  struct NaClCTX		*nacl_ctx;
+
+#endif
+
 };
 
 
@@ -630,7 +674,11 @@ int NaClMakePcrelThunk(struct NaClApp *nap, enum NaClAslrMode aslr_mode);
 int NaClMakeDispatchAddrs(struct NaClApp *nap);
 
 void NaClPatchOneTrampolineCall(uintptr_t call_target_addr,
+#if NACL_USGX
+                                uintptr_t target_addr, uintptr_t memory_target_addr);
+#else
                                 uintptr_t target_addr);
+#endif
 
 #endif
 

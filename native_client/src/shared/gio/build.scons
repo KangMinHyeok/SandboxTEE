@@ -12,6 +12,8 @@ env.DualLibrary('gio',
                  'gprintf.c',
                  ])
 
+if env.Bit('sgx'):
+	Return()
 
 gtest_env = env.MakeGTestEnv()
 

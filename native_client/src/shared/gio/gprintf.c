@@ -10,6 +10,8 @@
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/include/portability.h"
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "native_client/src/shared/gio/gio.h"

@@ -15,7 +15,13 @@
 #include "native_client/src/include/portability.h"
 
 #include <stdarg.h>
+
+#if NACL_SGX == 0
 #include <stdio.h>
+#else
+#include "native_client/src/trusted/stdlib/stdio.h"
+#include "native_client/src/trusted/stdlib/files.h"
+#endif
 
 EXTERN_C_BEGIN
 
