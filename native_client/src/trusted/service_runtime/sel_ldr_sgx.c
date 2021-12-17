@@ -64,11 +64,11 @@
 #include "native_client/src/trusted/xcall/ra.h"
 #include "native_client/src/trusted/wolfssl/handshake.h"
 
-// TODO(mkpark): uncomment below code
 static int IsEnvironmentVariableSet(char const *env_name) {
   return NULL != getenv(env_name);
 }
 /*
+// not supported in SGX
 static int ShouldEnableDyncodeSyscalls(void) {
   return !IsEnvironmentVariableSet("NACL_DISABLE_DYNCODE_SYSCALLS");
 }
