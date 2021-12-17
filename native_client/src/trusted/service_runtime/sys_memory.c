@@ -768,8 +768,7 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
         NaClXMutexLock(&nap->dynamic_load_mutex);
         ret = 0;
 #if NACL_SGX != 1 // TODO(mkpark)
-        ret = NaClDynamicRegionCreate(nap, NaClUserToSys(nap, usraddr), length,
-                                      1);
+        ret = NaClDynamicRegionCreate(nap, NaClUserToSys(nap, usraddr), length, 1);
 #endif
         NaClXMutexUnlock(&nap->dynamic_load_mutex);
         if (!ret) {
