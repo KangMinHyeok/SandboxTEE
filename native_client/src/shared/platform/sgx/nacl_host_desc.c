@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -350,6 +351,62 @@ void NaClHostDescUnmapUnsafe(void *addr, size_t length) {
   */
 }
 
+char* check_file_status(const char* file_name, struct DescCTX *desc_ctx) {
+	
+	int ret = 0;
+	int port; 
+	int total_len = 512;
+	char reply[total_len];
+	char *ip;
+	WOLFSSL *ssl;
+
+	char *msg_type, *path, *result, *ptr;
+
+	ip = "10.73.31.203";
+	port = 11111;
+
+	char buff[total_len];
+
+	snprintf(buff, 512, "%d,%s",
+			1,
+			file_name);
+
+	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
+
+    ssl = ssl_handshake(ip, port, desc_ctx->ctx, desc_ctx->der_key, desc_ctx->der_key_len, desc_ctx->der_cert, desc_ctx->der_cert_len);
+    if (ret < 0) { 
+    	printf("ERROR: ssl_handshake fail\n");
+    }    
+    
+    /* Send the message to the server */
+    if ((ret = wolfSSL_write(ssl, buff, total_len)) != total_len) {
+        fprintf(stderr, "ERROR: failed to write entire message\n");
+        //fprintf(stderr, "%d bytes of %d bytes were sent", ret, (int) len);
+        wolfSSL_free(ssl);
+    }
+
+    /* Read the server data */
+    memset(reply, 0, sizeof(reply));
+    if ((ret = wolfSSL_read(ssl, reply, sizeof(reply)-1)) == -1) {
+        fprintf(stderr, "ERROR: failed to read\n");
+        wolfSSL_free(ssl);
+    }
+
+    msg_type = strtok_r(reply, ",", &ptr);
+    if(strcmp(msg_type,"1") == 0) {
+		path = strtok_r(NULL, ",", &ptr);
+		result = strtok_r(NULL, ",", &ptr);
+		printf("%s\n", path);
+		return result;
+	
+	} else {
+		return "N";
+	}
+
+	
+}
+
+
 int send_tracelog(char *buff, struct DescCTX *desc_ctx) {
     int ret = 0;
 	int port;
@@ -359,7 +416,7 @@ int send_tracelog(char *buff, struct DescCTX *desc_ctx) {
 	char *ip;
 	WOLFSSL *ssl;
 
-    ip = "122.46.129.53";
+    ip = "10.73.31.203";
     port = 11111;
 
     ssl = ssl_handshake(ip, port, desc_ctx->ctx, desc_ctx->der_key, desc_ctx->der_key_len, desc_ctx->der_cert, desc_ctx->der_cert_len);
@@ -521,54 +578,56 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
     	NaClLog(LOG_FATAL, "NaClHostDescOpen: 'this' is NULL\n");
   	}
 
-    //send trace log
-    // 1. Declare TraceLog 
+    char* status = check_file_status(path, desc_ctx);
+    if(strcmp(status,"A") == 0) {
+    	//send trace log
+    	// 1. Declare TraceLog 
 
-    struct TraceLog *log = &trace_log;
+    	struct TraceLog *log = &trace_log;
 
-    // 2. Assign values
+    	// 2. Assign values
      
-    char date[20] = "";
-    char timenow[20] = "";
-    int retval;
-    struct nacl_abi_timeval now;
+    	char date[20] = "";
+    	char timenow[20] = "";
+    	int retval;
+    	struct nacl_abi_timeval now;
 
-    memset(&now, 0, sizeof(now));
-    retval = NaClGetTimeOfDay(&now);
-    if (0 != retval) {
-        return retval;
-    }
+    	memset(&now, 0, sizeof(now));
+    	retval = NaClGetTimeOfDay(&now);
+    	if (0 != retval) {
+        	return retval;
+    	}
 
-    timestamp_t unix_timestamp = now.nacl_abi_tv_sec;
-	datedata_t datedata;
-    timedata_t timedata;
-	utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
+    	timestamp_t unix_timestamp = now.nacl_abi_tv_sec;
+		datedata_t datedata;
+    	timedata_t timedata;
+		utc_timestamp_to_date(unix_timestamp , &datedata, &timedata);
     
-    snprintf(date, 10,"%d-%02d-%02d",
+    	snprintf(date, 10,"%d-%02d-%02d",
             datedata.year,
             datedata.month,
             datedata.day);
-    snprintf(timenow, 8, "%02d:%02d:%02d",
+    	snprintf(timenow, 8, "%02d:%02d:%02d",
             timedata.hour,
             timedata.minute,
             timedata.second);
 
-    log->msg_type = 0;
-    log->date = date;
-    log->date_len = sizeof(log->date);
-    log->time = timenow;
-    log->time_len = sizeof(log->time); 
-    log->svc_id = "ecg_app";
-    log->svc_id_len = strlen(log->svc_id);
-    log->agent_id = "io_agent_1";
-    log->agent_id_len = strlen(log->agent_id);
-    log->device_id = "user_device";
-    log->device_id_len = strlen(log->device_id);
-    log->file_name = path;
-    log->file_name_len = strlen(log->file_name);
-    log->io_mode = flags;
-    log->result = 0;
-    log->total_len = sizeof(log->msg_type) + 
+    	log->msg_type = 0;
+    	log->date = date;
+    	log->date_len = sizeof(log->date);
+    	log->time = timenow;
+    	log->time_len = sizeof(log->time); 
+    	log->svc_id = "ecg_app";
+    	log->svc_id_len = strlen(log->svc_id);
+    	log->agent_id = "io_agent_1";
+    	log->agent_id_len = strlen(log->agent_id);
+    	log->device_id = "user_device";
+    	log->device_id_len = strlen(log->device_id);
+    	log->file_name = path;
+    	log->file_name_len = strlen(log->file_name);
+    	log->io_mode = flags;
+    	log->result = 0;
+    	log->total_len = sizeof(log->msg_type) + 
                      sizeof(log->date_len) +
                      log->date_len +
                      sizeof(log->time_len) +
@@ -585,9 +644,9 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
                      sizeof(log->result) + 
                      sizeof(log->total_len);
 
-    char buff[512];
+    	char buff[512];
 
-	snprintf(buff, 512, "%d,%s,%s,%s,%s,%s,%s,%d,%d",
+		snprintf(buff, 512, "%d,%s,%s,%s,%s,%s,%s,%d,%d",
 			log->msg_type,
 			log->date,
 			log->time,
@@ -598,14 +657,18 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
 		    log->io_mode,         
 		    log->result);
 
-	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
+		printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
 
-    //send_tracelog(buff, desc_ctx);
+    	send_tracelog(buff, desc_ctx);
 
-	ret = redis_get_key(desc_ctx);
-	printf("SKS Key: %s (len: %d)\n", d->desc_ctx->sks_key, d->desc_ctx->sks_key_len);
+		ret = redis_get_key(desc_ctx);
+		printf("SKS Key: %s (len: %d)\n", d->desc_ctx->sks_key, d->desc_ctx->sks_key_len);
   
-  	UNREFERENCED_PARAMETER(ret);
+  		UNREFERENCED_PARAMETER(ret);
+	} else {
+		printf("this file is not available\n");
+		return -1;
+	}
 
   /*
    * Sanitize access flags.
