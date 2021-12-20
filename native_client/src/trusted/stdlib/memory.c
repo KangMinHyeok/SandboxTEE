@@ -24,7 +24,6 @@
 #include "native_client/src/trusted/stdlib/nacl_internal.h"
 #include "native_client/src/trusted/stdlib/memheader.h"
 
-#ifndef NO_INTERNAL_ALLOC
 #include "native_client/src/trusted/stdlib/list.h"
 #include "native_client/src/trusted/stdlib/spinlock.h"
 #include <string.h>
@@ -161,4 +160,3 @@ void free (void * ptr)
 
 }
 
-#endif /* !NO_INTERNAL_ALLOC */
