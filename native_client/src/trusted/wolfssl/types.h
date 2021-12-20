@@ -253,7 +253,7 @@
 				#define XFREE(p, h, t)       {void* xp = (p); if((xp)) wolfSSL_Free((xp), __func__, __LINE__);}
 				#define XREALLOC(p, n, h, t) wolfSSL_Realloc((p), (n), __func__, __LINE__)
             #else
-        // TODO mkpark
+        // SandboxTEE
 	            #define XMALLOC(s,h,t)   ((void)h, (void)t, wolfSSL_Malloc((s)))
 	            #define XFREE(p, h, t)    {void* xp = (p); if((xp)) wolfSSL_Free((xp));}
 	            #define XREALLOC(p, n, h, t) wolfSSL_Realloc((p), (n))
