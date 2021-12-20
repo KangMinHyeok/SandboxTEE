@@ -879,7 +879,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
               p_flags);
   }
 
-	// TODO(mkpark)
+	// TODO(iitp)
 	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
 
 	/*
@@ -943,7 +943,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
             paddr,
             file_offset, file_offset);
                         
-    // mkpark: map first, load to the enclave, then unmap
+    // iitp: map first, load to the enclave, then unmap
     image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
 											Map)(ndp,
 													 NaClDescEffectorTrustedMem(),
@@ -959,7 +959,7 @@ static NaClErrorCode NaClElfFileMapSegment(struct NaClApp *nap,
         return LOAD_STATUS_UNKNOWN;
     }
 
-		// TODO(mkpark): below sgx_addr check! 
+		// TODO(iitp): below sgx_addr check! 
 		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
     // rounded_filesz is already paged
 		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
@@ -1142,7 +1142,7 @@ NaClErrorCode NaClElfFileMapSegmentSGX(struct NaClApp *nap,
               p_flags);
   }
 
-	// TODO(mkpark)
+	// TODO(iitp)
 	// if any error occurs after switching to the nexe, need to check that the memory is well loaded
 
 	/*
@@ -1201,7 +1201,7 @@ NaClErrorCode NaClElfFileMapSegmentSGX(struct NaClApp *nap,
             paddr,
             file_offset, file_offset);
                         
-    // mkpark: map first, load to the enclave, then unmap
+    // iitp: map first, load to the enclave, then unmap
     image_sys_addr = (*NACL_VTBL(NaClDesc, ndp)->
 											Map)(ndp,
 													 NaClDescEffectorTrustedMem(),
@@ -1217,7 +1217,7 @@ NaClErrorCode NaClElfFileMapSegmentSGX(struct NaClApp *nap,
         return LOAD_STATUS_UNKNOWN;
     }
 
-		// TODO(mkpark): below sgx_addr check! 
+		// TODO(iitp): below sgx_addr check! 
 		void *sgx_addr = (void *) (((unsigned long) paddr & 0xFFFFFFFF) + 0x100000000);
     // rounded_filesz is already paged
 		int ret = add_pages_to_enclave(nap->sgx->enclave_secs, sgx_addr, (void *) image_sys_addr, rounded_filesz, 
