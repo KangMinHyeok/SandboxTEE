@@ -3698,7 +3698,7 @@ int ValidateDate(const byte* date, byte format, int dateType)
         return 0;
     }
 
-		// TODO mkpark
+		// TODO iitp
 		/*
     if (dateType == BEFORE) {
         if (DateLessThan(localTime, &certTime)) {
