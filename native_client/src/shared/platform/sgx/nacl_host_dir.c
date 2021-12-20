@@ -46,7 +46,6 @@
 #include "native_client/src/trusted/xcall/enclave_ocalls.h"
 #include "native_client/src/trusted/stdlib/filestruct.h"
 #include "native_client/src/trusted/stdlib/string.h"
-#include "native_client/src/trusted/stdlib/memory.h"
 
 int getdents(unsigned int fd, struct dirent* dirp, unsigned int count) {
   return ocall_getdents(fd, (struct linux_dirent64 *) dirp, count);

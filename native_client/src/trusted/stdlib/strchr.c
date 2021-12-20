@@ -23,7 +23,7 @@
    02111-1307 USA.  */
 
 #include "native_client/src/trusted/stdlib/string.h"
-#include "native_client/src/trusted/stdlib/memory.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 #include "native_client/src/include/build_config.h"
 
 #if NACL_SGX == 1

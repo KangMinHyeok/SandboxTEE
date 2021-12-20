@@ -11,7 +11,7 @@
 #include "native_client/src/trusted/service_runtime/sel_main.h"
 
 #include "native_client/src/trusted/service_runtime/nacl_all_modules.h"
-#include "native_client/src/trusted/stdlib/memory.h"
+#include "native_client/src/trusted/stdlib/memheader.h"
 
 
 int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_target, void * untrusted_stack, void * enclave_base_addr)
