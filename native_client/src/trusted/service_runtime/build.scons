@@ -48,7 +48,7 @@ env.Append(CPPPATH=['${TARGET_ROOT}/gen'])
 
 GENERATED='${TARGET_ROOT}/gen/native_client/src/trusted/service_runtime'
 
-# TODO (mkpark): we separately treat SGX env.
+# TODO (iitp): we separately treat SGX env.
 
 if env.Bit('sgx'):
 	if env.Bit('x86_64_zero_based_sandbox'):
