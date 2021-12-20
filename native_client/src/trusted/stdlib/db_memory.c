@@ -118,7 +118,6 @@ int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int pro
    memset(mem, 0, size);
 /*
     if (alloc_type & NACL_ALLOC_INTERNAL) {
-        SGX_DBG(DBG_M, "pal allocates %p-%p for internal use\n", mem, mem + size);
         _DkSpinLock(&pal_vma_lock);
         assert(pal_nvmas < NACL_VMA_MAX);
         pal_vmas[pal_nvmas].bottom = mem;
