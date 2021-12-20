@@ -158,22 +158,8 @@ struct config_store {
     void             (*free) (void *);
 };
 
-int read_config (struct config_store * store, int (*filter) (const char *, int),
-                 const char ** errstring);
-int free_config (struct config_store * store);
-int copy_config (struct config_store * store, struct config_store * new_store);
-int write_config (void * file, int (*write) (void *, void *, int),
-                  struct config_store * store);
-ssize_t get_config (struct config_store * cfg, const char * key,
-                    char * val_buf, size_t buf_size);
-int get_config_entries (struct config_store * cfg, const char * key,
-                        char * key_buf, size_t key_bufsize);
-ssize_t get_config_entries_size (struct config_store * cfg, const char * key);
-int set_config (struct config_store * cfg, const char * key, const char * val);
-
 int vsnprintf (char *string, size_t maxlen, const char *format, va_list args);
 
-//int snprintf(char *s, size_t maxlen, const char *format, ...);
 void vfprintfmt(int (*_fputch)(void *, int, void *), void *f, void * putdat,
         const char * fmt, va_list *ap);
 
