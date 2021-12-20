@@ -114,7 +114,6 @@ struct nacl_handle_thread {
 
 int printf  (const char  *fmt, ...);
 #include <stdarg.h>
-// #include <stdio.h>
 int vprintf(const char * fmt, va_list *ap);
 // int vprintf (const char *__restrict __format, _G_va_list __arg);
 void write_log (int nstrs, ...);

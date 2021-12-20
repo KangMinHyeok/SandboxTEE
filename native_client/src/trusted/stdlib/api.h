@@ -143,44 +143,8 @@ void qsort(void *aa, size_t n, size_t es, int (*cmp)(const void *, const void *)
 void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
     int (*compar)(const void *, const void *));
 
-/* Some useful macro */
-/* force failure if str is not a static string */
-#define force_static(str)   ("" str "")
 
-/* check if the var is exactly the same as the static string */
-#define strcmp_static(var, str) \
-    (!memcmp((var), force_static(str), static_strlen(force_static(str)) + 1))
-
-/* check if the var starts with the static string */
-#define strpartcmp_static(var, str) \
-    (!memcmp((var), force_static(str), static_strlen(force_static(str))))
-
-/* copy static string and return the address of the null end (null if the dest
- * is not large enough).*/
-#define strcpy_static(var, str, max) \
-    (static_strlen(force_static(str)) + 1 > max ? NULL : \
-     memcpy((var), force_static(str), static_strlen(force_static(str)) + 1) + \
-     static_strlen(force_static(str)))
-
-/* Libc printf functions. stdio.h/stdarg.h. */
-//TODO crhamm int vprintf(const char *fmt, va_list *ap);
-//extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
-
-int printf(const char *fmt, ...);
-
-
-//TODO crhamm int vfprintf(FILE *fp, const char *fmt, va_list *ap);
-//extern int vfprintf (FILE *__restrict __s, const char *__restrict __format,
-//             __gnuc_va_list __arg);
-
-int fprintf(FILE *fp, const char *fmt, ...);
-
-// int snprintf (char * buf, int n, const char * fmt, ...);
 /* Miscelleneous */
-
-int inet_pton4 (const char *src, int len, void *dst);
-int inet_pton6 (const char *src, int len, void *dst);
-
 uint32_t __htonl (uint32_t x);
 uint32_t __ntohl (uint32_t x);
 uint16_t __htons (uint16_t x);
