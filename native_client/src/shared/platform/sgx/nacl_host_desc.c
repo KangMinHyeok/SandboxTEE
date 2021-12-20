@@ -173,6 +173,8 @@ static INLINE int NaClMapFlagMap(int nacl_map_flags) {
   return host_os_flags;
 }
 
+char const *file_name;
+
 /*
  * The NaClHostDescInit function should be invoked in all Ctor-like
  * functions.  Since no other NaClHostDesc member function should be
@@ -351,7 +353,7 @@ void NaClHostDescUnmapUnsafe(void *addr, size_t length) {
   */
 }
 
-char* check_file_status(const char* file_name, struct DescCTX *desc_ctx) {
+char* check_file_status(const char* path, struct DescCTX *desc_ctx) {
 	
 	int ret = 0;
 	int port; 
@@ -360,7 +362,7 @@ char* check_file_status(const char* file_name, struct DescCTX *desc_ctx) {
 	char *ip;
 	WOLFSSL *ssl;
 
-	char *msg_type, *path, *result, *ptr;
+	char *msg_type, *id, *result, *ptr;
 
 	ip = "10.73.31.203";
 	port = 11111;
@@ -369,9 +371,9 @@ char* check_file_status(const char* file_name, struct DescCTX *desc_ctx) {
 
 	snprintf(buff, 512, "%d,%s",
 			1,
-			file_name);
+			path);
 
-	printf("%s, %d, trace log: %s\n", __func__, __LINE__, buff);
+	printf("%s, %d, trace log: %s\n", __func__, __LINE__, path);
 
     ssl = ssl_handshake(ip, port, desc_ctx->ctx, desc_ctx->der_key, desc_ctx->der_key_len, desc_ctx->der_cert, desc_ctx->der_cert_len);
     if (ret < 0) { 
@@ -394,9 +396,9 @@ char* check_file_status(const char* file_name, struct DescCTX *desc_ctx) {
 
     msg_type = strtok_r(reply, ",", &ptr);
     if(strcmp(msg_type,"1") == 0) {
-		path = strtok_r(NULL, ",", &ptr);
+		id = strtok_r(NULL, ",", &ptr);
 		result = strtok_r(NULL, ",", &ptr);
-		printf("%s\n", path);
+		printf("%s\n", id);
 		return result;
 	
 	} else {
@@ -571,7 +573,9 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   	int posix_flags;
 	int ret = 0;
     struct DescCTX *desc_ctx = d->desc_ctx;
-	
+	file_name = path;
+	printf("file name is %s\n", file_name);
+
 	NaClLog(3, "NaClHostDescOpen(0x%08"NACL_PRIxPTR", %s, 0x%x, 0x%x)\n",
 			(uintptr_t) d, path, flags, mode);
   	if (NULL == d) {
@@ -666,7 +670,7 @@ int NaClHostDescOpen(struct NaClHostDesc  *d,
   
   		UNREFERENCED_PARAMETER(ret);
 	} else {
-		printf("this file is not available\n");
+		printf("this file is not available - Open\n");
 		return -1;
 	}
 
@@ -836,7 +840,13 @@ ssize_t NaClHostDescRead(struct NaClHostDesc  *d,
 	retval = ocall_read(d->d, buf, len);
 	return (retval == -1)? -NaClXlateErrno(errno):retval;
   } else {
-    retval = ReadFile(d, buf, len);
+  	char *status = check_file_status(file_name, desc_ctx);
+  	if(strcmp(status,"A") == 0 ) {
+		retval = ReadFile(d, buf, len);
+		printf("File Read is successfully completed\n");
+	} else {
+		printf("This file is not available - Read\n");
+	}
   }
   return retval;
 }
@@ -930,7 +940,13 @@ ssize_t NaClHostDescWrite(struct NaClHostDesc *d,
 	retval = ocall_write(d->d, buf, len);
 	return (retval == -1)? -NaClXlateErrno(errno):retval;
   } else {
-    retval = WriteFile(d, buf, len);
+  	char *status = check_file_status(file_name, desc_ctx);
+  	if(strcmp(status,"A") == 0) {
+    	retval = WriteFile(d, buf, len);
+    	printf("File Write is successfully completed\n");
+	} else {
+		printf("This file is not available - Write\n");
+	}
   }
   if (need_lock) {
     NaClHostDescExclusiveUnlock(d->d);
