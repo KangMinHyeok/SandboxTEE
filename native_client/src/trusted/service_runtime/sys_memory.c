@@ -833,7 +833,7 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
                                       NULL);
 #else
       // note that it is not supported in SGX
-	  sysret = 0;
+	  sys_ret = 0;
 #endif
       if (sys_ret < 0) {
         map_result = sys_ret;
