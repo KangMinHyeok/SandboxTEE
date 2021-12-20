@@ -50,7 +50,7 @@ int handle_ecall (unsigned long ecall_index, void * ecall_args, void * exit_targ
 
   			struct NaClApp *nap = NaClAppCreate();
   			
-  			// TODO (mkpark): copy nap from usgx to sgx
+  			// copy nap from usgx to sgx
         // TODO (mkpark): below code as a function!
   			char *nap_p;
   			int len;
