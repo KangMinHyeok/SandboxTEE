@@ -1391,7 +1391,7 @@ int InitSSL_Ctx(WOLFSSL_CTX* ctx, WOLFSSL_METHOD* method, void* heap)
                 #error Micrium port does not support DTLS session export yet
             #endif
         #endif
-    #else // mkpark: here!
+    #else // iitp: here!
         ctx->CBIORecv = EmbedReceive;
         ctx->CBIOSend = EmbedSend;
         #ifdef WOLFSSL_DTLS
@@ -11707,7 +11707,7 @@ static INLINE int VerifyMac(WOLFSSL* ssl, const byte* input, word32 msgSz,
 
 //     recvd = DkStreamRead(hdl->pal_handle, 0, sz, buf, NULL, 0);
 //     if (recvd < 0) {
-//         int err = 0; //mkpark LastError();
+//         int err = 0; //iitp LastError();
 //         WOLFSSL_MSG("Embed Receive error");
 
 //         if (err == SOCKET_EWOULDBLOCK || err == SOCKET_EAGAIN) {

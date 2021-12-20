@@ -767,7 +767,7 @@ int32_t NaClSysMmapIntern(struct NaClApp        *nap,
          */
         NaClXMutexLock(&nap->dynamic_load_mutex);
         ret = 0;
-#if NACL_SGX != 1 // TODO(mkpark)
+#if NACL_SGX != 1 // TODO(iitp)
         ret = NaClDynamicRegionCreate(nap, NaClUserToSys(nap, usraddr), length, 1);
 #endif
         NaClXMutexUnlock(&nap->dynamic_load_mutex);
@@ -1068,7 +1068,7 @@ static int32_t MunmapInternal(struct NaClApp *nap,
     return -NaClXlateErrno(errno);
   }
   */
-  // mkpark: is it enough to zero-fill pages in SGX?
+  // iitp: is it enough to zero-fill pages in SGX?
   memset((void *) sysaddr, 0, length);
 
   NaClVmmapRemove(&nap->mem_map,

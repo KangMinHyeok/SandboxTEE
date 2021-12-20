@@ -352,7 +352,7 @@
 	#ifndef CTYPE_USER
 	    // #include <ctype.h>
 	    #if defined(HAVE_ECC) || defined(HAVE_OCSP) || defined(WOLFSSL_KEY_GEN)
-	        #define XTOUPPER(__c)     __c >= 'a' && __c < 'z' ? __c + 'A'-'a' : __c // toupper((c)) mkpark
+	        #define XTOUPPER(__c)     __c >= 'a' && __c < 'z' ? __c + 'A'-'a' : __c // toupper((c))
 	        #define XISALPHA(c)     isalpha((c))
 	    #endif
 

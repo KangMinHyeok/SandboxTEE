@@ -1714,7 +1714,7 @@ int ecc_projective_dbl_point(ecc_point *P, ecc_point *R, mp_int* a,
 
       /* T2 = X - T1 */
       if (err == MP_OKAY)
-          err = mp_sub(x, &t1, &t2); // mkpark: here
+          err = mp_sub(x, &t1, &t2); 
       if (err == MP_OKAY) {
           if (mp_isneg(&t2))
               err = mp_add(&t2, modulus, &t2);

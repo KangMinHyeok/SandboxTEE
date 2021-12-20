@@ -712,7 +712,7 @@
 
 #ifndef NO_RC4
     #undef  BUILD_ARC4
-// mkpark    #define BUILD_ARC4
+    #define BUILD_ARC4
 #endif
 
 #ifdef HAVE_CHACHA
