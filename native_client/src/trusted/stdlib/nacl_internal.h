@@ -92,17 +92,6 @@ struct nacl_handle_thread {
 };
 #define HANDLE_TYPE(handle)  ((handle)->hdr.type)
 
-struct arch_frame {
-#ifdef __x86_64__
-    unsigned long rsp, rbp, rbx, rsi, rdi, r12, r13, r14, r15;
-#else
-# error "unsupported architecture"
-#endif
-};
-
-/* function and definition for loading binaries */
-enum object_type { OBJECT_RTLD, OBJECT_EXEC, OBJECT_PRELOAD, OBJECT_EXTERNAL };
-
 #ifndef NO_INTERNAL_ALLOC
 void init_slab_mgr (int alignment);
 void * malloc (size_t size);
