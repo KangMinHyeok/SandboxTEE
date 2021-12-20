@@ -92,15 +92,6 @@ struct nacl_handle_thread {
 };
 #define HANDLE_TYPE(handle)  ((handle)->hdr.type)
 
-#ifndef NO_INTERNAL_ALLOC
-void init_slab_mgr (int alignment);
-void * malloc (size_t size);
-void * malloc_copy(const void * mem, size_t size);
-void * calloc (size_t nmem, size_t size);
-char * strdup(const char *source);
-void free (void * mem);
-#endif
-
 #ifdef __GNUC__
 # define __attribute_hidden __attribute__ ((visibility ("hidden")))
 # define __attribute_always_inline __attribute__((always_inline))
