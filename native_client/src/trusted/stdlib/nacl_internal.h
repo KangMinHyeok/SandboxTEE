@@ -44,12 +44,6 @@
 #endif /* ! IN_ENCLAVE */
 
 
-//#error "Do not use this header file"
-
-
-
-#define NACL_TRUE  true
-#define NACL_FALSE false
 /* The ABI includes three calls to allocate, free, and modify the
  * permission bits on page-base virtual memory. Permissions in-
  * clude read, write, execute, and guard. Memory regions can be
@@ -58,11 +52,7 @@
 
 /* Memory Allocation Flags */
 #define NACL_ALLOC_RESERVE     0x0001   /* Only reserve the memory */
-
-//TODO crhamm
-//#ifdef IN_ENCLAVE
 #define NACL_ALLOC_INTERNAL    0x8000
-//#endif
 
 /* Memory Protection Flags */
 #define NACL_PROT_NONE       0x0     /* 0x0 Page can not be accessed. */
@@ -86,13 +76,6 @@ extern unsigned long pagesize, pageshift, pagemask;
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
 int _DkVirtualMemoryFree (void * addr, uint64_t size);
 
-#define init_fail(exitcode, reason)                                     \
-    do {                                                                \
-        printf("NACL failed at " __FILE__  ":%s:%u (exitcode = %u, reason=%s)\n", \
-               __FUNCTION__, (unsigned int)__LINE__,                    \
-               (unsigned int) (exitcode), (const char *) (reason));     \
-        ocall_exit(exitcode);                                       \
-    } while (0)
 
 typedef struct {
     uint32_t type;

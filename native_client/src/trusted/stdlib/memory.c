@@ -87,8 +87,12 @@ void init_slab_mgr (int alignment)
     
     slab_alignment = alignment;
     slab_mgr = create_slab_mgr();
-    if (!slab_mgr)
-        init_fail(NACL_ERROR_NOMEM, "cannot initialize slab manager");
+    if (!slab_mgr) {
+		printf("NACL failed at " __FILE__  ":%s:%u (exitcode = %u, reason=cannot initialize slab manager)\n",
+               __FUNCTION__, (unsigned int)__LINE__, 
+               (unsigned int) (NACL_ERROR_NOMEM));
+        ocall_exit(NACL_ERROR_NOMEM);
+	}
 }
 
 void * malloc (size_t size)

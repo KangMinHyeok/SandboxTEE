@@ -25,14 +25,6 @@ extern void __assert_fail (__const char *__assertion, __const char *__file,
 
 int ocall_unmap_untrusted (const void * mem, uint64_t size);
 
-#define init_fail(exitcode, reason)                                     \
-    do {                                                                \
-        printf("PAL failed at " __FILE__  ":%s:%u (exitcode = %u, reason=%s)\n", \
-               __FUNCTION__, (unsigned int)__LINE__,                    \
-               (unsigned int) (exitcode), (const char *) (reason));     \
-        ocall_exit(exitcode);                                       \
-    } while (0)
-
 #define PAL_ALLOC_INTERNAL    0x8000
 #define PRESET_PAGESIZE (1 << 12)
 #define ASSERT_VMA 0
