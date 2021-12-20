@@ -25,20 +25,6 @@ extern void __assert_fail (__const char *__assertion, __const char *__file,
 
 int ocall_unmap_untrusted (const void * mem, uint64_t size);
 
-/*void * memcpy (void *dstpp, const void *srcpp, size_t len);
-void * memmove (void *dstpp, const void *srcpp, size_t len);
-void * memset (void *dstpp, int c, size_t len);
-int memcmp (const void *s1, const void *s2, size_t len);
-
-int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
-int _DkVirtualMemoryFree (void * addr, uint64_t size);
-void init_slab_mgr (int alignment);
-
-void *malloc(size_t size);
-void *realloc (void *ptr, size_t size);
-void free(void *ptr);
-void *calloc(size_t nmemb, size_t size);
-*/
 #define init_fail(exitcode, reason)                                     \
     do {                                                                \
         printf("PAL failed at " __FILE__  ":%s:%u (exitcode = %u, reason=%s)\n", \
