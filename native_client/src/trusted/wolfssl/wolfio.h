@@ -106,13 +106,13 @@
     #elif defined(WOLFSSL_SGX)
         #include <errno.h>
     #elif !defined(WOLFSSL_NO_SOCK)
-			// mkpark here
+			// iitp   here
         // #include <sys/types.h>
         #include <errno.h>
         #ifndef EBSNET
             #include <unistd.h>
         #endif
-        // #include <fcntl.h> mkpark
+        // #include <fcntl.h> iitp  
 
         #if defined(HAVE_RTP_SYS)
             #include <socket.h>
@@ -120,7 +120,7 @@
             #include "rtipapi.h"  /* errno */
             #include "socket.h"
         #elif !defined(DEVKITPRO) && !defined(WOLFSSL_PICOTCP)
-			 // mkpark
+			 // iitp  
             // #include <sys/socket.h>
             // #include <arpa/inet.h>
 			      
@@ -243,8 +243,8 @@
     #define SEND_FUNCTION send
     #define RECV_FUNCTION recv
 #else
-    #define SEND_FUNCTION(a,b,c,d) ocall_sock_send(a,b,c,NULL,0) // mkpark
-    #define RECV_FUNCTION(a,b,c,d) ocall_sock_recv(a,b,c,NULL,0) // mkpark
+    #define SEND_FUNCTION(a,b,c,d) ocall_sock_send(a,b,c,NULL,0) // iitp  
+    #define RECV_FUNCTION(a,b,c,d) ocall_sock_recv(a,b,c,NULL,0) // iitp  
     #if !defined(HAVE_SOCKADDR) && !defined(WOLFSSL_NO_SOCK)
         #define HAVE_SOCKADDR
     #endif
