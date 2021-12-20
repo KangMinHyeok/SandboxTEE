@@ -211,6 +211,7 @@ struct slab_debug {
 #define OBJ_PADDING             15
 #define LARGE_OBJ_PADDING       8
 #define MIN_MALLOC_ALIGNMENT    16
+/* statically allocate slab manager */
 #define STATIC_SLAB              1
 
 #define OBJ_LEVEL(obj) ((obj)->level)

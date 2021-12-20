@@ -30,18 +30,13 @@
 #include "native_client/src/include/build_config.h"
 #include "list.h"
 
-/* statically allocate slab manager */
-#define STATIC_SLAB              1
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
 
-#ifdef IN_ENCLAVE
 #include "native_client/src/trusted/stdlib/atomic.h"
-#else
-#endif /* ! IN_ENCLAVE */
 
 
 /* The ABI includes three calls to allocate, free, and modify the
