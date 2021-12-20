@@ -447,8 +447,7 @@ WOLFSSL_API int wolfCrypt_Cleanup(void);
 #if defined(USER_TIME)
     struct tm* gmtime(const time_t* timer);
     // hmlee
-    //extern time_t XTIME(time_t * timer);
-#define XTIME(t1) 0 
+	#define XTIME(t1) 0 
 
     #ifdef STACK_TRAP
         /* for stack trap tracking, don't call os gmtime on OS X/linux,
