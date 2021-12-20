@@ -42,14 +42,6 @@ static inline int HOST_PROT (int prot)
     return prot & (NACL_PROT_READ | NACL_PROT_WRITE | NACL_PROT_EXEC);
 }
 
-#define ACCESS_R    4
-#define ACCESS_W    2
-#define ACCESS_X    1
-
-struct stat;
-bool stataccess (struct stat * stats, int acc);
-
-
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot)
 {
     
