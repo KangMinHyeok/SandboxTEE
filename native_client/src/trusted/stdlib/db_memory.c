@@ -35,23 +35,7 @@
 #include "native_client/src/trusted/xcall/ocall_types.h"
 
 #define NACL_VMA_MAX     64
-/*int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
-    int _DkVirtualMemoryFree (void * addr, uint64_t size);
-    int _DkVirtualMemoryProtect (void * addr, uint64_t size, int prot);
-*/
 
-/*static struct pal_vma {
-    void * top, * bottom;
-} pal_vmas[NACL_VMA_MAX];
-
-static unsigned int pal_nvmas = 0;
-static spinlock_t pal_vma_lock;
-*/
-/*static inline int HOST_FLAGS (int alloc_type, int prot)
-{
-    return ((alloc_type & NACL_ALLOC_RESERVE) ? MAP_NORESERVE|MAP_UNINITIALIZED : 0) |
-           ((prot & NACL_PROT_WRITECOPY) ? MAP_PRIVATE : MAP_SHARED);
-}*/
 
 static inline int HOST_PROT (int prot)
 {
