@@ -213,7 +213,7 @@ uintptr_t NaClHostDescMap(struct NaClHostDesc *d, // NULL from NaClDescIoDescMap
   int   need_exec;
   UNREFERENCED_PARAMETER(effp);
 
-  // I added it (mkpark
+  // I added it (iitp
   UNREFERENCED_PARAMETER(tmp_prot);
 
   NaClLog(4,
@@ -274,7 +274,7 @@ uintptr_t NaClHostDescMap(struct NaClHostDesc *d, // NULL from NaClDescIoDescMap
   tmp_prot = host_prot & ~PROT_EXEC;
   need_exec = (0 != (PROT_EXEC & host_prot));
   // map_addr = ocall_mmap(start_addr, len, tmp_prot, host_flags, desc, offset); 
-  // TODO here!! mkpark
+  // TODO here!! iitp
   // ocall_map_untrusted (desc, offset, len, tmp_prot, map_addr); // host_flags are ignored..?
   map_addr = start_addr; // malloc(len);
   if ((uintptr_t) map_addr <= 0){
@@ -342,7 +342,7 @@ uintptr_t NaClHostDescMap(struct NaClHostDesc *d, // NULL from NaClDescIoDescMap
 void NaClHostDescUnmapUnsafe(void *addr, size_t length) {
   UNREFERENCED_PARAMETER(length);
   // if (ocall_munmap(addr, length) != 0) {
-  // TODO (mkpark)
+  // TODO (iitp)
   free(addr); 
   /*
   ocall_unmap_untrusted(addr, length) != 0) {

@@ -52,7 +52,7 @@ int getdents(unsigned int fd, struct dirent* dirp, unsigned int count) {
 }
 
 
-// mkpark: in linux_types.h (include/dirent.h)
+// iitp: in linux_types.h (include/dirent.h)
 //struct linux_dirent {  /* offsets, ILP32 and LP64 */
 //  unsigned long  d_ino;             /*  0,  0 */
 //  unsigned long  d_off;             /*  4,  8 */
