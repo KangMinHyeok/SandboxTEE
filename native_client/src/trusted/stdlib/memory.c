@@ -114,7 +114,6 @@ void * malloc (size_t size)
 #if PRINT_ENCLAVE_STAT
         print_alloced_pages();
 #endif
-            // SGX_DBG(DBG_I, "DkProcessExit: Returning exit code %d\n", exitcode);
         ocall_exit(-1);
     }
 
