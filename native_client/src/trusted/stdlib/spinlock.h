@@ -165,7 +165,6 @@ out_success:
  */
 static inline int spinlock_cmpxchg(spinlock_t* lock, int* expected, int desired) {
     // static_assert(SAME_TYPE(&lock->lock, expected), "spinlock is not implemented as int*");
-    // TODO(mkpark)
     return __atomic_compare_exchange_n(&lock->lock, expected, desired, /*weak=*/false,
                                        __ATOMIC_ACQUIRE, __ATOMIC_RELAXED);
 }
