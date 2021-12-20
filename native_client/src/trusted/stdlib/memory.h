@@ -25,18 +25,21 @@ extern void __assert_fail (__const char *__assertion, __const char *__file,
 
 int ocall_unmap_untrusted (const void * mem, uint64_t size);
 
-#define PAL_ALLOC_INTERNAL    0x8000
 #define PRESET_PAGESIZE (1 << 12)
 #define ASSERT_VMA 0
 #define STARTUP_SIZE 16
 
-/* Memory Protection Flags */
-#define PAL_PROT_NONE       0x0     /* 0x0 Page can not be accessed. */
-#define PAL_PROT_READ       0x1     /* 0x1 Page can be read. */
-#define PAL_PROT_WRITE      0x2     /* 0x2 Page can be written. */
-#define PAL_PROT_EXEC       0x4     /* 0x4 Page can be executed. */
-#define PAL_PROT_WRITECOPY  0x8     /* 0x8 Copy on write */
 
+#ifndef container_of
+/**
+ * container_of - cast a member of a structure out to the containing structure
+ * @ptr:    the pointer to the member.
+ * @type:   the type of the container struct this is embedded in.
+ * @member: the name of the member within the struct.
+ *
+ */
+# define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
+#endif
 
 
 
@@ -209,10 +212,6 @@ struct slab_debug {
 #define LARGE_OBJ_PADDING       8
 #define MIN_MALLOC_ALIGNMENT    16
 #define STATIC_SLAB              1
-
-#ifdef IN_ENCLAVE
-#define PAL_ALLOC_INTERNAL    0x8000
-#endif
 
 #define OBJ_LEVEL(obj) ((obj)->level)
 #define OBJ_RAW(obj) (&(obj)->raw)
