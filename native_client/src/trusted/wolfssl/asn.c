@@ -3658,7 +3658,7 @@ int ValidateDate(const byte* date, byte format, int dateType)
     (void)tmpTime;
 #endif
 
-    ltime = 0; // shim_times(0);// mkpark XTIME(0);
+    ltime = XTIME(0);
 
 #ifdef WOLFSSL_BEFORE_DATE_CLOCK_SKEW
     if (dateType == BEFORE) {
@@ -3729,7 +3729,7 @@ int wc_GetTime(void* timePtr, word32 timeSize)
         return BUFFER_E;
     }
 
-    *ltime = 0; // shim_times(0);// mkpark XTIME(0);
+    *ltime = XTIME(0);
 
     return 0;
 }
@@ -3768,8 +3768,7 @@ static int GetDate(DecodedCert* cert, int dateType)
         cert->beforeDateLen = cert->srcIdx - startIdx;
     else
         cert->afterDateLen  = cert->srcIdx - startIdx;
-		// mkpark
-/*
+
 #ifndef NO_ASN_TIME
     if (!XVALIDATE_DATE(date, b, dateType)) {
         if (dateType == BEFORE)
@@ -3778,7 +3777,7 @@ static int GetDate(DecodedCert* cert, int dateType)
             return ASN_AFTER_DATE_E;
     }
 #endif
-*/
+
     return 0;
 }
 
