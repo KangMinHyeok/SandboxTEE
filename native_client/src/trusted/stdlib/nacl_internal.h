@@ -37,14 +37,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef uint64_t      NACL_NUM;
-typedef const char *  NACL_STR;
-typedef void *        NACL_PTR;
-typedef uint32_t      NACL_FLG;
-typedef uint32_t      NACL_IDX;
-typedef bool          NACL_BOL;
-
-
 
 #ifdef IN_ENCLAVE
 #include "native_client/src/trusted/stdlib/atomic.h"
@@ -103,15 +95,15 @@ int _DkVirtualMemoryFree (void * addr, uint64_t size);
     } while (0)
 
 typedef struct {
-    NACL_IDX type;
-    NACL_FLG flags;
+    uint32_t type;
+    uint32_t flags;
 } NACL_HDR;
 
 DEFINE_LIST(nacl_handle_thread);
 struct nacl_handle_thread {
     NACL_HDR reserved;
-    NACL_IDX tid;
-    NACL_PTR tcs;
+    uint32_t tid;
+    void *tcs;
     LIST_TYPE(nacl_handle_thread) list;
     void * param;
 };
