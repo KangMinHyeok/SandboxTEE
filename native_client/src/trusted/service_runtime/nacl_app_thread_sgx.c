@@ -52,7 +52,7 @@ void WINAPI NaClAppThreadLauncher(void *state) {
   uint32_t thread_idx;
   NaClLog(4, "NaClAppThreadLauncher: entered\n");
 
-	// TODO(mkpark): in untrusted
+	// TODO(iitp): in untrusted
   // NaClSignalStackRegister(natp->signal_stack);
 
   NaClLog(4, "      natp = 0x%016"NACL_PRIxPTR"\n", (uintptr_t) natp);
@@ -212,7 +212,7 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
     goto cleanup_free;
   }
 
-	// TODO (mkpark) 
+	// TODO (iitp) 
 	/*
   if (!NaClSignalStackAllocate(&natp->signal_stack)) {
     goto cleanup_mu;
@@ -238,7 +238,7 @@ struct NaClAppThread *NaClAppThreadMake(struct NaClApp *nap,
  cleanup_mu:
   NaClMutexDtor(&natp->mu);
   if (NULL != natp->signal_stack) {
-  	// TODO mkpark
+  	// TODO iitp
     // NaClSignalStackFree(&natp->signal_stack);
     natp->signal_stack = NULL;
   }
@@ -292,7 +292,7 @@ void NaClAppThreadDelete(struct NaClAppThread *natp) {
   }
   free(natp->suspended_registers);
   NaClMutexDtor(&natp->suspend_mu);
-  // TODO mkpark
+  // TODO iitp
   // NaClSignalStackFree(natp->signal_stack);
   natp->signal_stack = NULL;
   NaClCondVarDtor(&natp->futex_condvar);
