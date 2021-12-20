@@ -49,27 +49,6 @@ static inline int HOST_PROT (int prot)
 struct stat;
 bool stataccess (struct stat * stats, int acc);
 
-bool _DkCheckMemoryMappable (const void * addr, int size)
-{
-    /*
-    if (addr < DATA_END && addr + size > TEXT_START) {
-        printf("address %p-%p is not mappable\n", addr, addr + size);
-        return true;
-    }
-
-    _DkSpinLock(&pal_vma_lock);
-
-    for (int i = 0 ; i < pal_nvmas ; i++)
-        if (addr < pal_vmas[i].top && addr + size > pal_vmas[i].bottom) {
-            printf("address %p-%p is not mappable\n", addr, addr + size);
-            _DkSpinUnlock(&pal_vma_lock);
-            return true;
-        }
-
-    _DkSpinUnlock(&pal_vma_lock);
-    */
-    return false;
-}
 
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot)
 {
@@ -128,22 +107,4 @@ int _DkVirtualMemoryFree (void * addr, uint64_t size)
     return 0;
 }
 
-int _DkVirtualMemoryProtect (void * addr, uint64_t size, int prot)
-{
-    return 0;
-}
-/*
-unsigned long _DkMemoryQuota (void)
-{
-    return pal_sec.heap_max - pal_sec.heap_min;
-}
 
-extern struct atomic_int alloced_pages;
-extern unsigned int pagesz;
-
-unsigned long _DkMemoryAvailableQuota (void)
-{
-    return (pal_sec.heap_max - pal_sec.heap_min) -
-        atomic_read(&alloced_pages) * pagesz;
-}
-*/

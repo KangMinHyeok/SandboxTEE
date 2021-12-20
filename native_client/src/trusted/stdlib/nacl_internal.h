@@ -118,7 +118,6 @@ extern unsigned long pagesize, pageshift, pagemask;
 /* DkVirtualMemory calls */
 int _DkVirtualMemoryAlloc (void ** paddr, uint64_t size, int alloc_type, int prot);
 int _DkVirtualMemoryFree (void * addr, uint64_t size);
-int _DkVirtualMemoryProtect (void * addr, uint64_t size, int prot);
 
 #define init_fail(exitcode, reason)                                     \
     do {                                                                \
