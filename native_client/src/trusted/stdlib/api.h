@@ -79,16 +79,6 @@ typedef ptrdiff_t ssize_t;
                                                                              alignment)))
 
 #define SAME_TYPE(a, b) __builtin_types_compatible_p(__typeof__(a), __typeof__(b))
-#ifndef container_of
-/**
- * container_of - cast a member of a structure out to the containing structure
- * @ptr:    the pointer to the member.
- * @type:   the type of the container struct this is embedded in.
- * @member: the name of the member within the struct.
- *
- */
-# define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
 
 #define __alloca __builtin_alloca
 
@@ -147,16 +137,6 @@ void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
 char * getenv (const char *name);
 
 
-struct config;
-DEFINE_LISTP(config);
-struct config_store {
-    LISTP_TYPE(config) root;
-    LISTP_TYPE(config) entries;
-    void *           raw_data;
-    int              raw_size;
-    void *           (*malloc) (size_t);
-    void             (*free) (void *);
-};
 
 int vsnprintf (char *string, size_t maxlen, const char *format, va_list args);
 

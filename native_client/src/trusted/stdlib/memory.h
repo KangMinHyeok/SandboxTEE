@@ -37,62 +37,8 @@ int ocall_unmap_untrusted (const void * mem, uint64_t size);
 #define PAL_PROT_EXEC       0x4     /* 0x4 Page can be executed. */
 #define PAL_PROT_WRITECOPY  0x8     /* 0x8 Copy on write */
 
-#ifndef container_of
-/**
- * container_of - cast a member of a structure out to the containing structure
- * @ptr:    the pointer to the member.
- * @type:   the type of the container struct this is embedded in.
- * @member: the name of the member within the struct.
- *
- */
-# define container_of(ptr, type, member) ((type *)((char *)(ptr) - offsetof(type, member)))
-#endif
 
 
-
-//stdlib/memcopy.h
-#define BYTE_COPY_FWD(dst_bp, src_bp, nbytes)                                 \
-  do                                                                          \
-    {                                                                         \
-      int __nbytes = (nbytes);                                        \
-      while (__nbytes > 0)                                                    \
-        {                                                                     \
-          byte __x = ((byte *) src_bp)[0];                                    \
-          src_bp += 1;                                                        \
-          __nbytes -= 1;                                                      \
-          ((byte *) dst_bp)[0] = __x;                                         \
-          dst_bp += 1;                                                        \
-        }                                                                     \
-    } while (0)
-
-#define BYTE_COPY_BWD(dst_ep, src_ep, nbytes)                                 \
-  do                                                                          \
-    {                                                                         \
-      int __nbytes = (nbytes);                                        \
-      while (__nbytes > 0)                                                    \
-        {                                                                     \
-          byte __x;                                                           \
-          src_ep -= 1;                                                        \
-          __x = ((byte *) src_ep)[0];                                         \
-          dst_ep -= 1;                                                        \
-          __nbytes -= 1;                                                      \
-          ((byte *) dst_ep)[0] = __x;                                         \
-        }                                                                     \
-    } while (0)
-
-extern void _wordcopy_bwd_aligned (long int, long int, int);
-extern void _wordcopy_bwd_dest_aligned (long int, long int, int);
-#define WORD_COPY_BWD(dst_ep, src_ep, nbytes_left, nbytes)                    \
-  do                                                                          \
-    {                                                                         \
-      if (src_ep % OPSIZ == 0)                                                \
-        _wordcopy_bwd_aligned (dst_ep, src_ep, (nbytes) / OPSIZ);             \
-      else                                                                    \
-        _wordcopy_bwd_dest_aligned (dst_ep, src_ep, (nbytes) / OPSIZ);        \
-      src_ep -= (nbytes) & -OPSIZ;                                            \
-      dst_ep -= (nbytes) & -OPSIZ;                                            \
-      (nbytes_left) = (nbytes) % OPSIZ;                                       \
-    } while (0)
 
 //stdlib/slabmgr.h
 #define OBJ_PADDING   15
@@ -116,19 +62,7 @@ typedef struct __attribute__((packed)) large_mem_obj {
 #define OP_T_THRES  16
 #define op_t    unsigned long int
 #define OPSIZ   (sizeof(op_t))
-#define BYTE_COPY_FWD(dst_bp, src_bp, nbytes)                     \
-  do                                          \
-    {                                         \
-      int __nbytes = (nbytes);                        \
-      while (__nbytes > 0)                            \
-    {                                     \
-      byte __x = ((byte *) src_bp)[0];                    \
-      src_bp += 1;                                \
-      __nbytes -= 1;                              \
-      ((byte *) dst_bp)[0] = __x;                         \
-      dst_bp += 1;                                \
-    }                                     \
-    } while (0)
+
 extern void _wordcopy_fwd_aligned (long int, long int, int);
 extern void _wordcopy_fwd_dest_aligned (long int, long int, int);
 #define WORD_COPY_FWD(dst_bp, src_bp, nbytes_left, nbytes)            \
