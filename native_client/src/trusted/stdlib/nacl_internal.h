@@ -105,7 +105,6 @@ typedef bool          NACL_BOL;
 #define NACL_PROT_WRITECOPY  0x8     /* 0x8 Copy on write */
 
 
-// TODO(mkpark)
 extern unsigned long pagesize, pageshift, pagemask;
 
 #define ALLOC_ALIGNDOWN(addr) \
