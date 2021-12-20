@@ -144,22 +144,7 @@ void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
     int (*compar)(const void *, const void *));
 
 
-/* Miscelleneous */
-uint32_t __htonl (uint32_t x);
-uint32_t __ntohl (uint32_t x);
-uint16_t __htons (uint16_t x);
-uint16_t __ntohs (uint16_t x);
-
-extern const char * const * sys_errlist_internal;
-
 char * getenv (const char *name);
-/* Graphene functions */
-
-int get_norm_path (const char * path, char * buf, int offset, int size);
-
-int get_base_name (const char * path, char * buf, int size);
-
-/* Loading configs / manifests */
 
 
 struct config;
