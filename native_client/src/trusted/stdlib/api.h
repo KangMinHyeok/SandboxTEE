@@ -25,7 +25,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-// #include "native_client/src/trusted/service_runtime/include/sys/errno.h"
 #include "native_client/src/include/build_config.h"
 #include "native_client/src/trusted/stdlib/list.h"
 #include "native_client/src/trusted/stdlib/filestruct.h"
@@ -134,25 +133,11 @@ typedef ptrdiff_t ssize_t;
 // 
 // int errno;
 //long strtol (const char *s, char **endptr, int base);
-void init_slab_mgr (int alignment);
 
 int atoi (const char *nptr);
 long int atol (const char *nptr);
 
-//char * strchr (const char *s, int c_in);
-//unsigned long strtoul(const char *nptr, char **endptr, register int base);
-
-void * memcpy (void *dstpp, const void *srcpp, size_t len);
-void * memmove (void *dstpp, const void *srcpp, size_t len);
-void * memset (void *dstpp, int c, size_t len);
-int memcmp (const void *s1, const void *s2, size_t len);
-void *memalign(size_t align, size_t len);
-
-/* Libc memory allocation functions. stdlib.h. */
-void *malloc(size_t size);
-void *realloc (void *ptr, size_t size);
-void free(void *ptr);
-void *calloc(size_t nmemb, size_t size);
+#include "native_client/src/trusted/stdlib/memheader.h"
 
 void qsort(void *aa, size_t n, size_t es, int (*cmp)(const void *, const void *));
 void * bsearch(const void *key, const void *base0, size_t nmemb, size_t size,
